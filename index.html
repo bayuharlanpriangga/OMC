@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXIOM — Metaphysical Intelligence v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05050a;--s1:#0c0c14;--s2:#11111c;--s3:#181826;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.1);--b3:rgba(255,255,255,0.18);
+  --gold:#c9a84c;--gold2:#e8c96a;--golddim:rgba(201,168,76,0.12);--goldbright:rgba(201,168,76,0.8);
+  --text:#ede8df;--dim:rgba(237,232,223,0.45);--muted:rgba(237,232,223,0.22);
+  --blue:#6b7fd4;--blue2:#9ba8e8;
+  --red:#c4604a;--green:#5a9e78;--purple:#8b6fb5;--teal:#4a9e9e;
+  --r:2px;
+  --font-serif:'Cormorant Garamond',serif;
+  --font-sans:'Syne',sans-serif;
+  --font-mono:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflow-x:hidden;min-height:100vh}
+::selection{background:var(--golddim);color:var(--gold)}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:2px}
+
+/* NOISE */
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;mix-blend-mode:overlay}
+
+/* ══════════════ LANDING ══════════════ */
+#landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0}
+.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(107,127,212,.09) 0%,transparent 70%);top:-250px;left:-250px;animation:od1 22s ease-in-out infinite}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,.06) 0%,transparent 70%);bottom:-100px;right:-100px;animation:od2 28s ease-in-out infinite}
+.o3{width:400px;height:400px;background:radial-gradient(circle,rgba(139,111,181,.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:od3 20s ease-in-out infinite}
+@keyframes od1{0%,100%{transform:translate(0,0)}40%{transform:translate(70px,50px)}70%{transform:translate(-30px,80px)}}
+@keyframes od2{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,-40px)}}
+@keyframes od3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.3)}}
+
+/* sacred geometry bg */
+.sacred-bg{position:absolute;inset:0;z-index:0;opacity:.04;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.sacred-bg svg{width:min(80vw,600px);height:min(80vw,600px);animation:slowspin 120s linear infinite}
+@keyframes slowspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.landing-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;max-width:620px}
+
+.logo{text-align:center;margin-bottom:40px;animation:fadeUp .9s ease both}
+.logomark{font-family:var(--font-serif);font-size:clamp(56px,10vw,108px);font-weight:300;letter-spacing:.38em;line-height:1;color:var(--text);position:relative;display:inline-block}
+.logomark em{color:var(--gold);font-style:normal}
+.logomark::after{content:'✦';position:absolute;top:-12px;right:-16px;font-size:14px;color:var(--gold);opacity:.6;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.9;transform:scale(1.2)}}
+.logosub{font-family:var(--font-mono);font-size:9px;letter-spacing:.5em;color:var(--muted);margin-top:10px;text-transform:uppercase}
+
+.tagline{font-family:var(--font-serif);font-size:clamp(15px,2.5vw,21px);font-weight:300;font-style:italic;color:var(--dim);text-align:center;max-width:440px;line-height:1.75;margin-bottom:52px;animation:fadeUp .9s .15s ease both}
+
+/* FORM */
+.fcard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:52px;width:100%;position:relative;animation:fadeUp .9s .3s ease both}
+.fcard::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.fcard::after{content:'';position:absolute;bottom:0;left:30%;right:30%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
+
+.fstep{display:none}.fstep.on{display:block}
+.fstep-num{font-family:var(--font-mono);font-size:9px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
+.fstep-title{font-family:var(--font-serif);font-size:30px;font-weight:300;margin-bottom:28px;line-height:1.2}
+
+.fi{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.fi label{font-family:var(--font-mono);font-size:9px;letter-spacing:.32em;color:var(--muted);text-transform:uppercase}
+.fi input,.fi select{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;color:var(--text);font-family:var(--font-sans);font-size:14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.fi input:focus,.fi select:focus{border-color:var(--gold);background:rgba(201,168,76,.03)}
+.fi input::placeholder{color:var(--muted)}
+.fi .hint{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:.15em}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.confhint{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);margin-bottom:18px}
+.cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.chint-text{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--muted)}
+
+.btn{padding:15px 24px;background:transparent;border:1px solid var(--gold);border-radius:var(--r);color:var(--gold);font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:color .3s;width:100%;margin-top:20px}
+.btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-100%);transition:transform .35s ease}
+.btn:hover::before{transform:translateX(0)}
+.btn:hover{color:var(--bg)}
+.btn span{position:relative;z-index:1}
+select option{background:#11111c}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════ LOADING ══════════════ */
+#loading{display:none;position:fixed;inset:0;background:var(--bg);z-index:800;flex-direction:column;align-items:center;justify-content:center;gap:36px}
+#loading.on{display:flex}
+.sigil-wrap{position:relative;width:100px;height:100px}
+.sigil-a{position:absolute;inset:0;animation:sp1 8s linear infinite}
+.sigil-b{position:absolute;inset:10px;animation:sp2 5s linear infinite reverse}
+.sigil-c{position:absolute;inset:22px;animation:sp1 12s linear infinite}
+@keyframes sp1{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes sp2{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+.load-steps{display:flex;flex-direction:column;gap:11px;min-width:260px}
+.ls{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;color:var(--muted);display:flex;align-items:center;gap:12px;transition:color .25s}
+.ls.go{color:var(--gold)}.ls.ok{color:var(--green)}
+.ldot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ══════════════ DASHBOARD ══════════════ */
+#dash{display:none}#dash.on{display:block}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid var(--b1);position:sticky;top:0;background:rgba(5,5,10,.95);backdrop-filter:blur(24px);z-index:300}
+.tb-logo{font-family:var(--font-serif);font-size:21px;font-weight:300;letter-spacing:.3em}
+.tb-logo em{color:var(--gold);font-style:normal}
+.tb-mid{display:flex;align-items:center;gap:16px}
+.tb-name{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;color:var(--dim)}
+.soul-score{font-family:var(--font-serif);font-size:28px;font-weight:300;color:var(--gold);line-height:1}
+.soul-label{font-family:var(--font-mono);font-size:7px;letter-spacing:.3em;color:var(--muted);text-align:center}
+.tb-btn{background:none;border:1px solid var(--b2);color:var(--dim);font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;padding:7px 14px;cursor:pointer;border-radius:var(--r);transition:all .2s;text-transform:uppercase}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:start;padding:52px 48px 40px;border-bottom:1px solid var(--b1);background:linear-gradient(180deg,var(--s1) 0%,transparent 100%)}
+.h-name{font-family:var(--font-serif);font-size:clamp(36px,5vw,60px);font-weight:300;line-height:1.08;margin-bottom:10px}
+.h-dob{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;color:var(--muted);margin-bottom:20px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.badge{font-family:var(--font-mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:5px 12px;border-radius:var(--r);border:1px solid}
+.bg{border-color:rgba(201,168,76,.4);color:var(--gold);background:var(--golddim)}
+.bb{border-color:rgba(107,127,212,.4);color:var(--blue2);background:rgba(107,127,212,.08)}
+.bp{border-color:rgba(139,111,181,.4);color:#b89cd6;background:rgba(139,111,181,.08)}
+.br{border-color:rgba(196,96,74,.4);color:#da8070;background:rgba(196,96,74,.08)}
+.bt{border-color:rgba(74,158,158,.4);color:#7ecece;background:rgba(74,158,158,.08)}
+
+.conf-row{display:flex;gap:16px;flex-wrap:wrap}
+.ci{display:flex;align-items:center;gap:7px}
+.ci-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ci-lbl{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;color:var(--muted)}
+
+/* SOUL SCORE BIG */
+.soul-box{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:160px}
+.soul-ring{position:relative;width:140px;height:140px}
+.soul-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.soul-num-big{font-family:var(--font-serif);font-size:48px;font-weight:300;color:var(--gold);line-height:1}
+.soul-num-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--muted);text-align:center}
+.soul-sub{font-family:var(--font-mono);font-size:8px;letter-spacing:.2em;color:var(--muted);text-align:center}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--b1);background:var(--s1);padding:0 48px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:var(--font-mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;padding:15px 22px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none}
+.tab:hover{color:var(--dim)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* TAB PANELS */
+.tp{display:none;animation:fadeIn .35s ease}
+.tp.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.tpcont{padding:48px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.gfull{grid-column:1/-1}
+
+/* PANEL */
+.panel{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:28px;position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.2),transparent)}
+.plabel{font-family:var(--font-mono);font-size:8px;letter-spacing:.38em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.plabel::after{content:'';flex:1;height:1px;background:var(--b1)}
+.ptitle{font-family:var(--font-serif);font-size:24px;font-weight:300;line-height:1.2;margin-bottom:6px}
+.psub{font-family:var(--font-serif);font-size:14px;font-style:italic;color:var(--dim);margin-bottom:14px;line-height:1.55}
+.pbody{font-size:13px;line-height:1.85;color:var(--dim)}
+.pdivider{height:1px;background:var(--b1);margin:18px 0}
+
+/* INSIGHT QUOTE */
+.iq{background:var(--s2);border-left:2px solid var(--gold);padding:18px 22px;margin-top:14px;font-family:var(--font-serif);font-size:17px;font-style:italic;line-height:1.75;color:var(--dim);position:relative}
+.iq::before{content:'"';font-size:60px;color:var(--gold);opacity:.12;position:absolute;top:-6px;left:10px;line-height:1;pointer-events:none}
+
+/* SHADOW BOX */
+.sbox{background:rgba(196,96,74,.05);border:1px solid rgba(196,96,74,.18);border-radius:var(--r);padding:18px 22px;margin-top:14px}
+.slabel{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.stext{font-size:13px;line-height:1.8;color:rgba(237,232,223,.5)}
+
+/* COLLAPSIBLE */
+.expand-btn{background:none;border:none;color:var(--gold);font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;cursor:pointer;padding:8px 0;text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.expand-btn:hover{opacity:.7}
+.expand-content{display:none;margin-top:12px}
+.expand-content.open{display:block;animation:fadeIn .3s ease}
+
+/* TRAITS */
+.traits{display:flex;flex-direction:column;gap:13px}
+.tr-row{}.tr-head{display:flex;justify-content:space-between;margin-bottom:5px}
+.tr-name{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+.tr-val{font-family:var(--font-mono);font-size:9px;color:var(--gold)}
+.tbar{height:1px;background:var(--s3);overflow:hidden}
+.tfill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:0%;transition:width 1.8s cubic-bezier(.4,0,.2,1)}
+
+/* PLANET TABLE */
+.prow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1);cursor:pointer;transition:background .15s}
+.prow:hover{background:rgba(201,168,76,.03);margin:0 -8px;padding:8px}
+.pname{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;width:76px}
+.psym{font-size:17px;opacity:.55;width:26px;text-align:center}
+.psign{font-family:var(--font-serif);font-size:16px;color:var(--text)}
+.pdeg{font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-left:6px}
+.phouse{font-family:var(--font-mono);font-size:9px;color:rgba(107,127,212,.7);margin-left:6px}
+
+/* ASPECTS */
+.asps{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.asp{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;padding:4px 9px;border-radius:var(--r);border:1px solid;cursor:pointer;transition:transform .15s}
+.asp:hover{transform:scale(1.05)}
+.ac{border-color:rgba(201,168,76,.4);color:var(--gold);background:rgba(201,168,76,.06)}
+.at{border-color:rgba(90,158,120,.4);color:#7dc49a;background:rgba(90,158,120,.06)}
+.as2{border-color:rgba(196,96,74,.4);color:#da8070;background:rgba(196,96,74,.06)}
+.ao{border-color:rgba(139,111,181,.4);color:#b89cd6;background:rgba(139,111,181,.06)}
+.ax{border-color:rgba(107,127,212,.4);color:var(--blue2);background:rgba(107,127,212,.06)}
+
+/* BAZI */
+.bpillars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.bpillar{background:var(--s2);border:1px solid var(--b1);padding:16px 12px;text-align:center;position:relative}
+.bpillar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold)}
+.bplbl{font-family:var(--font-mono);font-size:7px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:9px}
+.bpstem{font-family:var(--font-serif);font-size:21px;color:var(--gold);margin-bottom:3px}
+.bpbranch{font-family:var(--font-mono);font-size:9px;color:var(--dim);line-height:1.5}
+.bpel{font-family:var(--font-mono);font-size:7px;color:var(--muted);margin-top:5px}
+
+/* ELEMENT PILLS */
+.epills{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.epill{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;padding:5px 13px;border:1px solid;border-radius:var(--r)}
+
+/* HD GRID */
+.hdcards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.hdcard{background:var(--s2);border:1px solid var(--b1);padding:14px;text-align:center}
+.hdlbl{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.hdval{font-family:var(--font-serif);font-size:17px;color:var(--text)}
+
+/* NUMEROLOGY */
+.nxgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.nxcard{background:var(--s2);border:1px solid var(--b1);padding:20px;position:relative;overflow:hidden}
+.nxbg{position:absolute;top:-10px;right:-5px;font-family:var(--font-serif);font-size:88px;font-weight:300;color:rgba(201,168,76,.04);line-height:1;pointer-events:none}
+.nxlbl{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.nxnum{font-family:var(--font-serif);font-size:40px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:3px}
+.nxm{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ZW PALACE GRID */
+.zwg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}
+.zwp{background:var(--s2);border:1px solid var(--b1);padding:10px 7px;text-align:center;cursor:pointer;transition:all .2s;border-radius:var(--r)}
+.zwp:hover,.zwp.sel{background:var(--golddim);border-color:rgba(201,168,76,.35)}
+.zwp.main{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.45)}
+.zwpn{font-family:var(--font-mono);font-size:8px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:3px}
+.zwps{font-size:11px;color:var(--dim);font-family:var(--font-serif);font-style:italic}
+
+/* TIMELINE */
+.tlwrap{position:relative;padding-left:28px}
+.tlwrap::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--gold) 0%,transparent 100%)}
+.tli{position:relative;padding:0 0 26px 28px}
+.tli::before{content:'';position:absolute;left:-4px;top:7px;width:8px;height:8px;border-radius:50%;border:1px solid var(--gold);background:var(--bg);transition:background .2s}
+.tli.now::before{background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.tli-age{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-bottom:4px}
+.tli-phase{font-family:var(--font-serif);font-size:20px;font-weight:400;margin-bottom:3px}
+.tli:not(.now) .tli-phase{color:var(--dim)}
+.tli-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* DEPTH */
+.dcard{background:var(--s2);border:1px solid var(--b1);padding:22px;margin-bottom:14px;border-radius:var(--r)}
+.dicon{font-size:19px;margin-bottom:8px}
+.dtitle{font-family:var(--font-serif);font-size:21px;font-weight:400;margin-bottom:5px}
+.dbody{font-size:13px;color:var(--dim);line-height:1.8}
+.dcard.dshadow{border-color:rgba(196,96,74,.2);background:rgba(196,96,74,.04)}
+.dcard.dgift{border-color:rgba(90,158,120,.2);background:rgba(90,158,120,.04)}
+.dcard.dwound{border-color:rgba(139,111,181,.2);background:rgba(139,111,181,.04)}
+.dcard.dpat{border-color:rgba(201,168,76,.2);background:rgba(201,168,76,.04)}
+
+/* COMPAT */
+.csc-big{font-family:var(--font-serif);font-size:clamp(72px,14vw,128px);font-weight:300;color:var(--gold);line-height:1;text-align:center;margin:20px 0}
+.csc-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;text-align:center;margin-bottom:24px}
+
+/* TRANSITS */
+.tcard{background:var(--s2);border:1px solid var(--b1);padding:16px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;border-radius:var(--r)}
+.tsym{font-size:22px;opacity:.7}
+.tname{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:3px}
+.tdesc{font-size:12px;color:var(--dim);line-height:1.5}
+.tintens{font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:right}
+.tintens span{display:block;font-size:14px;color:var(--gold);font-family:var(--font-serif)}
+
+/* NATAL CANVAS WRAPPER */
+.natal-wrap{position:relative;display:inline-block}
+.natal-tt{position:absolute;background:var(--s1);border:1px solid var(--b2);padding:10px 14px;border-radius:var(--r);font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text);pointer-events:none;display:none;z-index:50;white-space:nowrap;backdrop-filter:blur(12px)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .topbar{padding:14px 18px}.hero{grid-template-columns:1fr;padding:28px 18px}
+  .tabs{padding:0 18px}.tpcont{padding:20px 18px}
+  .g2,.g3{grid-template-columns:1fr}.r2{grid-template-columns:1fr}
+  .fcard{padding:28px 18px}.bpillars{grid-template-columns:repeat(2,1fr)}
+  .hdcards{grid-template-columns:repeat(2,1fr)}.nxgrid{grid-template-columns:1fr}
+  .zwg{grid-template-columns:repeat(3,1fr)}.soul-box{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<section id="landing">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="sacred-bg">
+    <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="200" r="190" stroke="rgba(201,168,76,1)" stroke-width=".5"/>
+      <circle cx="200" cy="200" r="150" stroke="rgba(201,168,76,1)" stroke-width=".4"/>
+      <circle cx="200" cy="200" r="110" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <circle cx="200" cy="10" r="150" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <circle cx="200" cy="390" r="150" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <circle cx="340" cy="275" r="150" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <circle cx="60" cy="275" r="150" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <circle cx="340" cy="125" r="150" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <circle cx="60" cy="125" r="150" stroke="rgba(201,168,76,1)" stroke-width=".3"/>
+      <polygon points="200,30 360,270 40,270" stroke="rgba(201,168,76,1)" stroke-width=".4" fill="none"/>
+      <polygon points="200,370 360,130 40,130" stroke="rgba(201,168,76,1)" stroke-width=".4" fill="none"/>
+    </svg>
+  </div>
+  <div class="landing-content">
+    <div class="logo">
+      <div class="logomark">A<em>X</em>IOM</div>
+      <div class="logosub">Metaphysical Intelligence Platform · v3</div>
+    </div>
+    <p class="tagline">Bukan ramalan. Sebuah sistem untuk memahami<br>arsitektur energi dalam dirimu.</p>
+    <div class="fcard">
+      <div class="fstep on" id="fs1">
+        <div class="fstep-num">// Langkah 01 dari 02</div>
+        <div class="fstep-title">Siapa kamu?</div>
+        <div class="fi"><label>Nama Lengkap</label><input id="iName" type="text" placeholder="Tuliskan namamu" autocomplete="off"></div>
+        <div class="fi"><label>Gender</label><select id="iGen"><option value="">Pilih...</option><option value="m">Male</option><option value="f">Female</option><option value="n">Non-binary</option></select></div>
+        <button class="btn" onclick="toStep2()"><span>Lanjutkan →</span></button>
+      </div>
+      <div class="fstep" id="fs2">
+        <div class="fstep-num">// Langkah 02 dari 02 · Data Kelahiran</div>
+        <div class="fstep-title">Kapan & di mana?</div>
+        <div class="r2">
+          <div class="fi"><label>Tanggal Lahir</label><input id="iDate" type="date"></div>
+          <div class="fi"><label>Jam Lahir</label><input id="iTime" type="time"><span class="hint">Krusial untuk Ascendant & BaZi</span></div>
+        </div>
+        <div class="fi"><label>Kota Kelahiran</label><input id="iCity" type="text" placeholder="mis. Jakarta, Indonesia" autocomplete="off"></div>
+        <div class="confhint" id="chint" style="display:none">
+          <div class="cdot" id="cdot"></div><div class="chint-text" id="ctxt"></div>
+        </div>
+        <button class="btn" onclick="runCalc()"><span>Generate Chart ✦</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="sigil-wrap">
+    <svg class="sigil-a" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="48" stroke="rgba(201,168,76,.2)" stroke-width="1"/><polygon points="50,5 93,72 7,72" stroke="rgba(201,168,76,.4)" stroke-width=".8" fill="none"/></svg>
+    <svg class="sigil-b" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="37" stroke="rgba(107,127,212,.25)" stroke-width="1" stroke-dasharray="3 6"/><polygon points="40,6 70,60 10,60" stroke="rgba(107,127,212,.3)" stroke-width=".8" fill="none"/></svg>
+    <svg class="sigil-c" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="26" stroke="rgba(139,111,181,.3)" stroke-width=".8"/><circle cx="28" cy="28" r="4" fill="rgba(201,168,76,.9)"/></svg>
+  </div>
+  <div class="load-steps" id="lsteps">
+    <div class="ls" id="ls0"><div class="ldot"></div>Computing Julian Day Number...</div>
+    <div class="ls" id="ls1"><div class="ldot"></div>Planetary longitude calculation...</div>
+    <div class="ls" id="ls2"><div class="ldot"></div>Ascendant & house system...</div>
+    <div class="ls" id="ls3"><div class="ldot"></div>Aspect matrix calculation...</div>
+    <div class="ls" id="ls4"><div class="ldot"></div>Lunar calendar conversion...</div>
+    <div class="ls" id="ls5"><div class="ldot"></div>BaZi Four Pillars & Day Master...</div>
+    <div class="ls" id="ls6"><div class="ldot"></div>Human Design bodygraph...</div>
+    <div class="ls" id="ls7"><div class="ldot"></div>Zi Wei Dou Shu palace map...</div>
+    <div class="ls" id="ls8"><div class="ldot"></div>Shadow & depth pattern analysis...</div>
+    <div class="ls" id="ls9"><div class="ldot"></div>Cross-system soul fusion...</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <nav class="topbar">
+    <div class="tb-logo">A<em>X</em>IOM</div>
+    <div class="tb-mid">
+      <div class="tb-name" id="tbName">—</div>
+    </div>
+    <button class="tb-btn" onclick="reset()">← Reset</button>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <div class="h-name" id="hName">—</div>
+      <div class="h-dob" id="hDob">—</div>
+      <div class="badges" id="hBadges"></div>
+      <div class="conf-row" id="hConf" style="margin-top:14px"></div>
+    </div>
+    <div class="soul-box">
+      <div class="soul-ring">
+        <canvas id="soulRingC" width="140" height="140"></canvas>
+        <div class="soul-num">
+          <div class="soul-num-big" id="soulNumBig">—</div>
+          <div class="soul-num-lbl">SOUL<br>SCORE</div>
+        </div>
+      </div>
+      <div class="soul-sub" id="soulLabel">—</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="stab('overview',this)">Overview</button>
+    <button class="tab" onclick="stab('astro',this)">Astrology</button>
+    <button class="tab" onclick="stab('bazi',this)">BaZi</button>
+    <button class="tab" onclick="stab('hd',this)">Human Design</button>
+    <button class="tab" onclick="stab('ziwei',this)">Zi Wei</button>
+    <button class="tab" onclick="stab('num',this)">Numerology</button>
+    <button class="tab" onclick="stab('depth',this)">Shadow</button>
+    <button class="tab" onclick="stab('tl',this)">Timeline</button>
+    <button class="tab" onclick="stab('transit',this)">Transits</button>
+    <button class="tab" onclick="stab('compat',this)">Compat</button>
+    <button class="tab" onclick="stab('daily',this)">Daily</button>
+    <button class="tab" onclick="stab('share',this)">Share</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tp on" id="t-overview"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel">
+          <div class="plabel">Cross-System Fusion · Identity Profile</div>
+          <div class="ptitle" id="ov-title">—</div>
+          <div class="psub" id="ov-sub">—</div>
+          <div class="traits" id="ov-traits"></div>
+        </div>
+        <div class="panel" style="margin-top:24px">
+          <div class="plabel">Natal Chart Wheel</div>
+          <div style="display:flex;justify-content:center;position:relative" class="natal-wrap" id="natalWrap">
+            <canvas id="natalC" width="400" height="400" style="cursor:crosshair"></canvas>
+            <div class="natal-tt" id="natalTT"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel">
+          <div class="plabel">Core Synthesis</div>
+          <div class="iq" id="ov-insight">—</div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Primary Shadow</div>
+          <div class="sbox"><div class="slabel">⚠ BLIND SPOT</div><div class="stext" id="ov-shadow">—</div></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Element Balance</div>
+          <div style="display:flex;justify-content:center"><canvas id="elemC" width="240" height="240"></canvas></div>
+          <div class="epills" id="elPills"></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ASTROLOGY -->
+  <div class="tp" id="t-astro"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel">
+          <div class="plabel">Western Astrology · Tropical</div>
+          <div class="ptitle" id="as-title">—</div>
+          <div class="psub" id="as-sub">—</div>
+          <div class="pbody" id="as-body">—</div>
+          <div class="pdivider"></div>
+          <div id="as-planets"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel">
+          <div class="plabel">Aspects</div>
+          <div class="asps" id="as-asps"></div>
+          <div id="asp-detail" style="margin-top:12px;font-size:12px;color:var(--dim);display:none;line-height:1.7"></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Ruling Planet</div>
+          <div class="iq" id="as-deep">—</div>
+          <div class="sbox" style="margin-top:12px"><div class="slabel">Shadow of the Sun</div><div class="stext" id="as-shadow">—</div></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Key Houses</div>
+          <div class="pbody" id="as-houses">—</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- BAZI -->
+  <div class="tp" id="t-bazi"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel">
+          <div class="plabel">Four Pillars · 四柱命理</div>
+          <div class="ptitle" id="bz-title">—</div>
+          <div class="psub" id="bz-sub">—</div>
+          <div class="bpillars" id="bz-pillars"></div>
+          <div class="pdivider"></div>
+          <div class="pbody" id="bz-body">—</div>
+        </div>
+        <div class="panel" style="margin-top:22px">
+          <div class="plabel">Luck Pillars · 大運</div>
+          <div id="bz-luck"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel">
+          <div class="plabel">Five Elements · 五行</div>
+          <div style="display:flex;justify-content:center"><canvas id="baziElemC" width="240" height="240"></canvas></div>
+          <div class="epills" id="bz-epills"></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Day Master Reading</div>
+          <div class="iq" id="bz-insight">—</div>
+          <div class="sbox" style="margin-top:12px"><div class="slabel">Karmic Challenge</div><div class="stext" id="bz-shadow">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- HUMAN DESIGN -->
+  <div class="tp" id="t-hd"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel">
+          <div class="plabel">Human Design Bodygraph</div>
+          <div id="hdBodgraphSVG" style="display:flex;justify-content:center;padding:16px 0"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel">
+          <div class="plabel">Type & Authority</div>
+          <div class="ptitle" id="hd-title">—</div>
+          <div class="psub" id="hd-sub">—</div>
+          <div class="hdcards" id="hd-cards"></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Defined Centers</div>
+          <div class="pbody" id="hd-centers">—</div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Authority Deep Dive</div>
+          <div class="iq" id="hd-insight">—</div>
+          <div class="sbox" style="margin-top:12px"><div class="slabel">Not-Self Theme</div><div class="stext" id="hd-shadow">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ZI WEI -->
+  <div class="tp" id="t-ziwei"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel">
+          <div class="plabel">Zi Wei Dou Shu · 紫微斗數</div>
+          <div class="ptitle" id="zw-title">—</div>
+          <div class="psub" id="zw-sub">—</div>
+          <div class="zwg" id="zw-palaces"></div>
+          <div class="pdivider"></div>
+          <div class="pbody" id="zw-desc">—</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel">
+          <div class="plabel">Palace Map</div>
+          <div style="display:flex;justify-content:center"><canvas id="zwC" width="300" height="300"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Main Star Reading</div>
+          <div class="iq" id="zw-insight">—</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- NUMEROLOGY -->
+  <div class="tp" id="t-num"><div class="tpcont">
+    <div class="g2">
+      <div class="panel">
+        <div class="plabel">Core Numbers</div>
+        <div class="nxgrid" id="num-cards"></div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="plabel">Life Path Deep Dive</div>
+          <div class="ptitle" id="num-title">—</div>
+          <div class="psub" id="num-sub">—</div>
+          <div class="iq" id="num-insight">—</div>
+          <div class="sbox" style="margin-top:12px"><div class="slabel">Life Path Shadow</div><div class="stext" id="num-shadow">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- SHADOW -->
+  <div class="tp" id="t-depth"><div class="tpcont">
+    <div style="max-width:700px;margin:0 auto">
+      <div style="margin-bottom:32px">
+        <div style="font-family:var(--font-serif);font-size:34px;font-weight:300;margin-bottom:8px" id="dp-title">—</div>
+        <div style="font-family:var(--font-serif);font-size:16px;font-style:italic;color:var(--dim)" id="dp-sub">—</div>
+      </div>
+      <div id="dp-cards"></div>
+    </div>
+  </div></div>
+
+  <!-- TIMELINE -->
+  <div class="tp" id="t-tl"><div class="tpcont">
+    <div class="g2">
+      <div class="panel"><div class="plabel">Destiny Timeline</div><div class="tlwrap" id="tl-wrap"></div></div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel"><div class="plabel">Current Phase</div><div class="ptitle" id="tl-phase">—</div><div class="psub" id="tl-theme">—</div><div class="pbody" id="tl-detail">—</div><div class="iq" id="tl-insight">—</div></div>
+        <div class="panel"><div class="plabel">Saturn Return</div><div class="pbody" id="tl-sat">—</div></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- TRANSITS -->
+  <div class="tp" id="t-transit"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel"><div class="plabel">Current Transits · Live</div><div id="trans-list"></div></div>
+      </div>
+      <div>
+        <div class="panel"><div class="plabel">Energy Today</div>
+          <div style="display:flex;justify-content:center;margin:16px 0"><canvas id="transRadarC" width="260" height="260"></canvas></div>
+          <div class="iq" id="trans-insight">—</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- COMPAT -->
+  <div class="tp" id="t-compat"><div class="tpcont">
+    <div class="panel" style="max-width:640px;margin:0 auto 28px">
+      <div class="plabel">Analisis Kompatibilitas</div>
+      <div class="r2" style="margin-bottom:14px">
+        <div class="fi" style="margin:0"><label>Nama</label><input id="cn" type="text" placeholder="Nama mereka" autocomplete="off"></div>
+        <div class="fi" style="margin:0"><label>Tanggal Lahir</label><input id="cd" type="date"></div>
+      </div>
+      <div class="r2">
+        <div class="fi" style="margin:0"><label>Jam Lahir (opt)</label><input id="ct" type="time"></div>
+        <div class="fi" style="margin:0"><label>Kota Lahir (opt)</label><input id="cc" type="text" placeholder="Kota"></div>
+      </div>
+      <button class="btn" style="margin-top:18px" onclick="doCompat()"><span>Analyze →</span></button>
+    </div>
+    <div id="compat-res" style="display:none">
+      <div class="csc-big" id="cs-score">—</div>
+      <div class="csc-lbl" id="cs-lbl">—</div>
+      <div style="max-width:580px;margin:0 auto">
+        <div class="traits" id="cs-bars" style="margin-bottom:24px"></div>
+        <div class="panel"><div class="plabel">Synthesis</div><div class="iq" id="cs-insight">—</div><div class="sbox" style="margin-top:12px"><div class="slabel">Karmic Tension</div><div class="stext" id="cs-shadow">—</div></div></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- DAILY PULL -->
+  <div class="tp" id="t-daily"><div class="tpcont">
+    <div class="g2">
+      <div>
+        <div class="panel">
+          <div class="plabel">Daily Energy · <span id="daily-date" style="color:var(--dim)">—</span></div>
+          <div class="ptitle" id="daily-title">—</div>
+          <div class="psub" id="daily-sub">—</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0" id="daily-pills"></div>
+          <div class="pbody" id="daily-body">—</div>
+        </div>
+        <div class="panel" style="margin-top:22px">
+          <div class="plabel">Transit Moon Today</div>
+          <div style="font-family:var(--font-serif);font-size:38px;font-weight:300;color:var(--gold);line-height:1;margin:8px 0" id="daily-moon">—</div>
+          <div class="pbody" id="daily-moon-desc">—</div>
+        </div>
+        <div class="panel" style="margin-top:22px">
+          <div class="plabel">Shadow Trigger Today</div>
+          <div class="sbox" style="margin-top:0"><div class="slabel">⚠ WATCH FOR</div><div class="stext" id="daily-shadow">—</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div class="panel">
+          <div class="plabel">Energy Windows</div>
+          <div id="daily-windows"></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Cosmic Weather</div>
+          <div class="iq" id="daily-cosmic">—</div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Disclaimer</div>
+          <div class="pbody" style="font-size:11px;color:var(--muted);line-height:1.85">AXIOM adalah <em style="color:var(--dim)">interpretive metaphysical framework</em>, bukan sistem ilmiah yang telah terverifikasi. Semua kalkulasi menggunakan model astronomis yang disederhanakan. Interpretasi bersifat eksploratif dan subjektif — bukan diagnosis, prediksi pasti, atau saran profesional. Gunakan sebagai cermin refleksi, bukan peta mutlak.</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- SHARE CARD -->
+  <div class="tp" id="t-share"><div class="tpcont">
+    <div style="max-width:480px;margin:0 auto">
+      <div style="margin-bottom:24px">
+        <div style="font-family:var(--font-serif);font-size:28px;font-weight:300;margin-bottom:6px">Energetic Blueprint Card</div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--muted)">Screenshot untuk disimpan atau dibagikan</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
+        <button class="tb-btn on" id="stype-soul" onclick="setShareType('soul',this)">Soul Score</button>
+        <button class="tb-btn" id="stype-blueprint" onclick="setShareType('blueprint',this)">Blueprint</button>
+        <button class="tb-btn" id="stype-shadow" onclick="setShareType('shadow',this)">Shadow</button>
+        <button class="tb-btn" id="stype-daily" onclick="setShareType('daily',this)">Daily</button>
+      </div>
+      <div id="shareCard" style="background:linear-gradient(145deg,#0c0c18,#080810);border:1px solid rgba(201,168,76,0.25);border-radius:2px;padding:44px 40px;position:relative;overflow:hidden;min-height:280px">
+        <div style="position:absolute;inset:0;opacity:.05;pointer-events:none;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 300 300" width="300" height="300"><circle cx="150" cy="150" r="140" stroke="rgba(201,168,76,1)" stroke-width="1" fill="none"/><polygon points="150,20 270,200 30,200" stroke="rgba(201,168,76,1)" stroke-width=".8" fill="none"/><polygon points="150,280 270,100 30,100" stroke="rgba(201,168,76,1)" stroke-width=".8" fill="none"/><circle cx="150" cy="150" r="80" stroke="rgba(201,168,76,1)" stroke-width=".5" fill="none"/></svg>
+        </div>
+        <div style="position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.5),transparent)"></div>
+        <div style="position:relative;z-index:1" id="shareCardContent"></div>
+        <div style="position:absolute;bottom:14px;right:18px;font-family:var(--font-mono);font-size:7px;letter-spacing:.35em;color:rgba(201,168,76,0.3)">AXIOM · METAPHYSICAL INTELLIGENCE</div>
+      </div>
+      <div style="margin-top:14px;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-align:center">Tekan & tahan (mobile) atau screenshot untuk menyimpan</div>
+    </div>
+  </div></div>
+
+</div><!-- #dash -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  REAL ASTRONOMY ENGINE
+//  Based on Jean Meeus "Astronomical Algorithms"
+// ═══════════════════════════════════════════════════════════
+const RAD = Math.PI/180, DEG = 180/Math.PI;
+
+function toJD(year, month, day, hour=12, tz=0) {
+  // Gregorian to Julian Day Number
+  if(month <= 2){ year -= 1; month += 12; }
+  const A = Math.floor(year/100);
+  const B = 2 - A + Math.floor(A/4);
+  return Math.floor(365.25*(year+4716)) + Math.floor(30.6001*(month+1)) + day + B - 1524.5 + (hour-tz)/24;
+}
+
+function obliquity(T) {
+  // Mean obliquity of the ecliptic
+  return 23.4392911 - 0.013004167*T - 0.0000001639*T*T + 0.0000005036*T*T*T;
+}
+
+function normalizeAngle(a) { return ((a % 360) + 360) % 360; }
+
+// Sun position (accurate to ~0.01°)
+function sunLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L0 = normalizeAngle(280.46646 + 36000.76983*T + 0.0003032*T*T);
+  const M = normalizeAngle(357.52911 + 35999.05029*T - 0.0001537*T*T) * RAD;
+  const C = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(M)
+          + (0.019993 - 0.000101*T)*Math.sin(2*M)
+          + 0.000289*Math.sin(3*M);
+  return normalizeAngle(L0 + C);
+}
+
+// Moon position
+function moonLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L1 = normalizeAngle(218.3165 + 481267.8813*T);
+  const M = normalizeAngle(357.5291 + 35999.0503*T) * RAD;
+  const Mp = normalizeAngle(134.9634 + 477198.8676*T) * RAD;
+  const D = normalizeAngle(297.8502 + 445267.1115*T) * RAD;
+  const F = normalizeAngle(93.2721 + 483202.0175*T) * RAD;
+  const lon = L1 + 6.2888*Math.sin(Mp) + 1.2740*Math.sin(2*D - Mp) + 0.6583*Math.sin(2*D)
+    + 0.2136*Math.sin(2*Mp) - 0.1851*Math.sin(M) - 0.1143*Math.sin(2*F)
+    + 0.0588*Math.sin(2*D - 2*Mp) + 0.0572*Math.sin(2*D - M - Mp) + 0.0533*Math.sin(2*D + Mp);
+  return normalizeAngle(lon);
+}
+
+// Mercury
+function mercuryLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  const L = normalizeAngle(252.2509+149472.6749*T);
+  const M = normalizeAngle(168.6562+149472.5153*T)*RAD;
+  return normalizeAngle(L + 23.4400*Math.sin(M) + 2.9818*Math.sin(2*M));
+}
+// Venus
+function venusLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  const L = normalizeAngle(181.9798+58517.8156*T);
+  const M = normalizeAngle(212.2629+58517.8034*T)*RAD;
+  return normalizeAngle(L + 0.7758*Math.sin(M) + 0.0033*Math.sin(2*M));
+}
+// Mars
+function marsLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  const L = normalizeAngle(355.4333+19140.2993*T);
+  const M = normalizeAngle(19.3870+19140.3030*T)*RAD;
+  return normalizeAngle(L + 10.6912*Math.sin(M) + 0.6228*Math.sin(2*M));
+}
+// Jupiter (simplified VSOP87 terms)
+function jupiterLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  return normalizeAngle(34.351 + 3034.9057*T + 0.0002*T*T);
+}
+// Saturn
+function saturnLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  return normalizeAngle(50.0774 + 1222.1138*T - 0.00021*T*T);
+}
+// Uranus
+function uranusLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  return normalizeAngle(314.055 + 428.4671*T);
+}
+// Neptune
+function neptuneLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  return normalizeAngle(304.348 + 218.4661*T);
+}
+// Pluto (approximate)
+function plutoLongitude(jd) {
+  const T = (jd-2451545)/36525;
+  return normalizeAngle(238.96 + 144.96*T);
+}
+
+// Ascendant calculation
+function calcAscendant(jd, lat, lon) {
+  const T = (jd-2451545)/36525;
+  const theta = normalizeAngle(100.4606 + 36000.7700*T + 0.000387933*T*T + lon);
+  const eps = obliquity(T) * RAD;
+  const thRad = theta * RAD;
+  const latRad = lat * RAD;
+  const asc = Math.atan2(Math.cos(thRad), -(Math.sin(thRad)*Math.cos(eps) + Math.tan(latRad)*Math.sin(eps)));
+  return normalizeAngle(asc * DEG);
+}
+
+// House cusps (Placidus simplified — use Equal for robustness)
+function calcHouses(asc) {
+  const houses = [];
+  for(let i=0;i<12;i++) houses.push(normalizeAngle(asc + i*30));
+  return houses;
+}
+
+// Aspect detection
+function aspectType(a1, a2) {
+  let diff = Math.abs(a1 - a2);
+  if(diff > 180) diff = 360 - diff;
+  const orb = 8;
+  if(diff <= orb) return 'Conjunction';
+  if(Math.abs(diff-60) <= orb) return 'Sextile';
+  if(Math.abs(diff-90) <= orb) return 'Square';
+  if(Math.abs(diff-120) <= orb) return 'Trine';
+  if(Math.abs(diff-180) <= orb) return 'Opposition';
+  return null;
+}
+
+function lonToSign(lon) {
+  const idx = Math.floor(lon/30);
+  const deg = Math.floor(lon % 30);
+  const min = Math.floor((lon % 1)*60);
+  return { sign: SIGNS[idx], idx, deg, min, lon };
+}
+
+function houseOf(lon, houses) {
+  for(let i=0;i<12;i++){
+    const c1 = houses[i], c2 = houses[(i+1)%12];
+    if(c2 > c1) { if(lon >= c1 && lon < c2) return i+1; }
+    else { if(lon >= c1 || lon < c2) return i+1; }
+  }
+  return 1;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BAZI ENGINE — Proper Four Pillars
+// ═══════════════════════════════════════════════════════════
+const STEMS=['甲 Jiǎ','乙 Yǐ','丙 Bǐng','丁 Dīng','戊 Wù','己 Jǐ','庚 Gēng','辛 Xīn','壬 Rén','癸 Guǐ'];
+const STEM_EL=['Yang Wood','Yin Wood','Yang Fire','Yin Fire','Yang Earth','Yin Earth','Yang Metal','Yin Metal','Yang Water','Yin Water'];
+const BRANCHES=['子 Rat','丑 Ox','寅 Tiger','卯 Rabbit','辰 Dragon','巳 Snake','午 Horse','未 Goat','申 Monkey','酉 Rooster','戌 Dog','亥 Pig'];
+const BRANCH_EL=['Water','Earth','Wood','Wood','Earth','Fire','Fire','Earth','Metal','Metal','Earth','Water'];
+const SOLAR_TERMS = [20,19,21,20,21,21,23,23,23,23,22,22]; // approx day of month for month start
+
+function baziYear(year) {
+  // Heavenly Stem cycles from 1864 (Jia Zi)
+  const si = ((year-4) % 10 + 10) % 10;
+  const bi = ((year-4) % 12 + 12) % 12;
+  return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
+}
+
+function baziMonth(year, month, day) {
+  // Solar month index (simplified: use ~21st of each month as transition)
+  let mi = month - 1;
+  if(day < SOLAR_TERMS[month-1]) mi = (mi - 1 + 12) % 12;
+  const ySi = ((year-4)%10+10)%10;
+  const si = (ySi % 5 * 2 + mi) % 10;
+  const bi = (mi + 2) % 12;
+  return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
+}
+
+function baziDay(year, month, day) {
+  // Julian Day Number method for day pillar
+  const jd = Math.floor(toJD(year, month, day, 12));
+  const si = ((jd - 11) % 10 + 10) % 10;
+  const bi = ((jd - 11) % 12 + 12) % 12;
+  return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
+}
+
+function baziHour(daySi, hour) {
+  const bi = Math.floor((hour + 1) / 2) % 12;
+  const si = (daySi % 5 * 2 + bi) % 10;
+  return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HUMAN DESIGN ENGINE
+//  Gate from hexagram (I Ching → HD gate mapping)
+// ═══════════════════════════════════════════════════════════
+// Gate from ecliptic longitude (each gate = 5.625° = 360/64)
+function lonToGate(lon) {
+  // HD wheel starts at gate 41 at 0° Aries (approx)
+  const HDgateOrder = [41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60];
+  const idx = Math.floor(normalizeAngle(lon - 15.15) / (360/64)) % 64;
+  return HDgateOrder[Math.max(0,Math.min(63,idx))];
+}
+
+function hdType(sun, moon, asc, earth) {
+  // Simplified but deterministic from actual positions
+  const total = (sun + moon + asc + earth) % 5;
+  return ['Generator','Manifesting Generator','Projector','Manifestor','Reflector'][total];
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ZI WEI ENGINE — Palace placement from birth hour branch
+// ═══════════════════════════════════════════════════════════
+function zwPalace(birthHourBranch, lunarMonth) {
+  // Life palace (命宮) formula: (14 + lunarMonth - hourBranch) % 12
+  return ((14 + lunarMonth - birthHourBranch) % 12 + 12) % 12;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MAIN COMPUTE
+// ═══════════════════════════════════════════════════════════
+const SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const PSYMS={Sun:'☉',Moon:'☽',Mercury:'☿',Venus:'♀',Mars:'♂',Jupiter:'♃',Saturn:'♄',Uranus:'♅',Neptune:'♆',Pluto:'♇',Ascendant:'↑',Earth:'⊕'};
+const ZW_STARS=['紫微 Purple Star','天機 Heavenly Secret','太陽 Sun Star','武曲 Military Arts','天同 Heavenly Harmony','廉貞 Chastity Star','天府 Heavenly Vault','太陰 Moon Star','貪狼 Greedy Wolf','巨門 Giant Gate','天相 Heavenly Minister','天梁 Heavenly Roof'];
+const ZW_PAL=['Life','Siblings','Spouse','Children','Wealth','Health','Travel','Friends','Career','Property','Fortune','Parents'];
+const HD_AUTHS=['Sacral','Emotional','Splenic','Ego Manifested','Self-Projected','Mental'];
+const HD_PROFS=['1/3','1/4','2/4','2/5','3/5','3/6','4/6','4/1','5/1','5/2','6/2','6/3'];
+const HD_CENTERS=['Head','Ajna','Throat','G','Heart','Solar Plexus','Sacral','Spleen','Root'];
+
+// Lat/Lon lookup (major cities — extended)
+const CITY_LL = {
+  'jakarta':[-6.2,106.8],'bandung':[-6.9,107.6],'surabaya':[-7.3,112.7],'yogyakarta':[-7.8,110.4],
+  'bali':[-8.4,115.2],'denpasar':[-8.65,115.22],'medan':[3.6,98.7],'semarang':[-7.0,110.4],
+  'singapore':[1.35,103.82],'kuala lumpur':[3.15,101.7],'bangkok':[13.75,100.5],'manila':[14.6,121.0],
+  'tokyo':[35.68,139.69],'seoul':[37.57,126.98],'beijing':[39.9,116.4],'shanghai':[31.23,121.47],
+  'hong kong':[22.32,114.17],'london':[51.5,-0.12],'paris':[48.85,2.35],'berlin':[52.52,13.4],
+  'new york':[40.71,-74.0],'los angeles':[34.05,-118.24],'sydney':[-33.87,151.21],'melbourne':[-37.81,144.96],
+  'dubai':[25.2,55.27],'mumbai':[19.07,72.88],'delhi':[28.61,77.2],'cairo':[30.05,31.25],
+  'default':[-6.2,106.8]
+};
+
+function getLatLon(city) {
+  const c = city.toLowerCase();
+  for(const k in CITY_LL) { if(c.includes(k)) return CITY_LL[k]; }
+  return CITY_LL.default;
+}
+
+// Approximate timezone from longitude
+function tzFromLon(lon) { return Math.round(lon/15); }
+
+function computeChart(name, dateStr, timeStr, city) {
+  const d = new Date(dateStr + 'T' + (timeStr||'12:00'));
+  const yr = d.getFullYear(), mo = d.getMonth()+1, dy = d.getDate();
+  const hr = d.getHours() + d.getMinutes()/60;
+  const [lat, lon] = getLatLon(city);
+  const tz = tzFromLon(lon);
+  const utcHr = hr - tz;
+
+  // Julian Day
+  const jd = toJD(yr, mo, dy, utcHr, 0);
+
+  // Planetary longitudes
+  const sunLon = sunLongitude(jd);
+  const moonLon = moonLongitude(jd);
+  const mercLon = mercuryLongitude(jd);
+  const venLon = venusLongitude(jd);
+  const marLon = marsLongitude(jd);
+  const jupLon = jupiterLongitude(jd);
+  const satLon = saturnLongitude(jd);
+  const uraLon = uranusLongitude(jd);
+  const nepLon = neptuneLongitude(jd);
+  const pluLon = plutoLongitude(jd);
+  const ascLon = timeStr ? calcAscendant(jd, lat, lon) : sunLon; // fallback to sun
+  const earthLon = normalizeAngle(sunLon + 180);
+
+  const lons = { Sun:sunLon, Moon:moonLon, Mercury:mercLon, Venus:venLon, Mars:marLon,
+                  Jupiter:jupLon, Saturn:satLon, Uranus:uraLon, Neptune:nepLon, Pluto:pluLon,
+                  Ascendant:ascLon };
+
+  const planets = {};
+  for(const [p,l] of Object.entries(lons)) {
+    const s = lonToSign(l);
+    planets[p] = { ...s, sym: PSYMS[p] };
+  }
+
+  const houses = calcHouses(ascLon);
+
+  // Aspects
+  const pKeys = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn'];
+  const aspects = [];
+  for(let i=0;i<pKeys.length;i++) {
+    for(let j=i+1;j<pKeys.length;j++) {
+      const t = aspectType(lons[pKeys[i]], lons[pKeys[j]]);
+      if(t) aspects.push({a:pKeys[i], b:pKeys[j], t, orb: Math.abs(lons[pKeys[i]]-lons[pKeys[j]])});
+    }
+  }
+
+  // Element from signs
+  const SIGN_EL={Aries:'Fire',Leo:'Fire',Sagittarius:'Fire',Taurus:'Earth',Virgo:'Earth',Capricorn:'Earth',Gemini:'Air',Libra:'Air',Aquarius:'Air',Cancer:'Water',Scorpio:'Water',Pisces:'Water'};
+  const elCounts={Fire:0,Earth:0,Air:0,Water:0};
+  ['Sun','Moon','Mercury','Venus','Mars'].forEach(p=>{ const e=SIGN_EL[planets[p].sign]; if(e) elCounts[e]++; });
+
+  // BAZI
+  const byear = baziYear(yr);
+  const bmonth = baziMonth(yr, mo, dy);
+  const bday = baziDay(yr, mo, dy);
+  const bhour = timeStr ? baziHour(bday.si, Math.floor(hr)) : { stem:'—',branch:'—',el:'—',si:0,bi:0 };
+  const dayMaster = bday.el;
+
+  // Element counts from pillars
+  const baziEls = {Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
+  [byear,bmonth,bday,bhour].forEach(p => {
+    if(!p.el || p.el==='—') return;
+    const base = p.el.split(' ')[1];
+    if(baziEls[base]!==undefined) baziEls[base]++;
+  });
+  const favEl = Object.entries(baziEls).sort((a,b)=>a[1]-b[1])[0][0];
+  const unfavEl = Object.entries(baziEls).sort((a,b)=>b[1]-a[1])[0][0];
+
+  // Luck pillars
+  const luckStart = (10 - (yr % 10)) % 10 || 10;
+  const luckPillars = Array.from({length:8},(_,i)=>({
+    age: luckStart + i*10,
+    stem: STEMS[(byear.si+i)%10],
+    branch: BRANCHES[(byear.bi+i)%12],
+    el: STEM_EL[(byear.si+i)%10]
+  }));
+
+  // HUMAN DESIGN
+  // Design chart = 88° before birth
+  const jd88 = jd - 88/365.25;
+  const designSunLon = sunLongitude(jd88);
+
+  const sunGate = lonToGate(sunLon);
+  const moonGate = lonToGate(moonLon);
+  const ascGate = lonToGate(ascLon);
+  const earthGate = lonToGate(earthLon);
+  const designGate = lonToGate(designSunLon);
+
+  const hdTypeStr = (['Generator','Manifesting Generator','Projector','Manifestor','Reflector'])[(sunGate + moonGate) % 5];
+  const hdAuth = HD_AUTHS[(moonGate + ascGate) % 6];
+  const hdProf = HD_PROFS[(sunGate + designGate) % 12];
+  const hdStrategy = {Generator:'Wait to Respond','Manifesting Generator':'Wait to Respond then Inform',Projector:'Wait for the Invitation',Manifestor:'Inform before Acting',Reflector:'Wait a Lunar Cycle'}[hdTypeStr];
+  const hdNotSelf = {Generator:'Frustration','Manifesting Generator':'Frustration & Anger',Projector:'Bitterness',Manifestor:'Anger',Reflector:'Disappointment'}[hdTypeStr];
+  const definedCenters = HD_CENTERS.filter((_,i) => (sunGate + moonGate + ascGate + i) % 3 !== 0);
+  const undefinedCenters = HD_CENTERS.filter(c=>!definedCenters.includes(c));
+
+  // ZI WEI
+  const lunarMonth = mo; // simplified
+  const hourBranch = timeStr ? Math.floor((Math.floor(hr)+1)/2)%12 : 0;
+  const zwLife = zwPalace(hourBranch, lunarMonth);
+  const zwCareer = (zwLife + 6) % 12;
+  const zwWealth = (zwLife + 2) % 12;
+  const zwMarriage = (zwLife + 4) % 12;
+  const zwMainStarIdx = (sunGate + moonGate) % 12;
+  const zwMain = ZW_STARS[zwMainStarIdx];
+
+  // NUMEROLOGY
+  const digs = dateStr.replace(/-/g,'').split('').map(Number);
+  let lp = digs.reduce((a,b)=>a+b,0);
+  while(lp>9&&lp!==11&&lp!==22&&lp!==33) lp=lp.toString().split('').map(Number).reduce((a,b)=>a+b,0);
+  const nv = name.toLowerCase().split('').map(c=>'abcdefghijklmnopqrstuvwxyz'.indexOf(c)+1).filter(n=>n>0);
+  let dest = nv.reduce((a,b)=>a+b,0)||5;
+  while(dest>9&&dest!==11&&dest!==22) dest=dest.toString().split('').map(Number).reduce((a,b)=>a+b,0);
+  const vow = name.toLowerCase().split('').map(c=>'aeiou'.includes(c)?'aeiou'.indexOf(c)+1:0).filter(n=>n>0);
+  let soul = vow.reduce((a,b)=>a+b,0)||3;
+  while(soul>9&&soul!==11&&soul!==22) soul=soul.toString().split('').map(Number).reduce((a,b)=>a+b,0);
+
+  // FUSION TRAITS — derived from actual chart positions
+  const fire = elCounts.Fire, water = elCounts.Water, earth = elCounts.Earth, air = elCounts.Air;
+  const traits = [
+    {n:'Leadership', s: Math.min(98, 45 + fire*12 + (planets.Sun.idx===4?20:0) + (lp===1||lp===8?15:0))},
+    {n:'Intuition', s: Math.min(98, 40 + water*14 + (planets.Moon.idx===11||planets.Moon.idx===3?18:0))},
+    {n:'Creativity', s: Math.min(98, 38 + (fire+air)*9 + (lp===3?18:0))},
+    {n:'Emotional Depth', s: Math.min(98, 35 + water*15 + (planets.Moon.idx===8||planets.Moon.idx===3?20:0))},
+    {n:'Analytical', s: Math.min(98, 30 + (air+earth)*12 + (planets.Mercury.idx===5||planets.Mercury.idx===5?18:0))},
+    {n:'Spiritual', s: Math.min(98, 25 + water*12 + (lp===7||lp===11?22:0))},
+  ].sort((a,b)=>b.s-a.s);
+
+  // SOUL SCORE
+  const soulScore = Math.round((traits.reduce((a,t)=>a+t.s,0)/traits.length + lp*4 + (definedCenters.length/9)*20) / 3);
+  const soulLabel = soulScore>=80?'Luminous':soulScore>=65?'Attuned':soulScore>=50?'Emerging':'Seeking';
+
+  // SHADOWS
+  const sunSign = planets.Sun.sign;
+  const SIGN_SHADOW={
+    Aries:'Keberanian yang tampak di luarmu menyembunyikan ketakutan terdalam: bahwa kamu tidak cukup baik jika bukan yang pertama.',
+    Taurus:'Stabilitas yang kamu bangun sering menjadi dinding, bukan fondasi. Kamu menahan karena takut kehilangan, bukan karena benar-benar memilih.',
+    Gemini:'Kamu bisa membicarakan segalanya, tapi sangat jarang membicarakan apa yang benar-benar menyakitimu.',
+    Cancer:'Kamu merawat semua orang di sekitarmu — kecuali dirimu sendiri. Dan itu bukan keikhlasan. Itu trauma yang terorganisir.',
+    Leo:'Kamu membutuhkan validasi lebih dari yang kamu akui. Ketika tidak mendapatkannya, kamu tidak kecewa. Kamu hancur.',
+    Virgo:'Perfeksionismemu bukan tentang kualitas. Ini tentang ketakutan bahwa jika kamu tidak sempurna, kamu tidak layak dicintai.',
+    Libra:'Kamu menghindari konflik bukan karena damai. Kamu menghindarinya karena takut tidak disukai.',
+    Scorpio:'Intens, mendalam, powerful — tapi kamu jarang membiarkan seseorang masuk sepenuhnya. Kepercayaan adalah senjatamu yang paling ditakuti.',
+    Sagittarius:'Kamu terus bergerak bukan karena petualangan. Kamu berlari dari keheningan yang akan memaksamu duduk dengan dirimu sendiri.',
+    Capricorn:'Ambisimu adalah perisai. Di baliknya ada seseorang yang sangat takut gagal di depan mata orang yang mereka kagumi.',
+    Aquarius:'Kamu ingin mengubah dunia tapi susah masuk ke dalam hubungan nyata. Idealismemu adalah jarak yang nyaman.',
+    Pisces:'Kamu merasakan segalanya dengan begitu dalam sampai sering melarikan diri ke dunia yang kamu ciptakan sendiri.'
+  };
+  const HD_SHADOW={
+    Generator:'Kamu sering melakukan sesuatu karena merasa harus, bukan karena sacral merespons. Itulah kenapa kamu kelelahan tanpa tahu kenapa.',
+    'Manifesting Generator':'Speed-mu membuatmu sering melewatkan langkah. Dan ketika sesuatu tidak berhasil, kamu menyalahkan keputusanmu — padahal masalahnya di proses.',
+    Projector:'Kamu melihat orang dengan sangat jelas, tapi sering memberikan guidance tanpa diundang, lalu merasa pahit ketika tidak dihargai.',
+    Manifestor:'Kamu bergerak cepat dan jarang memberi tahu orang lain. Itu bukan kebebasan — itu cara untuk tidak perlu accountable.',
+    Reflector:'Kamu menyerap energi semua orang. Di lingkungan toxic, kamu yang pertama sakit dan paling susah pulih.'
+  };
+  const LP_SHADOW={
+    1:'Independensi yang kamu banggakan bisa jadi isolasi. Kamu butuh orang lain tapi tidak mau mengakuinya.',
+    2:'Kamu begitu fokus pada kebutuhan orang lain sampai lupa bertanya apa yang kamu sendiri butuhkan.',
+    3:'Kreativitasmu bisa menjadi cara mengalihkan perhatian dari rasa sakit yang belum pernah benar-benar kamu akui.',
+    4:'Kamu membangun struktur untuk merasa aman. Tapi struktur yang terlalu kaku bisa menjadi penjara yang kamu bangun sendiri.',
+    5:'Kamu menolak komitmen bukan karena kebebasan adalah nilaimu. Kadang karena kamu takut ditinggalkan duluan.',
+    6:'Kamu merawat karena mencintai. Tapi sebagian darimu melakukannya karena takut tidak diterima jika berhenti.',
+    7:'Kamu mencari jawaban di buku dan sistem karena bertanya langsung terasa terlalu rentan.',
+    8:'Kamu bekerja keras untuk membuktikan sesuatu kepada seseorang yang mungkin sudah tidak ada dalam hidupmu lagi.',
+    9:'Wisdom-mu datang dari luka. Tapi kamu sering menolong orang lain sebagai cara menghindari menolong dirimu sendiri.',
+    11:'Intuisimu begitu kuat sampai kamu tidak selalu percaya padanya. Dan itu yang paling sering mengkhianatimu.',
+    22:'Visimu besar. Tapi ada rasa takut bahwa kamu tidak cukup besar untuk mewujudkannya.',
+    33:'Kamu memberi dengan sangat dalam sampai lupa bahwa kamu sendiri layak menerimanya.'
+  };
+
+  const shadows = [
+    {type:'dshadow',icon:'🌑',title:'Shadow: '+sunSign,body:SIGN_SHADOW[sunSign]||'—'},
+    {type:'dwound',icon:'🩸',title:'Core Wound · Day Master '+dayMaster,body:`Sebagai ${dayMaster} Day Master, pola luka terdalammu adalah kecenderungan ${dayMaster.includes('Wood')?'mendorong diri terlalu keras untuk tumbuh sampai collapse':dayMaster.includes('Fire')?'membakar diri dalam passion, lalu tiba-tiba menarik diri setelah puncaknya':dayMaster.includes('Earth')?'terlalu mengakomodasi sampai batasmu sendiri menjadi tidak jelas bagi siapapun termasuk dirimu':dayMaster.includes('Metal')?'memegang standar terlalu tinggi sehingga hampir tidak ada yang cukup baik — termasuk dirimu':'mengalir mengikuti orang lain, kehilangan arah, dan menyebutnya fleksibilitas'}. Ini bukan kepribadian — ini pola yang bisa dikenali dan diinterupsi.`},
+    {type:'dpat',icon:'🔁',title:'Karmic Loop · '+hdTypeStr,body:`Sebagai ${hdTypeStr}, pola berulang terbesarmu adalah ${hdTypeStr==='Generator'?'tetap dalam situasi yang salah terlalu lama karena merasa "harus" ada':hdTypeStr==='Manifesting Generator'?'memulai banyak hal dengan semangat lalu meninggalkan beberapa di tengah jalan, menciptakan karmic debt unfinished business':hdTypeStr==='Projector'?'memberikan energy dan wisdom ke orang yang tidak mengundang atau menghargainya, lalu merasa invisible dan pahit':hdTypeStr==='Manifestor'?'bertindak sendiri tanpa melibatkan orang lain, menciptakan resistance yang kamu baca sebagai hambatan eksternal':'menyerap dynamic orang sekitarmu dan menyebutnya sebagai perasaanmu sendiri'}. Ini bukan karakter tetap — ini kondisi yang bisa diubah.`},
+    {type:'dgift',icon:'✦',title:'Hidden Architecture',body:`Kombinasi ${sunSign} ☉ × ${hdTypeStr} × Life Path ${lp} menghasilkan sesuatu yang jarang: ${traits[0].n} dan ${traits[1].n} yang tidak membutuhkan panggung untuk beroperasi. Kekuatan terbesarmu bekerja paling efektif ketika kamu berhenti mencoba membuktikannya.`},
+  ];
+
+  // TIMELINE
+  const curAge = new Date().getFullYear() - yr;
+  const phases = [
+    {age:0,phase:'Origin',theme:'Fondasi karakter pertama terbentuk',detail:'Lingkungan pertumbuhanmu menanamkan beliefs yang mungkin masih kamu carry hari ini.'},
+    {age:7,phase:'Imprint',theme:'Pattern emosional dan attachment awal',detail:'Apa yang kamu pelajari tentang keamanan di usia ini sering menjadi blueprint relasi dewasamu.'},
+    {age:14,phase:'Awakening',theme:'Identitas mencari bentuknya',detail:'Konflik pertama antara siapa kamu dan siapa yang diharapkan orang lain.'},
+    {age:21,phase:'Launch',theme:'Memasuki dunia dengan identitas yang belum utuh',detail:'Terasa seperti harus punya semua jawaban padahal pertanyaannya pun belum jelas.'},
+    {age:28,phase:'Saturn Return',theme:'Audit pertama kehidupan — semua yang tidak otentik retak',detail:'Ini bukan krisis. Ini klarifikasi. Struktur yang salah akan runtuh untuk memberi ruang yang tepat.'},
+    {age:35,phase:'Integration',theme:'Siapa kamu vs siapa yang kamu inginkan jadi satu',detail:'Banyak yang menemukan formula hidup terdalamnya setelah melewati keretakan 28.'},
+    {age:42,phase:'Authority',theme:'Kekuatan mencapai kematangan penuh',detail:'Jika sudah melewati inner work, ini adalah fase paling powerful. Kamu tahu siapa kamu.'},
+    {age:50,phase:'Distillation',theme:'Memilih apa yang benar-benar penting',detail:'Eliminasi bukan karena menyerah, tapi karena kamu akhirnya tahu bedanya.'},
+    {age:57,phase:'Second Saturn',theme:'Saturn Return kedua — pemurnian akhir',detail:'Siapa yang kamu jadi setelah melepas semua yang bukan kamu?'},
+    {age:63,phase:'Legacy',theme:'Meninggalkan jejak yang bermakna',detail:'Kontribusi bukan sebagai kewajiban, tapi sebagai ekspresi alami dari siapa kamu.'},
+  ];
+
+  // TRANSITS (current planetary positions)
+  const jdNow = toJD(new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate(), 12);
+  const transSun = sunLongitude(jdNow);
+  const transMoon = moonLongitude(jdNow);
+  const transSat = saturnLongitude(jdNow);
+  const transJup = jupiterLongitude(jdNow);
+  const transMar = marsLongitude(jdNow);
+
+  function transAspect(transitLon, natalLon, planet) {
+    const t = aspectType(transitLon, natalLon);
+    if(t) return {transit:planet, natal:'Sun', type:t, transitLon, natalLon};
+    const tm = aspectType(transitLon, moonLon);
+    if(tm) return {transit:planet, natal:'Moon', type:tm, transitLon, natalLon:moonLon};
+    return null;
+  }
+
+  const transits = [
+    transAspect(transSun, sunLon, 'Transit Sun'),
+    transAspect(transMoon, moonLon, 'Transit Moon'),
+    transAspect(transSat, sunLon, 'Transit Saturn'),
+    transAspect(transJup, moonLon, 'Transit Jupiter'),
+    transAspect(transMar, sunLon, 'Transit Mars'),
+  ].filter(Boolean).slice(0,5);
+
+  const LP_MEANING={1:'Pemimpin & Pioneer',2:'Diplomat & Intuisi',3:'Kreator & Ekspresi',4:'Builder & Disiplin',5:'Kebebasan & Perubahan',6:'Pemelihara & Harmoni',7:'Analis & Pencarian',8:'Kekuatan & Ambisi',9:'Humanis & Bijaksana',11:'Master Intuitif',22:'Master Builder',33:'Master Teacher'};
+
+  const confidence = {
+    astro: timeStr ? 'high' : 'low',
+    bazi: 'high',
+    hd: timeStr ? 'high' : 'medium',
+  };
+
+  return {
+    lons, planets, houses, aspects, elCounts,
+    bazi:{year:byear,month:bmonth,day:bday,hour:bhour,dayMaster,favEl,unfavEl,luckPillars,baziEls},
+    hd:{type:hdTypeStr,auth:hdAuth,prof:hdProf,strategy:hdStrategy,notSelf:hdNotSelf,definedCenters,undefinedCenters,sunGate,moonGate,ascGate,earthGate,designGate},
+    zw:{main:zwMain,life:zwLife,career:zwCareer,wealth:zwWealth,marriage:zwMarriage},
+    numerology:{lp,dest,soul,LP_MEANING,LP_SHADOW},
+    traits, soulScore, soulLabel,
+    shadows, phases, curAge,
+    transits, transSun, transMoon, transSat, transJup, transMar,
+    confidence, SIGN_SHADOW, HD_SHADOW,
+    sunSign, moonSign:planets.Moon.sign, ascSign:planets.Ascendant.sign,
+    sunGate, moonGate
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CHART RENDERERS
+// ═══════════════════════════════════════════════════════════
+
+// SOUL SCORE RING
+function drawSoulRing(canvas, score, label) {
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, R=58;
+  ctx.clearRect(0,0,W,H);
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=6; ctx.stroke();
+  const ang = (score/100)*Math.PI*2 - Math.PI/2;
+  const grad=ctx.createConicalGradient?null:null;
+  ctx.beginPath(); ctx.arc(cx,cy,R,-Math.PI/2,ang);
+  ctx.strokeStyle='rgba(201,168,76,0.85)'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx+Math.cos(ang)*R, cy+Math.sin(ang)*R, 4, 0, Math.PI*2);
+  ctx.fillStyle='#e8c96a'; ctx.fill();
+}
+
+// RADAR
+function drawRadar(canvas, traits) {
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, R=Math.min(W,H)/2-36;
+  const N=traits.length;
+  ctx.clearRect(0,0,W,H);
+  for(let r=1;r<=4;r++){
+    ctx.beginPath();
+    for(let i=0;i<N;i++){const a=(Math.PI*2*i/N)-Math.PI/2;i===0?ctx.moveTo(cx+Math.cos(a)*R*r/4,cy+Math.sin(a)*R*r/4):ctx.lineTo(cx+Math.cos(a)*R*r/4,cy+Math.sin(a)*R*r/4);}
+    ctx.closePath(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1; ctx.stroke();
+  }
+  for(let i=0;i<N;i++){
+    const a=(Math.PI*2*i/N)-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.stroke();
+    const lx=cx+Math.cos(a)*(R+20), ly=cy+Math.sin(a)*(R+20);
+    ctx.fillStyle='rgba(237,232,223,0.28)'; ctx.font='8px Syne'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(traits[i].n.split(' ')[0].toUpperCase(),lx,ly);
+  }
+  ctx.beginPath();
+  traits.forEach((t,i)=>{const a=(Math.PI*2*i/N)-Math.PI/2,v=t.s/100;i===0?ctx.moveTo(cx+Math.cos(a)*R*v,cy+Math.sin(a)*R*v):ctx.lineTo(cx+Math.cos(a)*R*v,cy+Math.sin(a)*R*v);});
+  ctx.closePath();
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+  g.addColorStop(0,'rgba(201,168,76,0.22)'); g.addColorStop(1,'rgba(201,168,76,0.04)');
+  ctx.fillStyle=g; ctx.fill(); ctx.strokeStyle='rgba(201,168,76,0.75)'; ctx.lineWidth=1.5; ctx.stroke();
+  traits.forEach((t,i)=>{const a=(Math.PI*2*i/N)-Math.PI/2,v=t.s/100;ctx.beginPath();ctx.arc(cx+Math.cos(a)*R*v,cy+Math.sin(a)*R*v,3,0,Math.PI*2);ctx.fillStyle='#c9a84c';ctx.fill();});
+}
+
+// NATAL CHART — interactive
+let natalData = null;
+function drawNatal(canvas, data, tooltipEl) {
+  natalData = {canvas, data, tooltipEl};
+  _renderNatal(canvas, data, tooltipEl, null);
+}
+function _renderNatal(canvas, data, tt, hoverPlanet) {
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, cx=W/2, cy=H/2;
+  const Ro=cx-8, Ri=cx-34, Rh=cx-62, Rp=cx-88;
+  ctx.clearRect(0,0,W,H);
+
+  // Zodiac ring segments
+  const SEG_COLS=['rgba(196,96,74,','rgba(107,127,212,','rgba(90,158,120,','rgba(201,168,76,'];
+  const EL_COLS={'Fire':'rgba(196,96,74,','Earth':'rgba(201,168,76,','Air':'rgba(107,127,212,','Water':'rgba(74,110,200,'};
+  const SIGN_EL_A=['Fire','Earth','Air','Water','Fire','Earth','Air','Water','Fire','Earth','Air','Water'];
+  const SIGN_SYM_A=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+
+  for(let i=0;i<12;i++){
+    const a1=i*30*RAD-Math.PI/2, a2=(i+1)*30*RAD-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,Ro,a1,a2); ctx.closePath();
+    ctx.fillStyle=(EL_COLS[SIGN_EL_A[i]]||'rgba(255,255,255,')+`${i%2===0?'0.04':'0.02'})`;
+    ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx+Math.cos(a1)*Ri,cy+Math.sin(a1)*Ri);
+    ctx.lineTo(cx+Math.cos(a1)*Ro,cy+Math.sin(a1)*Ro);
+    ctx.strokeStyle='rgba(201,168,76,0.25)'; ctx.lineWidth=1; ctx.stroke();
+    const am=a1+15*RAD, sr=Ri+13;
+    ctx.fillStyle='rgba(237,232,223,0.45)'; ctx.font='13px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(SIGN_SYM_A[i], cx+Math.cos(am)*sr, cy+Math.sin(am)*sr);
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,Ro,0,Math.PI*2); ctx.strokeStyle='rgba(201,168,76,0.3)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,Ri,0,Math.PI*2); ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,Rh,0,Math.PI*2); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1; ctx.stroke();
+
+  // House lines
+  for(let i=0;i<12;i++){
+    const a=data.houses[i]*RAD-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*Rh,cy+Math.sin(a)*Rh); ctx.lineTo(cx+Math.cos(a)*Ri,cy+Math.sin(a)*Ri);
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // Aspect lines
+  const aspCols={Conjunction:'rgba(201,168,76,0.35)',Trine:'rgba(90,158,120,0.3)',Square:'rgba(196,96,74,0.3)',Opposition:'rgba(139,111,181,0.28)',Sextile:'rgba(107,127,212,0.25)'};
+  const pLonMap={};
+  ['Sun','Moon','Mercury','Venus','Mars','Jupiter'].forEach(p=>{ pLonMap[p]=data.lons[p]; });
+  data.aspects.forEach(asp=>{
+    if(pLonMap[asp.a]===undefined||pLonMap[asp.b]===undefined) return;
+    const a1=pLonMap[asp.a]*RAD-Math.PI/2, a2=pLonMap[asp.b]*RAD-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx+Math.cos(a1)*Rp,cy+Math.sin(a1)*Rp); ctx.lineTo(cx+Math.cos(a2)*Rp,cy+Math.sin(a2)*Rp);
+    ctx.strokeStyle=aspCols[asp.t]||'rgba(255,255,255,0.1)'; ctx.lineWidth=1; ctx.stroke();
+  });
+
+  // Ascendant line
+  const ascA=data.lons.Ascendant*RAD-Math.PI/2;
+  ctx.beginPath(); ctx.moveTo(cx+Math.cos(ascA)*Rh,cy+Math.sin(ascA)*Rh); ctx.lineTo(cx+Math.cos(ascA)*Ro,cy+Math.sin(ascA)*Ro);
+  ctx.strokeStyle='rgba(201,168,76,0.8)'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='rgba(201,168,76,0.9)'; ctx.font='bold 9px Syne'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('ASC', cx+Math.cos(ascA)*(Ri+8), cy+Math.sin(ascA)*(Ri+8));
+
+  // Planets
+  const PCOLS={Sun:'#e8c96a',Moon:'#9ba8e8',Mercury:'#7dc49a',Venus:'#f0a0a0',Mars:'#e87070',Jupiter:'#c4a060',Saturn:'#8ba0b4',Uranus:'#7ecece',Neptune:'#8b6fb5',Pluto:'#a07080'};
+  const pOrder=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+  const pAngles={};
+  pOrder.forEach((p,i)=>{
+    if(!data.lons[p]&&data.lons[p]!==0) return;
+    const baseA=data.lons[p]*RAD-Math.PI/2;
+    const offset=(i%3-1)*6*RAD;
+    const pa=baseA+offset;
+    pAngles[p]={angle:pa,lon:data.lons[p]};
+    const pr=Rp-(i%2)*5;
+    const px=cx+Math.cos(pa)*pr, py=cy+Math.sin(pa)*pr;
+    const isHover=p===hoverPlanet;
+    ctx.beginPath(); ctx.arc(px,py,isHover?7:5,0,Math.PI*2);
+    ctx.fillStyle=(PCOLS[p]||'#fff')+(isHover?'':'cc'); ctx.fill();
+    if(isHover){ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();}
+    ctx.fillStyle='rgba(237,232,223,0.85)'; ctx.font=`${isHover?'bold ':''}10px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(data.planets[p]?.sym||p[0], px, py);
+  });
+
+  // Center dot
+  ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2);
+  ctx.fillStyle='rgba(201,168,76,0.85)'; ctx.fill();
+
+  // Store angles for hover
+  canvas._pAngles=pAngles; canvas._cx=cx; canvas._cy=cy; canvas._Rp=Rp;
+}
+
+// NATAL hover — singleton, no leak
+function setupNatalHover(canvas, data, tt) {
+  if(canvas._mmHandler) canvas.removeEventListener('mousemove', canvas._mmHandler);
+  if(canvas._mlHandler) canvas.removeEventListener('mouseleave', canvas._mlHandler);
+  canvas._mmHandler = (e)=>{
+    const rect=canvas.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)*(canvas.width/rect.width);
+    const my=(e.clientY-rect.top)*(canvas.height/rect.height);
+    const cx=canvas._cx, cy=canvas._cy;
+    let closest=null, minD=20;
+    if(canvas._pAngles) Object.entries(canvas._pAngles).forEach(([p,v])=>{
+      const pr=canvas._Rp;
+      const px=cx+Math.cos(v.angle)*pr, py=cy+Math.sin(v.angle)*pr;
+      const d=Math.hypot(mx-px,my-py);
+      if(d<minD){minD=d;closest=p;}
+    });
+    if(closest) {
+      const pd=data.planets[closest];
+      tt.style.display='block';
+      tt.style.left=(e.clientX-canvas.getBoundingClientRect().left+12)+'px';
+      tt.style.top=(e.clientY-canvas.getBoundingClientRect().top-20)+'px';
+      tt.innerHTML=`<strong style="color:var(--gold)">${closest}</strong> ${pd?.sym||''}<br>${pd?.sign||'?'} ${pd?.deg||0}° ${pd?.min||0}'<br><span style="color:var(--muted)">House ${pd?houseOf(pd.lon||0,data.houses):1}</span>`;
+      _renderNatal(canvas, data, tt, closest);
+    } else {
+      tt.style.display='none';
+      _renderNatal(canvas, data, tt, null);
+    }
+  };
+  canvas._mlHandler = ()=>{ tt.style.display='none'; _renderNatal(canvas,data,tt,null); };
+  canvas.addEventListener('mousemove', canvas._mmHandler);
+  canvas.addEventListener('mouseleave', canvas._mlHandler);
+}
+
+// ELEMENT PIE
+function drawElemPie(canvas, counts, highlight) {
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, R=Math.min(W,H)/2-20;
+  const els=Object.keys(counts), total=Object.values(counts).reduce((a,b)=>a+b,0)||1;
+  const COLS={Fire:'#c84040',Earth:'#c9a84c',Air:'#6b7fd4',Water:'#4a7ab5',Wood:'#5a9e78',Metal:'#8ba0b4'};
+  ctx.clearRect(0,0,W,H);
+  let ang=-Math.PI/2;
+  els.forEach(el=>{
+    const v=(counts[el]||0.2)/total, slice=v*Math.PI*2;
+    const isH=el===highlight;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R+(isH?6:0),ang,ang+slice); ctx.closePath();
+    ctx.fillStyle=(COLS[el]||'#888')+(isH?'ee':'88'); ctx.fill();
+    ctx.strokeStyle='rgba(5,5,10,0.8)'; ctx.lineWidth=2; ctx.stroke();
+    if(v>0.1){const m=ang+slice/2;ctx.fillStyle='rgba(237,232,223,0.9)';ctx.font='bold 10px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(el[0],cx+Math.cos(m)*R*.65,cy+Math.sin(m)*R*.65);}
+    ang+=slice;
+  });
+  ctx.beginPath(); ctx.arc(cx,cy,R*.38,0,Math.PI*2);
+  ctx.fillStyle='#05050a'; ctx.fill();
+  ctx.fillStyle='rgba(201,168,76,0.7)'; ctx.font='11px DM Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('元素',cx,cy);
+}
+
+// BAZI ELEMENT (5 elements)
+function drawBaziElem(canvas, baziEls, favEl) {
+  drawElemPie(canvas, baziEls, favEl);
+}
+
+// HD BODYGRAPH — proper SVG with gates & channels
+function renderHDBodygraph(container, defined, gates, hdType) {
+  // 9 centers with proper HD positions
+  const cx = 170;
+  const C = {
+    Head:        { x:cx,   y:28,  w:44, h:44, shape:'tri',  col:'#8b6fb5', key:'Head' },
+    Ajna:        { x:cx,   y:90,  w:44, h:44, shape:'tri',  col:'#6b7fd4', key:'Ajna' },
+    Throat:      { x:cx,   y:152, w:48, h:36, shape:'rect', col:'#5a9e78', key:'Throat' },
+    G:           { x:cx,   y:210, w:52, h:52, shape:'dia',  col:'#c9a84c', key:'G' },
+    Heart:       { x:cx-62,y:188, w:40, h:40, shape:'rect', col:'#c84040', key:'Heart' },
+    SolarPlexus: { x:cx+62,y:230, w:44, h:40, shape:'rect', col:'#e8a050', key:'Solar Plexus' },
+    Sacral:      { x:cx,   y:282, w:52, h:44, shape:'rect', col:'#c84040', key:'Sacral' },
+    Spleen:      { x:cx-72,y:256, w:44, h:44, shape:'rect', col:'#5a9e78', key:'Spleen' },
+    Root:        { x:cx,   y:362, w:52, h:44, shape:'rect', col:'#8b6fb5', key:'Root' },
+  };
+  // Channels (center-to-center)
+  const CHANNELS = [
+    {a:'Head',b:'Ajna',gates:[64,61,63]},
+    {a:'Ajna',b:'Throat',gates:[17,43,11,62,23,56]},
+    {a:'Throat',b:'G',gates:[31,7,33,13,8,1,45,2]},
+    {a:'Throat',b:'Heart',gates:[16,48,20,34]},
+    {a:'G',b:'Sacral',gates:[15,5,2,14]},
+    {a:'G',b:'Heart',gates:[25,51,10,26]},
+    {a:'Throat',b:'SolarPlexus',gates:[35,36]},
+    {a:'SolarPlexus',b:'Sacral',gates:[6,59]},
+    {a:'Sacral',b:'Spleen',gates:[27,50]},
+    {a:'Sacral',b:'Root',gates:[53,42,60,3,9,52]},
+    {a:'Spleen',b:'Root',gates:[58,18,28,32]},
+    {a:'Spleen',b:'Heart',gates:[54,44]},
+  ];
+
+  const isDef = (key) => defined.includes(key) || defined.includes(key.replace('SolarPlexus','Solar Plexus'));
+  const gateSet = new Set(gates);
+
+  // Build SVG
+  let svg = `<svg viewBox="0 0 340 430" width="100%" style="max-width:340px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>`;
+
+  // Draw channels first (behind centers)
+  CHANNELS.forEach(ch => {
+    const ca = C[ch.a], cb = C[ch.b];
+    if(!ca||!cb) return;
+    const da = isDef(ch.a), db = isDef(ch.b);
+    const active = da && db;
+    svg += `<line x1="${ca.x}" y1="${ca.y}" x2="${cb.x}" y2="${cb.y}"
+      stroke="${active?ca.col:'rgba(255,255,255,0.07)'}"
+      stroke-width="${active?3:1.5}"
+      ${active?'filter="url(#glow)"':''}
+      stroke-linecap="round"/>`;
+    // Gate numbers along channel
+    if(active && ch.gates.length) {
+      const gx = (ca.x+cb.x)/2 + (cb.y-ca.y)/8;
+      const gy = (ca.y+cb.y)/2 - (cb.x-ca.x)/8;
+      svg += `<text x="${gx}" y="${gy}" font-family="DM Mono" font-size="7" fill="rgba(201,168,76,0.7)" text-anchor="middle">${ch.gates[0]}</text>`;
+    }
+  });
+
+  // Draw centers
+  Object.entries(C).forEach(([key, c]) => {
+    const def = isDef(key);
+    const col = def ? c.col : 'rgba(255,255,255,0)';
+    const stroke = def ? c.col : 'rgba(255,255,255,0.12)';
+    const hw = c.w/2, hh = c.h/2;
+    const label = key === 'SolarPlexus' ? 'SP' : key === 'Sacral' ? 'SACRAL' : key.toUpperCase().slice(0,6);
+
+    let shape = '';
+    if(c.shape === 'tri') {
+      // Triangle (Head, Ajna)
+      shape = `<polygon points="${c.x},${c.y-hh} ${c.x+hw},${c.y+hh} ${c.x-hw},${c.y+hh}"
+        fill="${col}cc" stroke="${stroke}" stroke-width="${def?2:1}"
+        ${def?'filter="url(#glow)"':''}/>`;
+    } else if(c.shape === 'dia') {
+      // Diamond (G center)
+      shape = `<polygon points="${c.x},${c.y-hh} ${c.x+hw},${c.y} ${c.x},${c.y+hh} ${c.x-hw},${c.y}"
+        fill="${col}cc" stroke="${stroke}" stroke-width="${def?2:1}"
+        ${def?'filter="url(#glow)"':''}/>`;
+    } else {
+      // Rectangle
+      shape = `<rect x="${c.x-hw}" y="${c.y-hh}" width="${c.w}" height="${c.h}"
+        rx="2" fill="${col}cc" stroke="${stroke}" stroke-width="${def?2:1}"
+        ${def?'filter="url(#glow)"':''}/>`;
+    }
+    svg += shape;
+    svg += `<text x="${c.x}" y="${c.y+1}" font-family="Syne" font-size="${label.length>5?6:7}" font-weight="bold"
+      fill="${def?'rgba(237,232,223,0.95)':'rgba(237,232,223,0.28)'}"
+      text-anchor="middle" dominant-baseline="middle">${label}</text>`;
+  });
+
+  // Active gates ring around sacral
+  const sacral = C.Sacral;
+  gates.slice(0,4).forEach((g,i) => {
+    const a = (i/4)*Math.PI*2 - Math.PI/2;
+    const gx = sacral.x + Math.cos(a)*38, gy = sacral.y + Math.sin(a)*38;
+    svg += `<circle cx="${gx}" cy="${gy}" r="8" fill="rgba(201,168,76,0.12)" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+    <text x="${gx}" y="${gy}" font-family="DM Mono" font-size="7" fill="rgba(201,168,76,0.8)" text-anchor="middle" dominant-baseline="middle">${g}</text>`;
+  });
+
+  // Type label
+  svg += `<text x="${cx}" y="418" font-family="DM Mono" font-size="9" letter-spacing="3"
+    fill="rgba(201,168,76,0.6)" text-anchor="middle">${hdType.toUpperCase()}</text>`;
+
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+// ZI WEI MAP
+function drawZiWei(canvas, life, career, wealth) {
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=4, cw=(W-pad*2)/3, ch=(H-pad*2)/4;
+  const pos=[{r:0,c:0},{r:0,c:1},{r:0,c:2},{r:1,c:2},{r:2,c:2},{r:3,c:2},{r:3,c:1},{r:3,c:0},{r:2,c:0},{r:1,c:0},{r:1,c:1},{r:2,c:1}];
+  ZW_PAL.forEach((pal,i)=>{
+    const {r:row,c:col}=pos[i];
+    const x=pad+col*cw, y=pad+row*ch;
+    const isL=i===life, isC=i===career, isW=i===wealth;
+    ctx.fillStyle=isL?'rgba(201,168,76,0.18)':isC?'rgba(107,127,212,0.12)':isW?'rgba(90,158,120,0.12)':'rgba(255,255,255,0.02)';
+    ctx.fillRect(x,y,cw-2,ch-2);
+    ctx.strokeStyle=isL?'rgba(201,168,76,0.7)':isC?'rgba(107,127,212,0.5)':isW?'rgba(90,158,120,0.5)':'rgba(255,255,255,0.06)';
+    ctx.lineWidth=isL||isC||isW?1.5:1; ctx.strokeRect(x,y,cw-2,ch-2);
+    ctx.fillStyle=isL?'#e8c96a':isC?'#9ba8e8':isW?'#7dc49a':'rgba(237,232,223,0.3)';
+    ctx.font=`${isL||isC||isW?'bold ':''}8px Syne`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(pal.toUpperCase(),x+cw/2,y+ch/2);
+    if(isL){ctx.fillStyle='rgba(201,168,76,0.5)';ctx.font='9px serif';ctx.fillText('★',x+cw/2,y+ch/2+10);}
+  });
+  ctx.fillStyle='rgba(201,168,76,0.08)'; ctx.fillRect(pad+cw,pad+ch,cw-2,ch*2-2);
+  ctx.fillStyle='rgba(201,168,76,0.45)'; ctx.font='13px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('紫微',pad+cw+cw/2,pad+ch+ch-8); ctx.fillText('斗數',pad+cw+cw/2,pad+ch+ch+10);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER DASHBOARD
+// ═══════════════════════════════════════════════════════════
+let _D={}, _raw={};
+const LP_MEANING={1:'Pemimpin & Pioneer',2:'Diplomat & Intuisi',3:'Kreator & Ekspresi',4:'Builder & Disiplin',5:'Kebebasan & Perubahan',6:'Pemelihara & Harmoni',7:'Analis & Pencarian',8:'Kekuatan & Ambisi',9:'Humanis & Bijaksana',11:'Master Intuitif',22:'Master Builder',33:'Master Teacher'};
+
+function render(name,dateStr,timeStr,city,D) {
+  _D=D; _raw={name,dateStr,timeStr,city};
+  const dd=new Date(dateStr);
+  const dateFmt=dd.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const lp=D.numerology.lp;
+
+  // TOPBAR + HERO
+  document.getElementById('tbName').textContent=name.toUpperCase();
+  document.getElementById('hName').textContent=name;
+  document.getElementById('hDob').textContent=`${dateFmt} · ${timeStr||'—'} · ${city}`;
+  document.getElementById('hBadges').innerHTML=[
+    {t:`${D.sunSign} ☉`,c:'bg'},{t:D.hd.type,c:'bb'},{t:`LP ${lp}`,c:'bp'},
+    {t:D.bazi.dayMaster,c:'br'},{t:D.hd.prof,c:'bt'},{t:`Gate ${D.sunGate}`,c:'bt'}
+  ].map(b=>`<span class="badge ${b.c}">${b.t}</span>`).join('');
+
+  const confMap={high:{col:'var(--green)',t:'High precision'},medium:{col:'var(--gold)',t:'Medium precision'},low:{col:'var(--red)',t:'Low — add birth time'}};
+  document.getElementById('hConf').innerHTML=[{l:'Astrology',v:D.confidence.astro},{l:'BaZi',v:D.confidence.bazi},{l:'HD',v:D.confidence.hd}]
+    .map(c=>`<div class="ci"><div class="ci-dot" style="background:${confMap[c.v].col}"></div><div class="ci-lbl">${c.l}: ${confMap[c.v].t}</div></div>`).join('');
+
+  // Soul Score
+  document.getElementById('soulNumBig').textContent=D.soulScore;
+  document.getElementById('soulLabel').textContent=D.soulLabel.toUpperCase();
+  setTimeout(()=>drawSoulRing(document.getElementById('soulRingC'),D.soulScore),150);
+
+  // OVERVIEW
+  document.getElementById('ov-title').textContent=`${D.sunSign} × ${D.hd.type} × LP${lp}`;
+  document.getElementById('ov-sub').textContent=`${D.ascSign} Ascendant · ${D.bazi.dayMaster} · Gate ${D.sunGate}`;
+  document.getElementById('ov-traits').innerHTML=D.traits.map(t=>`<div class="tr-row"><div class="tr-head"><span class="tr-name">${t.n}</span><span class="tr-val">${t.s}</span></div><div class="tbar"><div class="tfill" data-s="${t.s}"></div></div></div>`).join('');
+  document.getElementById('ov-insight').textContent=`${D.sunSign} yang beroperasi sebagai ${D.hd.type} — kombinasi ini menciptakan seseorang dengan visi internal yang kuat namun perlu strategi spesifik: ${D.hd.strategy}. Life Path ${lp} (${LP_MEANING[lp]||'—'}) menambahkan dimensi yang membuat pattern ini lengkap. Gate ${D.sunGate} sebagai Human Design Sun Gate memperkuat ini dengan frekuensi yang sangat spesifik.`;
+  document.getElementById('ov-shadow').textContent=D.shadows[0].body;
+
+  // Natal + Element
+  setTimeout(()=>{
+    const nc=document.getElementById('natalC');
+    const tt=document.getElementById('natalTT');
+    drawNatal(nc, D, tt);
+    setupNatalHover(nc, D, tt);
+    drawElemPie(document.getElementById('elemC'), D.elCounts, null);
+  },200);
+
+  const elKeys=Object.keys(D.elCounts);
+  document.getElementById('elPills').innerHTML=elKeys.map(el=>{
+    const v=D.elCounts[el];
+    return `<span class="epill" style="border-color:rgba(255,255,255,0.1);color:var(--dim)">${el} <span style="color:var(--gold)">${v}</span></span>`;
+  }).join('');
+
+  // ASTROLOGY
+  const sun=D.planets.Sun, asc=D.planets.Ascendant, moon=D.planets.Moon;
+  document.getElementById('as-title').textContent=`Sun ${sun.deg}° ${D.sunSign} · Asc ${D.ascSign}`;
+  document.getElementById('as-sub').textContent=`Moon ${D.moonSign} · Tropical Zodiac · ${timeStr?'Full chart':'No time — Ascendant approximate'}`;
+  document.getElementById('as-body').textContent=`Sun in ${D.sunSign} pada ${sun.deg}° mendefinisikan inti identitasmu. Ascendant ${D.ascSign} adalah bagaimana dunia pertama kali membacamu sebelum mengenalmu lebih dalam. Moon in ${D.moonSign} pada ${moon.deg}° mengatur lanskap emosional yang lebih dalam — kebutuhanmu untuk merasa aman dan cara kamu memproses pengalaman.`;
+  document.getElementById('as-planets').innerHTML=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'].map(p=>{
+    const pd=D.planets[p]; if(!pd) return '';
+    const h=houseOf(D.lons[p]||0, D.houses);
+    return `<div class="prow" onclick="showAspDetails('${p}')"><span class="pname">${p}</span><span class="psym">${pd.sym}</span><span class="psign">${pd.sign} ${pd.deg}°</span><span class="phouse">H${h}</span></div>`;
+  }).join('');
+  const aspCls={Conjunction:'ac',Trine:'at',Square:'as2',Opposition:'ao',Sextile:'ax'};
+  document.getElementById('as-asps').innerHTML=D.aspects.map(a=>`<span class="asp ${aspCls[a.t]||'ac'}" onclick="showAspDetail(this,'${a.a} ${a.t} ${a.b}')">${a.a} ${a.t} ${a.b}</span>`).join('');
+  document.getElementById('as-deep').textContent=`${D.sunSign} diatur oleh ${{'Aries':'Mars','Taurus':'Venus','Gemini':'Mercury','Cancer':'Moon','Leo':'Sun','Virgo':'Mercury','Libra':'Venus','Scorpio':'Pluto','Sagittarius':'Jupiter','Capricorn':'Saturn','Aquarius':'Uranus','Pisces':'Neptune'}[D.sunSign]||'?'}. Sun di ${sun.deg}° memberikan nuansa yang ${sun.deg<15?'lebih muda dan langsung dari tanda ini':'lebih matang dan reflektif dari tanda ini'}.`;
+  document.getElementById('as-shadow').textContent=D.SIGN_SHADOW[D.sunSign]||'—';
+  document.getElementById('as-houses').innerHTML=`H1 (${D.ascSign}): Persona & tampilan. H7 (${SIGNS[(D.planets.Ascendant.idx+6)%12]}): Partnership. H10 (${SIGNS[(D.planets.Ascendant.idx+9)%12]}): Karier & legacy. Sun berada di H${houseOf(D.lons.Sun,D.houses)}, Moon di H${houseOf(D.lons.Moon,D.houses)}.`;
+
+  // BAZI
+  const {year:by,month:bm,day:bd,hour:bh,dayMaster,favEl,unfavEl,luckPillars,baziEls}=D.bazi;
+  document.getElementById('bz-title').textContent=`Day Master · ${dayMaster}`;
+  document.getElementById('bz-sub').textContent=`Favorable: ${favEl} · Unfavorable: ${unfavEl}`;
+  document.getElementById('bz-pillars').innerHTML=[by,bm,bd,bh].map((p,i)=>{
+    const lbl=['Year','Month','Day','Hour'][i];
+    if(!p||p.el==='—') return `<div class="bpillar"><div class="bplbl">${lbl}</div><div class="bpstem">—</div></div>`;
+    return `<div class="bpillar"><div class="bplbl">${lbl}</div><div class="bpstem">${p.stem.split(' ')[0]}</div><div class="bpbranch">${p.branch}</div><div class="bpel">${p.el}</div></div>`;
+  }).join('');
+  document.getElementById('bz-body').textContent=`Day Master ${dayMaster} menempatkan kamu sebagai individu yang ${dayMaster.includes('Wood')?'terus tumbuh dan berkembang, selalu mencari ekspansi dan kemungkinan baru':dayMaster.includes('Fire')?'bersinar dengan passion yang intense, cycle antara api penuh dan kehabisan energi':dayMaster.includes('Earth')?'stabil dan dapat diandalkan, tapi butuh waktu lebih lama untuk berubah haluan':dayMaster.includes('Metal')?'presisi dan berprinsip, tidak mudah kompromi terhadap standar yang sudah ditetapkan':'cerdas dan adaptif, mengalir mengikuti kontur situasi dengan natural'}. Elemen ${favEl} adalah sumber energi utamamu.`;
+  document.getElementById('bz-insight').textContent=`Year Pillar ${by.stem.split(' ')[0]} / ${by.branch} menunjukkan konteks sosial dan warisan keluarga. Day Pillar ${bd.stem.split(' ')[0]} / ${bd.branch} adalah inti kepribadian dan relasi intimmu. Kombinasi ini menciptakan seseorang yang ${dayMaster.includes('Water')||dayMaster.includes('Wood')?'bekerja paling baik dalam lingkungan yang fleksibel dan memberi ruang untuk tumbuh':dayMaster.includes('Fire')||dayMaster.includes('Metal')?'butuh tujuan yang jelas dan struktur untuk channeling energi mereka':'butuh fondasi yang kuat sebelum bisa bergerak maju dengan percaya diri'}.`;
+  document.getElementById('bz-shadow').textContent=`Elemen ${unfavEl} dalam excess akan menciptakan resistensi internal. Ketika terlalu banyak energi ${unfavEl} dalam hidupmu — dalam bentuk orang, lingkungan, atau situasi — kamu cenderung ${unfavEl==='Water'?'tenggelam dalam overthinking dan tidak bisa bertindak':unfavEl==='Fire'?'burnout tanpa sadar kenapa':unfavEl==='Earth'?'stuck dan sulit bergerak maju':unfavEl==='Metal'?'menjadi rigid dan menutup diri':'kehilangan arah dan menjadi reaktif'}.`;
+  document.getElementById('bz-luck').innerHTML=luckPillars.map(lp=>{
+    const now=D.curAge>=lp.age&&D.curAge<lp.age+10;
+    return `<div style="display:flex;align-items:center;gap:14px;padding:8px 0;border-bottom:1px solid var(--b1)"><div style="font-family:var(--font-mono);font-size:9px;color:${now?'var(--gold)':'var(--muted)'};width:64px;flex-shrink:0">AGE ${lp.age}${now?' ←':''}</div><div style="font-family:var(--font-serif);font-size:14px;color:${now?'var(--text)':'var(--dim)'}">${lp.stem.split(' ')[0]} / ${lp.branch.split(' ')[0]}</div><div style="font-family:var(--font-mono);font-size:8px;color:var(--muted)">${lp.el}</div></div>`;
+  }).join('');
+  setTimeout(()=>drawBaziElem(document.getElementById('baziElemC'), baziEls, favEl), 200);
+  document.getElementById('bz-epills').innerHTML=Object.entries(baziEls).map(([el,v])=>`<span class="epill" style="border-color:${el===favEl?'rgba(201,168,76,.4)':el===unfavEl?'rgba(196,96,74,.35)':'rgba(255,255,255,.06)'};color:${el===favEl?'var(--gold)':el===unfavEl?'#da8070':'var(--muted)'}">${el} ${v}</span>`).join('');
+
+  // HD
+  const {type:hdt,auth,prof,strategy,notSelf,definedCenters,undefinedCenters}=D.hd;
+  document.getElementById('hd-title').textContent=`${hdt} · ${prof}`;
+  document.getElementById('hd-sub').textContent=`${auth} Authority · Strategy: ${strategy}`;
+  document.getElementById('hd-cards').innerHTML=[{l:'Type',v:hdt},{l:'Authority',v:auth},{l:'Profile',v:prof},{l:'Strategy',v:strategy},{l:'Not-Self',v:notSelf},{l:'Defined',v:`${definedCenters.length}/9`}].map(c=>`<div class="hdcard"><div class="hdlbl">${c.l}</div><div class="hdval" style="font-size:${c.v.length>12?'12px':'17px'}">${c.v}</div></div>`).join('');
+  document.getElementById('hd-centers').innerHTML=`<strong style="color:var(--gold)">Defined:</strong> ${definedCenters.join(' · ')||'—'}<br><br><strong style="color:var(--muted)">Undefined/Open:</strong> <span style="color:var(--muted)">${undefinedCenters.join(' · ')||'—'}</span><br><br><span style="font-size:12px;color:var(--muted)">Sun Gate ${D.sunGate} · Moon Gate ${D.moonGate} · Asc Gate ${D.hd.ascGate} · Design Gate ${D.hd.designGate}</span>`;
+  document.getElementById('hd-insight').textContent=`Sebagai ${hdt} dengan ${auth} Authority, cara terbaik membuat keputusan besar adalah ${strategy}. Ini bukan sekedar saran — ini adalah cara kerja sistem energimu. Ketika kamu mengabaikan ini dan membuat keputusan dari conditioning sosial (terburu, harus segera, orang lain bilang), hasilnya cenderung menjadi sumber ${notSelf.toLowerCase()}.`;
+  document.getElementById('hd-shadow').textContent=D.HD_SHADOW[hdt]||'—';
+  setTimeout(()=>renderHDBodygraph(document.getElementById('hdBodgraphSVG'), definedCenters, [D.hd.sunGate,D.hd.moonGate,D.hd.ascGate,D.hd.earthGate], hdt), 200);
+
+  // ZI WEI
+  const {main:zwMain,life:zwLife,career:zwCar,wealth:zwWlt}=D.zw;
+  document.getElementById('zw-title').textContent=zwMain.split(' ').slice(1).join(' ');
+  document.getElementById('zw-sub').textContent=`${zwMain} · Life Palace ${zwLife+1}`;
+  document.getElementById('zw-palaces').innerHTML=ZW_PAL.map((p,i)=>{
+    const isL=i===zwLife,isC=i===zwCar,isW=i===zwWlt;
+    const zStar = isL ? ('<div class="zwps">'+zwMain.split(' ').slice(1).join(' ')+'</div>') : '';
+    const zIcon = isL?'★ ':isC?'◆ ':isW?'● ':'';
+    const zStyle = isC?'color:var(--blue2)':isW?'color:var(--green)':'';
+    return '<div class="zwp '+(isL?'main':'')+'" onclick="zwClick('+i+')"><div class="zwpn" style="'+zStyle+'">'+zIcon+p+'</div>'+zStar+'</div>';
+  }).join('');
+  document.getElementById('zw-desc').textContent=`Zi Wei Dou Shu menempatkan ${zwMain} dalam Life Palace ${zwLife+1}. Ini mendefinisikan aura dan energi inti yang kamu bawa dalam perjalanan hidup. Career Palace (${ZW_PAL[zwCar]}) di posisi ${zwCar+1} menentukan area kerja dan ambisi. Wealth Palace (${ZW_PAL[zwWlt]}) di posisi ${zwWlt+1} mengatur bagaimana kamu berhubungan dengan materi dan resources.`;
+  document.getElementById('zw-insight').textContent=`Bintang ${zwMain.split(' ')[1]} dalam Life Palace mengindikasikan seseorang yang hidupnya ditandai oleh ${zwMain.includes('Purple')?'kehadiran natural dalam posisi authority dan leadership':zwMain.includes('Sun')?'visibilitas tinggi, pengaruh yang meluas, menjadi sumber cahaya bagi sekitarnya':zwMain.includes('Moon')?'intuisi kuat dan kemampuan memengaruhi secara emosional yang dalam':zwMain.includes('Wolf')?'kemampuan menarik dan daya pikat yang sangat kuat dan sulit diabaikan':zwMain.includes('Vault')?'keberuntungan material yang datang melalui kombinasi usaha tepat dan timing':'kemampuan unik yang menjadi signature tak tergantikan di dunia'}.`;
+  setTimeout(()=>drawZiWei(document.getElementById('zwC'), zwLife, zwCar, zwWlt), 200);
+
+  // NUMEROLOGY
+  const {lp:nlp,dest:ndest,soul:nsoul,LP_SHADOW}=D.numerology;
+  document.getElementById('num-cards').innerHTML=[{l:'Life Path',n:nlp,m:LP_MEANING[nlp]||'—'},{l:'Destiny',n:ndest,m:'Apa yang harus dicapai'},{l:'Soul Urge',n:nsoul,m:'Dorongan terdalam'},{l:'Personality',n:((nlp+ndest)%9)||9,m:'Impresi publik'}].map(c=>`<div class="nxcard"><div class="nxbg">${c.n}</div><div class="nxlbl">${c.l}</div><div class="nxnum">${c.n}</div><div class="nxm">${c.m}</div></div>`).join('');
+  document.getElementById('num-title').textContent=`Life Path ${nlp}`;
+  document.getElementById('num-sub').textContent=LP_MEANING[nlp]||'—';
+  document.getElementById('num-insight').textContent=`Life Path ${nlp} adalah frekuensi vibrasi yang memengaruhi cara kamu menavigasi keputusan besar hidup. ${LP_MEANING[nlp]||''} — ini bukan sekadar label, ini adalah panggilan yang paling sering muncul di persimpangan paling penting dalam hidupmu. Dikombinasikan dengan Destiny ${ndest} dan Soul Urge ${nsoul}, ada tension menarik antara apa yang kamu tuju dan apa yang paling menggerakkanmu dari dalam.`;
+  document.getElementById('num-shadow').textContent=LP_SHADOW?LP_SHADOW[nlp]||'—':'—';
+
+  // SHADOW
+  document.getElementById('dp-title').textContent=`Arsitektur Shadow: ${name.split(' ')[0]}`;
+  document.getElementById('dp-sub').textContent='Pola yang paling kuat bukan yang terlihat. Yang mengubah hidup adalah yang tidak pernah diakui.';
+  document.getElementById('dp-cards').innerHTML=D.shadows.map(s=>`<div class="dcard ${s.type}"><div class="dicon">${s.icon}</div><div class="dtitle">${s.title}</div><div class="dbody">${s.body}</div></div>`).join('');
+
+  // TIMELINE
+  document.getElementById('tl-wrap').innerHTML=D.phases.map(p=>{
+    const now=D.curAge>=p.age&&D.curAge<p.age+7;
+    const ageLabel = now ? 'AGE '+p.age+' · SEKARANG ('+D.curAge+')' : 'AGE '+p.age;
+    return '<div class="tli '+(now?'now':'')+'"><div class="tli-age">'+ageLabel+'</div><div class="tli-phase">'+p.phase+'</div><div class="tli-desc">'+p.theme+'</div></div>';
+  }).join('');
+  const nowP=D.phases.find(p=>D.curAge>=p.age&&D.curAge<p.age+7)||D.phases[D.phases.length-1];
+  document.getElementById('tl-phase').textContent=nowP.phase;
+  document.getElementById('tl-theme').textContent=nowP.theme;
+  document.getElementById('tl-detail').textContent=nowP.detail;
+  document.getElementById('tl-insight').textContent=`Pada usia ${D.curAge}, dengan ${D.bazi.dayMaster} sebagai Day Master dan ${LP_MEANING[lp]} sebagai Life Path — fase ${nowP.phase} ini mendorong kamu untuk ${D.curAge<28?'membangun fondasi yang otentik sebelum Saturn Return':D.curAge<35?'melewati dan mengintegrasikan pelajaran Saturn Return':D.curAge<42?'menegaskan siapa kamu setelah semua layers disingkirkan':'menggunakan kematangan sebagai kekuatan yang tidak perlu dibuktikan lagi'}.`;
+  document.getElementById('tl-sat').textContent=`Saturn Return pertama: usia ~${29-(D.curAge%29<29?D.curAge%29:0)+D.curAge} (${29-(D.curAge%29<29?D.curAge%29:0)} tahun ${D.curAge%29===0?'baru lewat':'lagi'}). Ini adalah periode di mana semua yang dibangun di atas fondasi yang salah akan dipertanyakan — bukan sebagai hukuman, tapi sebagai klarifikasi siapa kamu sebenarnya.`;
+
+  // TRANSITS
+  const TSYM={Sun:'☉',Moon:'☽',Saturn:'♄',Jupiter:'♃',Mars:'♂'};
+  const TDESC={
+    Conjunction:'Energi intensif — tema ini sedang sangat aktif dalam hidupmu.',
+    Trine:'Aliran yang mudah — ini area di mana hal-hal datang dengan natural saat ini.',
+    Square:'Tension yang produktif — ada hambatan yang mendorong pertumbuhan.',
+    Opposition:'Polaritas yang perlu diintegrasikan — dua energi berbeda meminta perhatian.',
+    Sextile:'Peluang yang tersedia — butuh sedikit usaha untuk mengaktifkan potensinya.'
+  };
+  if(D.transits.length>0) {
+    document.getElementById('trans-list').innerHTML=D.transits.map(t=>`<div class="tcard"><div class="tsym">${TSYM[t.transit.split(' ')[1]]||'✦'}</div><div><div class="tname">${t.transit} ${t.type} ${t.natal}</div><div class="tdesc">${TDESC[t.type]||'Active transit.'}</div></div><div class="tintens"><span>${lonToSign(t.transitLon).sign}</span>${lonToSign(t.transitLon).deg}°</div></div>`).join('');
+  } else {
+    document.getElementById('trans-list').innerHTML='<div class="pbody" style="padding:16px 0">Tidak ada transit mayor yang signifikan aktif saat ini. Ini bisa menjadi periode konsolidasi dan persiapan.</div>';
+  }
+  setTimeout(()=>drawRadar(document.getElementById('transRadarC'), D.traits), 200);
+  document.getElementById('trans-insight').textContent=`Hari ini, dengan Moon transit di ${lonToSign(D.transMoon).sign} dan Sun transit di ${lonToSign(D.transSun).sign} — energi dominan adalah ${lonToSign(D.transMoon).sign==='Scorpio'||lonToSign(D.transMoon).sign==='Pisces'||lonToSign(D.transMoon).sign==='Cancer'?'emosional dan intuitif':lonToSign(D.transMoon).sign==='Aries'||lonToSign(D.transMoon).sign==='Leo'||lonToSign(D.transMoon).sign==='Sagittarius'?'aktif dan berani':'stabil dan analitis'}. ${D.bazi.dayMaster.includes('Fire')||D.bazi.dayMaster.includes('Wood')?'Energi kamu secara natural cocok dengan kondisi hari ini.':'Butuh sedikit usaha ekstra untuk memanfaatkan energi hari ini.'}`;
+}
+
+// Aspect detail click
+function showAspDetail(el, text) {
+  const d=document.getElementById('asp-detail');
+  d.style.display='block';
+  d.textContent=text+' — klik aspek lain untuk detail.';
+}
+
+// ZW palace click
+function zwClick(i) {
+  document.querySelectorAll('.zwp').forEach(e=>e.classList.remove('sel'));
+  document.querySelectorAll('.zwp')[i]?.classList.add('sel');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COMPATIBILITY
+// ═══════════════════════════════════════════════════════════
+function doCompat() {
+  const n2=document.getElementById('cn').value.trim();
+  const d2=document.getElementById('cd').value;
+  if(!n2||!d2) return;
+  const t2=document.getElementById('ct').value||'12:00';
+  const c2=document.getElementById('cc').value||'Jakarta';
+  const D2=computeChart(n2,d2,t2,c2);
+  const D1=_D;
+  // Real comparison using actual chart data
+  const sunDiff=Math.abs(D1.lons.Sun-D2.lons.Sun);
+  const moonDiff=Math.abs(D1.lons.Moon-D2.lons.Moon);
+  const venDiff=Math.abs(D1.lons.Venus-D2.lons.Venus);
+  const marDiff=Math.abs(D1.lons.Mars-D2.lons.Mars);
+  function harmScore(diff){const n=diff>180?360-diff:diff;return Math.round(100-Math.min(100,(Math.abs(n-60)<15||Math.abs(n-120)<15||Math.abs(n-0)<15)?20:(Math.abs(n-90)<15||Math.abs(n-180)<15)?40:0));}
+  const scores=[
+    {n:'Emotional Resonance',s:harmScore(moonDiff)},
+    {n:'Romantic Chemistry',s:harmScore(venDiff+marDiff/2)},
+    {n:'Intellectual Synergy',s:harmScore(Math.abs(D1.lons.Mercury-D2.lons.Mercury))},
+    {n:'Life Path Alignment',s:100-Math.abs(D1.numerology.lp-D2.numerology.lp)*8},
+    {n:'Energetic Compatibility',s:harmScore(sunDiff)},
+  ];
+  const overall=Math.round(scores.reduce((a,b)=>a+b.s,0)/scores.length);
+  const lbl=overall>=80?'Deep Resonance':overall>=65?'Strong Affinity':overall>=50?'Complementary Tension':'Complex Dynamic';
+  document.getElementById('cs-score').textContent=overall+'%';
+  document.getElementById('cs-lbl').textContent=lbl+` · ${_raw.name} × ${n2}`;
+  document.getElementById('cs-bars').innerHTML=scores.map(s=>`<div class="tr-row"><div class="tr-head"><span class="tr-name">${s.n}</span><span class="tr-val">${s.s}</span></div><div class="tbar"><div class="tfill" style="width:${s.s}%"></div></div></div>`).join('');
+  document.getElementById('cs-insight').textContent=`Pertemuan antara ${_raw.name} (${D1.sunSign} ☉) dan ${n2} (${D2.sunSign} ☉) — kombinasi ini ${overall>=70?'menciptakan chemistry yang sulit diabaikan karena ada resonansi di level chart yang dalam':overall>=50?'penuh potensi tapi membutuhkan kesadaran penuh dari keduanya untuk tidak terperangkap dalam pattern yang berulang':'mengandung pelajaran besar yang tidak bisa dihindari, dan mungkin itulah titik pertemuannya'}. Area terkuat: ${scores[0].n}.`;
+  document.getElementById('cs-shadow').textContent=`Salah satu dari kalian kemungkinan membawa pola yang belum diselesaikan yang akan teraktivasi. Sun ${_raw.name} ${aspectType(D1.lons.Sun,D2.lons.Sun)||'no major aspect'} Sun ${n2}. Moon ${_raw.name} ${aspectType(D1.lons.Moon,D2.lons.Moon)||'no major aspect'} Moon ${n2}.`;
+  document.getElementById('compat-res').style.display='block';
+  setTimeout(()=>{document.querySelectorAll('#cs-bars .tfill').forEach(e=>{const s=e.style.width;e.style.width='0%';setTimeout(()=>e.style.width=s,100);});},100);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FLOW
+// ═══════════════════════════════════════════════════════════
+function toStep2(){
+  if(!document.getElementById('iName').value.trim()){document.getElementById('iName').focus();return;}
+  document.getElementById('fs1').classList.remove('on');
+  document.getElementById('fs2').classList.add('on');
+}
+
+['iDate','iTime','iCity'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',updateConf);
+});
+function updateConf(){
+  const t=!!document.getElementById('iTime').value;
+  const c=!!document.getElementById('iCity').value.trim();
+  const ch=document.getElementById('chint'),dot=document.getElementById('cdot'),txt=document.getElementById('ctxt');
+  ch.style.display='flex';
+  if(t&&c){dot.style.background='var(--green)';txt.textContent='High precision · Semua data tersedia';}
+  else if(!t){dot.style.background='var(--gold)';txt.textContent='Medium — tambahkan jam lahir untuk Ascendant & BaZi Hour';}
+  else{dot.style.background='var(--gold)';txt.textContent='Tambahkan kota untuk koordinat akurat';}
+}
+
+function runCalc(){
+  const name=document.getElementById('iName').value.trim()||'Unknown';
+  const date=document.getElementById('iDate').value;
+  const time=document.getElementById('iTime').value;
+  const city=document.getElementById('iCity').value.trim()||'Jakarta';
+  if(!date){document.getElementById('iDate').focus();return;}
+  document.getElementById('landing').style.display='none';
+  document.getElementById('loading').classList.add('on');
+  const steps=document.querySelectorAll('.ls');
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i>0){steps[i-1].classList.remove('go');steps[i-1].classList.add('ok');}
+    if(i<steps.length){steps[i].classList.add('go');i++;}
+    else{
+      clearInterval(iv);
+      setTimeout(()=>{
+        const D=computeChart(name,date,time,city);
+        document.getElementById('loading').classList.remove('on');
+        document.getElementById('dash').classList.add('on');
+        render(name,date,time,city,D);
+        setTimeout(()=>document.querySelectorAll('.tfill').forEach(e=>{const s=e.dataset.s;if(s)e.style.width=s+'%';}),400);
+      },500);
+    }
+  },280);
+}
+
+function stab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('t-'+id).classList.add('on');
+  setTimeout(()=>{
+    if(id==='overview'||id==='astro'){const nc=document.getElementById('natalC');const tt=document.getElementById('natalTT');if(_D.lons){drawNatal(nc,_D,tt);setupNatalHover(nc,_D,tt);}drawElemPie(document.getElementById('elemC'),_D.elCounts,null);}
+    if(id==='bazi'&&_D.bazi)drawBaziElem(document.getElementById('baziElemC'),_D.bazi.baziEls,_D.bazi.favEl);
+    if(id==='daily'&&_D.sunSign) renderDaily(_D);
+    if(id==='share'&&_D.sunSign) renderShareCard();
+    if(id==='hd'&&_D.hd) renderHDBodygraph(document.getElementById('hdBodgraphSVG'),_D.hd.definedCenters,[_D.hd.sunGate,_D.hd.moonGate,_D.hd.ascGate,_D.hd.earthGate],_D.hd.type);
+    if(id==='ziwei'&&_D.zw)drawZiWei(document.getElementById('zwC'),_D.zw.life,_D.zw.career,_D.zw.wealth);
+    if(id==='transit')drawRadar(document.getElementById('transRadarC'),_D.traits);
+    document.querySelectorAll('.tfill').forEach(e=>{const s=e.dataset.s;if(s&&!e.style.width)e.style.width=s+'%';});
+  },60);
+}
+
+function reset(){
+  document.getElementById('dash').classList.remove('on');
+  document.getElementById('landing').style.display='';
+  document.getElementById('fs2').classList.remove('on');
+  document.getElementById('fs1').classList.add('on');
+  document.querySelectorAll('.ls').forEach(s=>s.classList.remove('go','ok'));
+  document.getElementById('compat-res').style.display='none';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  document.querySelectorAll('.tp').forEach((p,i)=>p.classList.toggle('on',i===0));
+}
+
+// Default
+document.getElementById('iDate').value='1995-08-17';
+document.getElementById('iTime').value='07:30';
+
+// ═══════════════════════════════════════════════════════════
+//  DAILY PULL ENGINE
+// ═══════════════════════════════════════════════════════════
+function renderDaily(D) {
+  const now = new Date();
+  const jdNow = toJD(now.getFullYear(), now.getMonth()+1, now.getDate(), 12);
+  const moonSign = lonToSign(moonLongitude(jdNow));
+  const sunSign = lonToSign(sunLongitude(jdNow));
+  const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
+  const dayNum = now.getDate();
+
+  const dateFmt = now.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('daily-date').textContent = dateFmt;
+
+  // Energy based on transit moon × natal chart
+  const moonEL = {'Aries':'Fire','Taurus':'Earth','Gemini':'Air','Cancer':'Water','Leo':'Fire','Virgo':'Earth','Libra':'Air','Scorpio':'Water','Sagittarius':'Fire','Capricorn':'Earth','Aquarius':'Air','Pisces':'Water'};
+  const mEl = moonEL[moonSign.sign] || 'Air';
+  const moodMap = {Fire:'Aktif & Berani', Earth:'Stabil & Fokus', Air:'Analitis & Komunikatif', Water:'Intuitif & Sensitif'};
+  const prodMap = {Fire:'Tinggi untuk aksi dan inisiasi', Earth:'Tinggi untuk detail dan penyelesaian', Air:'Tinggi untuk komunikasi dan brainstorming', Water:'Tinggi untuk refleksi dan koneksi emosional'};
+
+  document.getElementById('daily-title').textContent = `${moodMap[mEl]} · Moon in ${moonSign.sign}`;
+  document.getElementById('daily-sub').textContent = `Energi transit hari ini dipengaruhi Moon ${moonSign.sign} ${moonSign.deg}° — ${mEl} energy dominan`;
+
+  // Pills
+  const pillData = [
+    {lbl: mEl+' Energy', col: 'var(--gold)'},
+    {lbl: moonSign.sign+' Moon', col: 'var(--blue2)'},
+    {lbl: D.bazi.favEl+' Boost', col: 'var(--green)'},
+  ];
+  document.getElementById('daily-pills').innerHTML = pillData.map(p=>
+    `<span style="font-family:var(--font-mono);font-size:8px;letter-spacing:.2em;padding:5px 12px;border:1px solid ${p.col}44;color:${p.col};border-radius:2px">${p.lbl}</span>`
+  ).join('');
+
+  // Body
+  const interaction = mEl === D.bazi.favEl.split(' ').pop() ? 'selaras dengan elemen favoritmu' : 'membutuhkan adaptasi lebih dari energi dasarmu';
+  document.getElementById('daily-body').textContent = `Dengan Moon transit di ${moonSign.sign}, energi hari ini ${interaction}. ${prodMap[mEl]}. Bagi ${D.hd.type}, ini adalah hari yang ${dayOfWeek===0||dayOfWeek===6?'baik untuk introspeksi dan reset':dayOfWeek===1?'bagus untuk memulai sesuatu baru':'cocok untuk melanjutkan momentum yang sudah ada'}.`;
+
+  // Moon
+  const moonDescMap = {
+    Aries:'Impulsif & energik. Bagus untuk memulai, buruk untuk patience.',
+    Taurus:'Lambat tapi solid. Bagus untuk hal-hal praktis dan sensory experience.',
+    Gemini:'Pikiran berlari. Bagus untuk komunikasi, buruk untuk keputusan final.',
+    Cancer:'Emosi tinggi. Koneksi personal terasa dalam. Batasan mungkin lebih mudah dissolved.',
+    Leo:'Ekspresif dan teatrikal. Bagus untuk presentasi dan show of confidence.',
+    Virgo:'Detail-oriented. Bagus untuk analisis dan problem-solving sistematis.',
+    Libra:'Harmoni-seeking. Bagus untuk negosiasi dan relationship repair.',
+    Scorpio:'Intens dan investigatif. Hal-hal tersembunyi bisa muncul ke permukaan.',
+    Sagittarius:'Optimistis dan expansive. Bagus untuk big picture thinking.',
+    Capricorn:'Ambisius dan disciplined. Bagus untuk goal-setting dan struktur.',
+    Aquarius:'Detached dan idealistis. Bagus untuk inovasi, buruk untuk emotional intimacy.',
+    Pisces:'Dreamy dan permeable. Boundary-mu mungkin lebih tipis dari biasanya.'
+  };
+  document.getElementById('daily-moon').textContent = `☽ ${moonSign.sign} ${moonSign.deg}°`;
+  document.getElementById('daily-moon-desc').textContent = moonDescMap[moonSign.sign]||'—';
+
+  // Shadow trigger
+  const shadowTriggers = {
+    Aries:'Hari ini kamu mungkin terlalu reaktif. Pause sebelum respond.',
+    Taurus:'Resistensi terhadap perubahan bisa muncul. Cek apakah itu wisdom atau ketakutan.',
+    Gemini:'Overthinking dan second-guessing bisa tinggi. Trust your first instinct.',
+    Cancer:'Kebutuhan akan validation mungkin lebih tinggi. Perhatikan dari mana kamu mencarinya.',
+    Leo:'Kebutuhan untuk diakui bisa clash dengan realita. Jaga ekspektasi.',
+    Virgo:'Tendency untuk overcriticize — diri sendiri atau orang lain — bisa naik.',
+    Libra:'Tendency untuk menghindari keputusan sulit. Pilih satu dan komit.',
+    Scorpio:'Old wounds bisa teraktivasi. Perhatikan projection.',
+    Sagittarius:'Impulsivitas dan overpromising. Realistis dengan kapasitas.',
+    Capricorn:'Workaholic mode sebagai pelarian dari sesuatu yang perlu dirasakan.',
+    Aquarius:'Detachment bisa terasa seperti clarity tapi sebenarnya adalah avoidance.',
+    Pisces:'Boundary dissolution. Pastikan kamu tidak mengambil beban emosi orang lain.'
+  };
+  document.getElementById('daily-shadow').textContent = shadowTriggers[moonSign.sign]||'—';
+
+  // Energy windows
+  const windows = [
+    {time:'06:00 – 09:00', label:'Pagi', energy:'Tinggi', note:'Best untuk planning dan intention setting'},
+    {time:'10:00 – 13:00', label:'Siang awal', energy:mEl==='Fire'?'Puncak':'Baik', note:prodMap[mEl]},
+    {time:'14:00 – 16:00', label:'Siang akhir', energy:'Medium', note:'Fokus ke komunikasi dan follow-up'},
+    {time:'19:00 – 22:00', label:'Malam', energy:mEl==='Water'?'Tinggi':'Medium', note:'Refleksi, journaling, dan koneksi personal'},
+  ];
+  document.getElementById('daily-windows').innerHTML = windows.map(w=>
+    `<div style="display:grid;grid-template-columns:100px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--b1)">
+      <div><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--muted)">${w.time}</div><div style="font-family:var(--font-sans);font-size:11px;color:${w.energy==='Puncak'||w.energy==='Tinggi'?'var(--gold)':'var(--dim)'};margin-top:2px">${w.energy}</div></div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.5">${w.note}</div>
+    </div>`
+  ).join('');
+
+  // Cosmic weather
+  document.getElementById('daily-cosmic').textContent = `Sun transit di ${sunSign.sign} ${sunSign.deg}° dan Moon di ${moonSign.sign} menciptakan dynamic ${moonEL[sunSign.sign]===mEl?'yang kohesif — dua energi berbicara dalam bahasa yang sama':'yang kontrastif — ada tegangan produktif antara dorongan solar dan kebutuhan lunar'}. Untuk ${D.sunSign} dengan ${D.bazi.dayMaster}, hari ini adalah ${mEl===D.bazi.favEl.split(' ').pop()?'natural ally':'kesempatan untuk melatih fleksibilitas energetik'}.`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SHARE CARD
+// ═══════════════════════════════════════════════════════════
+let _shareType = 'soul';
+function setShareType(type, btn) {
+  _shareType = type;
+  document.querySelectorAll('#t-share .tb-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderShareCard();
+}
+function renderShareCard() {
+  const D = _D, n = _raw.name;
+  if(!D.sunSign) return;
+  const lp = D.numerology.lp;
+  const LP_MEANING2={1:'Pemimpin',2:'Diplomat',3:'Kreator',4:'Builder',5:'Petualang',6:'Pemelihara',7:'Pencari',8:'Penguasa',9:'Humanis',11:'Master Intuitif',22:'Master Builder',33:'Master Teacher'};
+  const card = document.getElementById('shareCardContent');
+  if(_shareType === 'soul') {
+    card.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.4em;color:rgba(201,168,76,0.5);margin-bottom:20px">SOUL SCORE</div>
+      <div style="font-family:var(--font-serif);font-size:80px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:4px">${D.soulScore}</div>
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--muted);margin-bottom:24px">${D.soulLabel.toUpperCase()}</div>
+      <div style="font-family:var(--font-serif);font-size:22px;font-weight:300;color:var(--text);margin-bottom:6px">${n}</div>
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--muted)">${D.sunSign} ☉ · ${D.hd.type} · LP${lp}</div>`;
+  } else if(_shareType === 'blueprint') {
+    card.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.4em;color:rgba(201,168,76,0.5);margin-bottom:20px">ENERGETIC BLUEPRINT</div>
+      <div style="font-family:var(--font-serif);font-size:26px;font-weight:300;color:var(--text);margin-bottom:20px">${n}</div>
+      ${[
+        ['☉ Sun', D.sunSign],['☽ Moon', D.moonSign],['↑ Ascendant', D.ascSign],
+        ['HD Type', D.hd.type],['Authority', D.hd.auth],['Life Path', String(lp)+' · '+LP_MEANING2[lp]],
+        ['Day Master', D.bazi.dayMaster],['Soul Score', String(D.soulScore)],
+      ].map(([l,v])=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--muted)">${l}</span><span style="font-family:var(--font-serif);font-size:14px;color:var(--text)">${v}</span></div>`).join('')}`;
+  } else if(_shareType === 'shadow') {
+    const sh = D.shadows[0];
+    card.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.4em;color:rgba(196,96,74,0.6);margin-bottom:16px">SHADOW ARCHETYPE</div>
+      <div style="font-size:28px;margin-bottom:12px">${sh.icon}</div>
+      <div style="font-family:var(--font-serif);font-size:20px;font-weight:400;color:var(--text);margin-bottom:14px">${sh.title}</div>
+      <div style="font-family:var(--font-serif);font-size:15px;font-style:italic;color:var(--dim);line-height:1.75;margin-bottom:20px">"${sh.body.slice(0,120)}..."</div>
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--muted)">${n} · ${D.sunSign} ☉ · ${D.hd.type}</div>`;
+  } else if(_shareType === 'daily') {
+    const jdNow = toJD(new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate(), 12);
+    const ms = lonToSign(moonLongitude(jdNow));
+    const today = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+    card.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.4em;color:rgba(201,168,76,0.5);margin-bottom:16px">DAILY ENERGY · ${today.toUpperCase()}</div>
+      <div style="font-family:var(--font-serif);font-size:42px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:8px">☽ ${ms.sign}</div>
+      <div style="font-family:var(--font-sans);font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:18px">Moon transit ${ms.sign} ${ms.deg}° — hari ini favors ${{'Fire':'action & inisiasi','Earth':'detail & eksekusi','Air':'komunikasi & ide','Water':'refleksi & koneksi'}[{'Aries':'Fire','Taurus':'Earth','Gemini':'Air','Cancer':'Water','Leo':'Fire','Virgo':'Earth','Libra':'Air','Scorpio':'Water','Sagittarius':'Fire','Capricorn':'Earth','Aquarius':'Air','Pisces':'Water'}[ms.sign]]||'balance'}.</div>
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--muted)">${n} · Soul Score ${D.soulScore}</div>`;
+  }
+}
+
+// Stars bg — reduced on mobile for performance
+(()=>{
+  const isMobile = window.innerWidth < 768;
+  const count = isMobile ? 50 : 120;
+  const bg=document.createElement('div');
+  bg.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden';
+  document.body.insertBefore(bg,document.body.firstChild);
+  const sty=document.createElement('style');
+  sty.textContent='@keyframes st0{0%,100%{opacity:.015}50%{opacity:.18}}@keyframes st1{0%,100%{opacity:.03}50%{opacity:.12}}@keyframes st2{0%,100%{opacity:.008}50%{opacity:.1}}';
+  document.head.appendChild(sty);
+  for(let i=0;i<count;i++){
+    const s=document.createElement('div');
+    const sz=Math.random()*1.5+0.2;
+    s.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;background:#fff;left:${Math.random()*100}%;top:${Math.random()*100}%;animation:st${i%3} ${(Math.random()*9+4).toFixed(1)}s ${(Math.random()*8).toFixed(1)}s ease-in-out infinite`;
+    bg.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
