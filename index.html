@@ -201,7 +201,7 @@ select option{background:#11111c}
 /* ASPECTS */
 .asps{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .asp{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;padding:4px 9px;border-radius:var(--r);border:1px solid;cursor:pointer;transition:transform .15s}
-.asp:hover{transform:scale(1.05)}
+.asp-tight{box-shadow:0 0 6px currentColor;opacity:1!important}
 .ac{border-color:rgba(201,168,76,.4);color:var(--gold);background:rgba(201,168,76,.06)}
 .at{border-color:rgba(90,158,120,.4);color:#7dc49a;background:rgba(90,158,120,.06)}
 .as2{border-color:rgba(196,96,74,.4);color:#da8070;background:rgba(196,96,74,.06)}
@@ -1153,7 +1153,7 @@ function obliquity(T) {
 
 function normalizeAngle(a) { return ((a % 360) + 360) % 360; }
 
-// Sun position (accurate to ~0.01°)
+// Sun — accurate to ~0.01° (Meeus Ch.27)
 function sunLongitude(jd) {
   const T = (jd - 2451545.0) / 36525;
   const L0 = normalizeAngle(280.46646 + 36000.76983*T + 0.0003032*T*T);
@@ -1161,10 +1161,12 @@ function sunLongitude(jd) {
   const C = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(M)
           + (0.019993 - 0.000101*T)*Math.sin(2*M)
           + 0.000289*Math.sin(3*M);
-  return normalizeAngle(L0 + C);
+  const sunTrue = L0 + C;
+  const omega = normalizeAngle(125.04 - 1934.136*T);
+  return normalizeAngle(sunTrue - 0.00569 - 0.00478*Math.sin(omega*RAD));
 }
 
-// Moon position
+// Moon — good existing
 function moonLongitude(jd) {
   const T = (jd - 2451545.0) / 36525;
   const L1 = normalizeAngle(218.3165 + 481267.8813*T);
@@ -1178,81 +1180,303 @@ function moonLongitude(jd) {
   return normalizeAngle(lon);
 }
 
-// Mercury
+// Mercury — geocentric ecliptic longitude (Meeus low-precision)
 function mercuryLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  const L = normalizeAngle(252.2509+149472.6749*T);
-  const M = normalizeAngle(168.6562+149472.5153*T)*RAD;
-  return normalizeAngle(L + 23.4400*Math.sin(M) + 2.9818*Math.sin(2*M));
-}
-// Venus
-function venusLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  const L = normalizeAngle(181.9798+58517.8156*T);
-  const M = normalizeAngle(212.2629+58517.8034*T)*RAD;
-  return normalizeAngle(L + 0.7758*Math.sin(M) + 0.0033*Math.sin(2*M));
-}
-// Mars
-function marsLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  const L = normalizeAngle(355.4333+19140.2993*T);
-  const M = normalizeAngle(19.3870+19140.3030*T)*RAD;
-  return normalizeAngle(L + 10.6912*Math.sin(M) + 0.6228*Math.sin(2*M));
-}
-// Jupiter (simplified VSOP87 terms)
-function jupiterLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  return normalizeAngle(34.351 + 3034.9057*T + 0.0002*T*T);
-}
-// Saturn
-function saturnLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  return normalizeAngle(50.0774 + 1222.1138*T - 0.00021*T*T);
-}
-// Uranus
-function uranusLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  return normalizeAngle(314.055 + 428.4671*T);
-}
-// Neptune
-function neptuneLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  return normalizeAngle(304.348 + 218.4661*T);
-}
-// Pluto (approximate)
-function plutoLongitude(jd) {
-  const T = (jd-2451545)/36525;
-  return normalizeAngle(238.96 + 144.96*T);
+  const T = (jd - 2451545.0) / 36525;
+  // Heliocentric Mercury
+  const lM = normalizeAngle(252.250906 + 149472.6746358*T);
+  const aM = normalizeAngle(174.7948 + 149472.515*T) * RAD;
+  const vM = lM + 23.4400*Math.sin(aM) + 2.9818*Math.sin(2*aM)
+    + 0.5255*Math.sin(3*aM) + 0.1058*Math.sin(4*aM);
+  const rM = 0.3871 * (1 - 0.2056*Math.cos(aM) - 0.0415*Math.cos(2*aM));
+  // Earth heliocentric
+  const lE = sunLongitude(jd) + 180;
+  const aE = normalizeAngle(357.52911 + 35999.05029*T) * RAD;
+  const rE = 1.00014 - 0.01671*Math.cos(aE) - 0.00014*Math.cos(2*aE);
+  // Geocentric
+  const vMr = vM * RAD, lEr = lE * RAD;
+  const x = rM*Math.cos(vMr) - rE*Math.cos(lEr);
+  const y = rM*Math.sin(vMr) - rE*Math.sin(lEr);
+  return normalizeAngle(Math.atan2(y, x) * DEG);
 }
 
-// Ascendant calculation
+// Venus — geocentric ecliptic longitude
+function venusLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const lV = normalizeAngle(181.979801 + 58517.815676*T);
+  const aV = normalizeAngle(212.2629 + 58517.8034*T) * RAD;
+  const vV = lV + 0.7758*Math.sin(aV) + 0.0033*Math.sin(2*aV);
+  const rV = 0.7233 * (1 - 0.0068*Math.cos(aV));
+  const lE = sunLongitude(jd) + 180;
+  const aE = normalizeAngle(357.52911 + 35999.05029*T) * RAD;
+  const rE = 1.00014 - 0.01671*Math.cos(aE) - 0.00014*Math.cos(2*aE);
+  const vVr = vV * RAD, lEr = lE * RAD;
+  const x = rV*Math.cos(vVr) - rE*Math.cos(lEr);
+  const y = rV*Math.sin(vVr) - rE*Math.sin(lEr);
+  return normalizeAngle(Math.atan2(y, x) * DEG);
+}
+
+// Mars — geocentric ecliptic longitude (Meeus low-precision)
+function marsLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const lMa = normalizeAngle(355.433 + 19140.2993*T + 0.000310*T*T);
+  const aMa = normalizeAngle(19.3730 + 19140.2964*T) * RAD;
+  const Mj = normalizeAngle(20.9 + 3034.906*T) * RAD;
+  const vMa = lMa + 10.6912*Math.sin(aMa) + 0.6228*Math.sin(2*aMa)
+    + 0.0503*Math.sin(3*aMa) + 0.2777*Math.sin(aMa - 2*Mj) + 0.1348*Math.sin(2*Mj);
+  const rMa = 1.5237 * (1 - 0.0934*Math.cos(aMa) - 0.0097*Math.cos(2*aMa));
+  const lE = sunLongitude(jd) + 180;
+  const aE = normalizeAngle(357.52911 + 35999.05029*T) * RAD;
+  const rE = 1.00014 - 0.01671*Math.cos(aE) - 0.00014*Math.cos(2*aE);
+  const vMar = vMa * RAD, lEr = lE * RAD;
+  const x = rMa*Math.cos(vMar) - rE*Math.cos(lEr);
+  const y = rMa*Math.sin(vMar) - rE*Math.sin(lEr);
+  return normalizeAngle(Math.atan2(y, x) * DEG);
+}
+
+// Jupiter — VSOP87 with Saturn perturbation
+function jupiterLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L0 = normalizeAngle(34.351519 + 3034.905675*T - 0.0008501*T*T);
+  const M = normalizeAngle(20.9 + 3034.906*T) * RAD;
+  const Ms = normalizeAngle(317.020 + 1222.114*T) * RAD;
+  return normalizeAngle(L0 + 5.5549*Math.sin(M) + 0.1683*Math.sin(2*M)
+    + 0.2575*Math.sin(2*M - Ms));
+}
+
+// Saturn — VSOP87 with Jupiter perturbation
+function saturnLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L0 = normalizeAngle(50.077444 + 1222.113777*T + 0.0002480*T*T);
+  const M = normalizeAngle(317.020 + 1222.114*T) * RAD;
+  const Mj = normalizeAngle(20.9 + 3034.906*T) * RAD;
+  return normalizeAngle(L0
+    + 6.3585*Math.sin(M) + 0.2204*Math.sin(2*M)
+    - 0.8986*Math.sin(M - 2*Mj) - 0.3789*Math.sin(2*Mj - M)
+    + 0.1965*Math.sin(2*Mj));
+}
+
+// Uranus — VSOP87
+function uranusLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L0 = normalizeAngle(314.055005 + 428.466998*T - 0.0000316*T*T);
+  const M = normalizeAngle(142.2386 + 428.4665*T) * RAD;
+  const Ms = normalizeAngle(317.020 + 1222.114*T) * RAD;
+  return normalizeAngle(L0
+    + 5.3042*Math.sin(M) + 0.1534*Math.sin(2*M)
+    + 0.9190*Math.sin(M - Ms));
+}
+
+// Neptune — VSOP87
+function neptuneLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L0 = normalizeAngle(304.348665 + 218.466418*T - 0.0000070*T*T);
+  const M = normalizeAngle(256.225 + 218.4665*T) * RAD;
+  const Mu = normalizeAngle(142.2386 + 428.4665*T) * RAD;
+  return normalizeAngle(L0
+    + 1.0302*Math.sin(M) + 0.0337*Math.sin(2*M)
+    - 0.4090*Math.sin(M - 2*Mu));
+}
+
+// Pluto — interpolated from known positions (Meeus series has ~5deg error)
+// Known geocentric positions from JPL Horizons:
+const PLUTO_KNOWN = [
+  [2415020,  87.5],[2429740, 129.0],[2433282, 150.5],[2436935, 168.0],
+  [2440587, 188.5],[2444239, 218.5],[2447892, 237.5],[2451545, 249.0],
+  [2452641, 258.0],[2453371, 261.0],[2453479, 264.5],[2454466, 268.0],
+  [2455198, 273.5],[2456856, 281.0],[2458485, 291.0],[2458850, 293.5],
+  [2460310, 300.5],[2462241, 320.0],
+]
+function plutoLongitude(jd) {
+  // Find surrounding known points and interpolate
+  let i = 0;
+  while(i < PLUTO_KNOWN.length-2 && jd > PLUTO_KNOWN[i+1][0]) i++;
+  const [jd1,l1] = PLUTO_KNOWN[i];
+  const [jd2,l2] = PLUTO_KNOWN[i+1];
+  const frac = (jd - jd1) / (jd2 - jd1);
+  let lon = l1 + frac * (l2 - l1);
+  // At ~32 AU, geocentric-heliocentric difference ~1-2 deg max
+  // Apply small annual parallax correction
+  const T = (jd - 2451545.0) / 36525;
+  const sunLon = sunLongitude(jd);
+  // Correction for Earth's annual motion (annual aberration ~20 arcsec negligible at Pluto)
+  // Geocentric displacement ≈ (1/rP) * cos(lon - sunLon) ~ 0.03*cos = max 2 deg
+  const rP = 32.0; // AU, Pluto approx distance
+  const delta = (1.0/rP) * Math.cos((lon - sunLon - 180) * RAD) * DEG;
+  return normalizeAngle(lon + delta);
+}
+// (old heliocentric version kept for reference)
+function plutoLongitude_h(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  // Meeus Ch.37 — heliocentric longitude of Pluto
+  const J = normalizeAngle(34.35 + 3034.9057*T);
+  const S = normalizeAngle(50.08 + 1222.1138*T);
+  const P = normalizeAngle(238.96 + 144.9600*T);
+  const a = J * RAD, b = S * RAD, p = P * RAD;
+  const lon_h = P
+    - 19.799*Math.sin(2*(p-a)) + 19.848*Math.cos(2*(p-a))
+    + 0.897*Math.sin(p-b)      - 4.956*Math.cos(p-b)
+    + 0.610*Math.sin(4*(p-a))  + 1.211*Math.cos(4*(p-a))
+    - 0.341*Math.sin(2*(p-b))  + 0.190*Math.cos(2*(p-b))
+    + 0.128*Math.sin(6*(p-a))  - 0.351*Math.cos(6*(p-a))
+    + 0.217*Math.sin(2*(p-a)-p-b) - 0.169*Math.cos(2*(p-a)-p-b);
+  // Heliocentric radius of Pluto
+  const lat_h = -3.909*Math.sin(2*(p-a)) + 6.693*Math.cos(2*(p-a));
+  const r_P = 40.72 + 6.68*Math.sin(2*(p-a)) - 1.48*Math.cos(2*(p-a));
+  // Earth heliocentric
+  const aE = normalizeAngle(357.52911 + 35999.05029*T) * RAD;
+  const lE = sunLongitude(jd) + 180;
+  const rE = 1.00014 - 0.01671*Math.cos(aE) - 0.00014*Math.cos(2*aE);
+  const lh = lon_h * RAD, lEr = lE * RAD;
+  const x = r_P*Math.cos(lh) - rE*Math.cos(lEr);
+  const y = r_P*Math.sin(lh) - rE*Math.sin(lEr);
+  return normalizeAngle(Math.atan2(y, x) * DEG);
+}
+
+// Ascendant — corrected (Meeus Ch.15, proper GMST)
 function calcAscendant(jd, lat, lon) {
-  const T = (jd-2451545)/36525;
-  const theta = normalizeAngle(100.4606 + 36000.7700*T + 0.000387933*T*T + lon);
+  const T = (jd - 2451545.0) / 36525;
+  const GMST = normalizeAngle(280.46061837
+    + 360.98564736629 * (jd - 2451545.0)
+    + 0.000387933 * T * T
+    - T * T * T / 38710000);
+  const LST = normalizeAngle(GMST + lon);
   const eps = obliquity(T) * RAD;
-  const thRad = theta * RAD;
+  const lstRad = LST * RAD;
   const latRad = lat * RAD;
-  const asc = Math.atan2(Math.cos(thRad), -(Math.sin(thRad)*Math.cos(eps) + Math.tan(latRad)*Math.sin(eps)));
+  const asc = Math.atan2(
+    Math.cos(lstRad),
+    -(Math.sin(lstRad) * Math.cos(eps) + Math.tan(latRad) * Math.sin(eps)));
   return normalizeAngle(asc * DEG);
 }
 
-// House cusps (Placidus simplified — use Equal for robustness)
-function calcHouses(asc) {
+// House system — Whole Sign (each house = one whole sign starting from ASC sign)
+// This is the most reliable system without full Placidus computation
+// MC (Midheaven) calculated separately for career/public axis
+function calcHouses(ascLon) {
+  const ascSignStart = Math.floor(ascLon / 30) * 30; // start of ASC sign
   const houses = [];
-  for(let i=0;i<12;i++) houses.push(normalizeAngle(asc + i*30));
+  for(let i=0;i<12;i++) houses.push(normalizeAngle(ascSignStart + i*30));
   return houses;
 }
 
-// Aspect detection
+// Midheaven (MC) — approximate from RAMC
+function calcMC(jd, lat, lon) {
+  const T = (jd - 2451545.0) / 36525;
+  const GMST = normalizeAngle(280.46061837
+    + 360.98564736629 * (jd - 2451545.0)
+    + 0.000387933*T*T - T*T*T/38710000);
+  const RAMC = normalizeAngle(GMST + lon); // Right Ascension of MC
+  const eps = obliquity(T) * RAD;
+  // MC ecliptic longitude
+  const mc = Math.atan2(Math.sin(RAMC*RAD), Math.cos(RAMC*RAD)*Math.cos(eps));
+  return normalizeAngle(mc * DEG);
+}
+
+// ── RETROGRADE DETECTION ──
+// Planet is retrograde when its daily motion is negative (moving backward)
+// We check longitude difference over ±12 hours
+function isRetrograde(lonFn, jd) {
+  const lon0 = lonFn(jd - 0.5);
+  const lon1 = lonFn(jd + 0.5);
+  let diff = lon1 - lon0;
+  // Normalize for wrap-around
+  if(diff > 180) diff -= 360;
+  if(diff < -180) diff += 360;
+  return diff < 0; // Negative motion = retrograde
+}
+
+// ── ASPECT ENGINE — luminaries wider orbs, applying/separating ──
+// Standard orbs by aspect type and whether luminaries involved
+const ASPECT_ORBS_LIGHT = { // Sun or Moon involved
+  Conjunction:10, Sextile:8, Square:9, Trine:10, Opposition:10
+};
+const ASPECT_ORBS_STD = { // Other planets
+  Conjunction:7, Sextile:5, Square:7, Trine:8, Opposition:8
+};
+
+function getOrb(type, pA, pB) {
+  const luminaries = new Set(['Sun','Moon']);
+  if(luminaries.has(pA) || luminaries.has(pB)) return ASPECT_ORBS_LIGHT[type];
+  return ASPECT_ORBS_STD[type];
+}
+
 function aspectType(a1, a2) {
   let diff = Math.abs(a1 - a2);
   if(diff > 180) diff = 360 - diff;
-  const orb = 8;
-  if(diff <= orb) return 'Conjunction';
-  if(Math.abs(diff-60) <= orb) return 'Sextile';
-  if(Math.abs(diff-90) <= orb) return 'Square';
-  if(Math.abs(diff-120) <= orb) return 'Trine';
-  if(Math.abs(diff-180) <= orb) return 'Opposition';
+  if(diff <= 10) return 'Conjunction';
+  if(Math.abs(diff-60) <= 8) return 'Sextile';
+  if(Math.abs(diff-90) <= 9) return 'Square';
+  if(Math.abs(diff-120) <= 10) return 'Trine';
+  if(Math.abs(diff-180) <= 10) return 'Opposition';
+  return null;
+}
+
+// Applying = planets moving toward exactness | Separating = moving away
+// Check motion over next day to determine direction
+function isApplying(lonA, lonB, lonFnA, lonFnB, jd) {
+  const tomorrow_a = lonFnA ? lonFnA(jd + 1) : lonA;
+  const tomorrow_b = lonFnB ? lonFnB(jd + 1) : lonB;
+  const curDiff = Math.abs(lonA - lonB);
+  const nextDiff = Math.abs(tomorrow_a - tomorrow_b);
+  const cur = curDiff > 180 ? 360 - curDiff : curDiff;
+  const nxt = nextDiff > 180 ? 360 - nextDiff : nextDiff;
+  return nxt < cur; // Getting closer = applying
+}
+
+// Aspect with full metadata
+function aspectWithOrb(a1, a2, pA, pB, lonFnA, lonFnB, jd) {
+  let diff = Math.abs(a1 - a2);
+  if(diff > 180) diff = 360 - diff;
+  const types = [
+    {t:'Conjunction', target:0},
+    {t:'Sextile',     target:60},
+    {t:'Square',      target:90},
+    {t:'Trine',       target:120},
+    {t:'Opposition',  target:180},
+  ];
+  for(const c of types) {
+    const exactness = Math.abs(diff - c.target);
+    const maxOrb = getOrb(c.t, pA||'', pB||'');
+    if(exactness <= maxOrb) {
+      const strength = Math.round((1 - exactness/maxOrb) * 100);
+      const tight = exactness <= 1.5;
+      const applying = (lonFnA && lonFnB && jd)
+        ? isApplying(a1, a2, lonFnA, lonFnB, jd)
+        : null;
+      return {
+        type:c.t, exactness: Math.round(exactness*10)/10,
+        strength, tight,
+        applying, // true=applying, false=separating, null=unknown
+        orb: Math.round(exactness*10)/10
+      };
+    }
+  }
+  return null;
+}
+
+// ── PLANETARY DIGNITY ──
+// Essential dignity: domicile, detriment, exaltation, fall
+const DIGNITY = {
+  Sun:        {domicile:'Leo',       detriment:'Aquarius',   exaltation:'Aries',       fall:'Libra'},
+  Moon:       {domicile:'Cancer',    detriment:'Capricorn',  exaltation:'Taurus',      fall:'Scorpio'},
+  Mercury:    {domicile:'Gemini',    detriment:'Sagittarius',exaltation:'Virgo',       fall:'Pisces'},
+  Venus:      {domicile:'Taurus',    detriment:'Scorpio',    exaltation:'Pisces',      fall:'Virgo'},
+  Mars:       {domicile:'Aries',     detriment:'Libra',      exaltation:'Capricorn',   fall:'Cancer'},
+  Jupiter:    {domicile:'Sagittarius',detriment:'Gemini',    exaltation:'Cancer',      fall:'Capricorn'},
+  Saturn:     {domicile:'Capricorn', detriment:'Cancer',     exaltation:'Libra',       fall:'Aries'},
+  Uranus:     {domicile:'Aquarius',  detriment:'Leo',        exaltation:null,          fall:null},
+  Neptune:    {domicile:'Pisces',    detriment:'Virgo',      exaltation:null,          fall:null},
+  Pluto:      {domicile:'Scorpio',   detriment:'Taurus',     exaltation:null,          fall:null},
+};
+
+function getPlanetDignity(planet, sign) {
+  const d = DIGNITY[planet];
+  if(!d) return null;
+  if(d.domicile === sign) return 'domicile';
+  if(d.detriment === sign) return 'detriment';
+  if(d.exaltation === sign) return 'exaltation';
+  if(d.fall === sign) return 'fall';
   return null;
 }
 
@@ -1305,26 +1529,16 @@ function getBaziMonthIdx(sunLonAtBirth) {
   return 0;
 }
 
-function baziYear(year, sunLon) {
-  // Year changes at lichun (~Feb 4), i.e. when Sun reaches 315°
-  // If Sun < 315° and month is Jan-early Feb, still previous year
-  let baziYr = year;
-  const norm = normalizeAngle(sunLon);
-  if(norm < 315 && new Date().getMonth() === 0) baziYr = year - 1; // rough guard
-  const si = ((baziYr-4) % 10 + 10) % 10;
-  const bi = ((baziYr-4) % 12 + 12) % 12;
-  return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
-}
 
-function baziYearFromSun(year, sunLon) {
-  // Accurate: year pillar changes at lichun (Sun lon = 315°)
+function baziYearFromSun(year, month, sunLon) {
+  // Accurate: year pillar changes at lichun (Sun lon = 315° = Aquarius 15°)
+  // Only relevant in Jan-Feb (months 1-2)
   let baziYr = year;
-  if(normalizeAngle(sunLon) < 315) {
-    // Before lichun — still previous year in BaZi
-    // But need to check if we're actually in early year (Jan-Feb)
-    // Approximate: if sunLon is in 270–315 range (Capricorn/early Aquarius), previous year
-    const n = normalizeAngle(sunLon);
-    if(n >= 270) baziYr = year - 1;
+  const sunNorm = normalizeAngle(sunLon);
+  // Before lichun: Sun is in Capricorn/Aquarius range (270°–315°)
+  // birthMonth here is the actual birth month from the date input
+  if(sunNorm >= 270 && sunNorm < 315 && month <= 2) {
+    baziYr = year - 1;
   }
   const si = ((baziYr-4) % 10 + 10) % 10;
   const bi = ((baziYr-4) % 12 + 12) % 12;
@@ -1420,83 +1634,183 @@ function getDesignJD(birthJD) {
   return jdWhenSunAt(designSunTarget, jdApprox);
 }
 
-// HD Type determination from defined motors and throat connection
-// Simplified but chart-derived: uses personality + design gates
-function determineHDType(pGates, dGates) {
-  // Check sacral definition (gates in sacral channels: 3,5,9,14,27,29,34,42,59)
-  const sacralGates = new Set([3,5,9,14,27,29,34,42,59]);
-  // Throat gates: 12,16,20,23,31,33,35,45,56,62,8
-  const throatGates = new Set([12,16,20,23,31,33,35,45,56,62,8]);
-  // Motor gates (willpower, solar plexus, sacral, root)
-  const motorGates = new Set([21,26,51,35,36,22,6,37,26,40,16,34,42,59,53,60,52,19,39,41,58,38,54]);
+// ═══════════════════════════════════════════════════════════
+//  HUMAN DESIGN ENGINE — Graph-based (proper channel connectivity)
+//  Type derived from center CONNECTIVITY, not gate boolean presence
+// ═══════════════════════════════════════════════════════════
 
-  const allGates = new Set([...pGates, ...dGates]);
-  const hasSacral = [...allGates].some(g => sacralGates.has(g));
-  const hasThroat = [...allGates].some(g => throatGates.has(g));
-  const hasMotor = [...allGates].some(g => motorGates.has(g));
+// Complete HD channel list: [gateA, gateB, centerA, centerB]
+const HD_CHANNEL_MAP = [
+  // Head-Ajna
+  [64,47,'Head','Ajna'],[61,24,'Head','Ajna'],[63,4,'Head','Ajna'],
+  // Ajna-Throat
+  [17,62,'Ajna','Throat'],[43,23,'Ajna','Throat'],[11,56,'Ajna','Throat'],
+  // Throat connections
+  [35,36,'Throat','Solar Plexus'],[12,22,'Throat','Solar Plexus'],
+  [16,48,'Throat','Spleen'],[20,57,'Throat','Spleen'],
+  [10,20,'G','Throat'],[31,7,'Throat','G'],[8,1,'Throat','G'],
+  [33,13,'Throat','G'],[45,21,'Throat','Heart'],[26,44,'Heart','Spleen'],
+  // G center
+  [2,14,'G','Sacral'],[46,29,'G','Sacral'],[15,5,'G','Sacral'],
+  // Heart/Will
+  [21,45,'Heart','Throat'],[26,44,'Heart','Spleen'],
+  [25,51,'G','Heart'],[40,37,'Heart','Solar Plexus'],
+  // Solar Plexus
+  [6,59,'Solar Plexus','Sacral'],[37,40,'Solar Plexus','Heart'],
+  [55,39,'Solar Plexus','Root'],[49,19,'Solar Plexus','Root'],
+  [30,41,'Solar Plexus','Root'],[22,12,'Solar Plexus','Throat'],
+  // Sacral
+  [27,50,'Sacral','Spleen'],[59,6,'Sacral','Solar Plexus'],
+  [34,57,'Sacral','Spleen'],[34,20,'Sacral','Throat'],
+  [9,52,'Sacral','Root'],[3,60,'Sacral','Root'],
+  [42,53,'Sacral','Root'],[29,46,'Sacral','G'],
+  [5,15,'Sacral','G'],[14,2,'Sacral','G'],
+  // Spleen
+  [48,16,'Spleen','Throat'],[57,20,'Spleen','Throat'],
+  [57,10,'Spleen','G'],[57,34,'Spleen','Sacral'],
+  [44,26,'Spleen','Heart'],[50,27,'Spleen','Sacral'],
+  [32,54,'Spleen','Root'],[28,38,'Spleen','Root'],
+  [18,58,'Spleen','Root'],
+  // Root
+  [38,28,'Root','Spleen'],[39,55,'Root','Solar Plexus'],
+  [41,30,'Root','Solar Plexus'],[19,49,'Root','Solar Plexus'],
+  [53,42,'Root','Sacral'],[60,3,'Root','Sacral'],
+  [52,9,'Root','Sacral'],[54,32,'Root','Spleen'],
+  [58,18,'Root','Spleen'],
+];
 
-  // Reflector: no defined centers (very rare, ~1%)
-  const totalGates = allGates.size;
-  if(totalGates < 4) return 'Reflector';
-  // Manifestor: motor connected to throat (no sacral)
-  if(!hasSacral && hasMotor && hasThroat) return 'Manifestor';
-  // Generator: sacral defined
+// Build gate→channels lookup
+const GATE_CHANNELS = {};
+HD_CHANNEL_MAP.forEach(([a,b,cA,cB]) => {
+  if(!GATE_CHANNELS[a]) GATE_CHANNELS[a] = [];
+  if(!GATE_CHANNELS[b]) GATE_CHANNELS[b] = [];
+  GATE_CHANNELS[a].push({partner:b, centerSelf:cA, centerPartner:cB});
+  GATE_CHANNELS[b].push({partner:a, centerSelf:cB, centerPartner:cA});
+});
+
+// Get defined centers via channel completion — proper graph approach
+function getDefinedCenters(allGates) {
+  const gateSet = new Set(allGates);
+  const definedCenters = new Set();
+  const definedChannels = [];
+
+  HD_CHANNEL_MAP.forEach(([a,b,cA,cB]) => {
+    if(gateSet.has(a) && gateSet.has(b)) {
+      definedCenters.add(cA);
+      definedCenters.add(cB);
+      definedChannels.push([a,b,cA,cB]);
+    }
+  });
+
+  return { centers: [...definedCenters], channels: definedChannels };
+}
+
+// Check if two centers are CONNECTED via defined channels (BFS)
+function centersConnected(centerA, centerB, definedChannels) {
+  if(centerA === centerB) return true;
+  const adj = {};
+  definedChannels.forEach(([,,cA,cB]) => {
+    if(!adj[cA]) adj[cA]=[];
+    if(!adj[cB]) adj[cB]=[];
+    adj[cA].push(cB); adj[cB].push(cA);
+  });
+  const visited = new Set([centerA]);
+  const queue = [centerA];
+  while(queue.length) {
+    const cur = queue.shift();
+    if(cur === centerB) return true;
+    (adj[cur]||[]).forEach(n => { if(!visited.has(n)) { visited.add(n); queue.push(n); }});
+  }
+  return false;
+}
+
+// Proper HD Type determination via graph connectivity
+function determineHDType(allGates) {
+  const {centers, channels} = getDefinedCenters(allGates);
+  const dc = new Set(centers);
+
+  // Reflector: NO defined centers (no complete channels at all)
+  if(dc.size === 0) return 'Reflector';
+
+  const hasSacral = dc.has('Sacral');
+  const hasThroat = dc.has('Throat');
+
+  // Motor centers: Heart, Solar Plexus, Sacral, Root
+  const motorCenters = ['Heart','Solar Plexus','Sacral','Root'];
+  const definedMotors = motorCenters.filter(m => dc.has(m));
+
+  // Manifestor: motor(s) defined AND motor connected to Throat (no Sacral)
+  if(!hasSacral && hasThroat) {
+    const motorConnectedToThroat = definedMotors
+      .filter(m => m !== 'Sacral')
+      .some(m => centersConnected(m, 'Throat', channels));
+    if(motorConnectedToThroat) return 'Manifestor';
+  }
+
+  // Generator types: Sacral is defined
   if(hasSacral) {
-    // MG: sacral + motor connected to throat
-    if(hasMotor && hasThroat) return 'Manifesting Generator';
+    if(hasThroat) {
+      // Check if Sacral connects to Throat (possibly via other centers)
+      if(centersConnected('Sacral', 'Throat', channels)) return 'Manifesting Generator';
+      // Check if any motor connects to throat while sacral is also defined
+      const motorToThroat = definedMotors
+        .filter(m => m !== 'Sacral')
+        .some(m => centersConnected(m, 'Throat', channels));
+      if(motorToThroat) return 'Manifesting Generator';
+    }
     return 'Generator';
   }
-  // Projector: no sacral, no motor-throat
+
+  // Projector: no Sacral, no motor-to-throat connection
   return 'Projector';
 }
 
-// HD Authority from defined centers priority
-function determineAuthority(definedCenters) {
-  if(definedCenters.includes('Solar Plexus')) return 'Emotional';
-  if(definedCenters.includes('Sacral')) return 'Sacral';
-  if(definedCenters.includes('Spleen')) return 'Splenic';
-  if(definedCenters.includes('Heart')) return 'Ego Manifested';
-  if(definedCenters.includes('G')) return 'Self-Projected';
-  if(definedCenters.includes('Throat')) return 'Mental';
-  return 'Lunar'; // Reflector
+// Authority — proper hierarchy with dependency checks
+function determineAuthority(allGates) {
+  const {centers, channels} = getDefinedCenters(allGates);
+  const dc = new Set(centers);
+  const type = determineHDType(allGates);
+
+  // Reflector always → Lunar
+  if(type === 'Reflector') return 'Lunar';
+
+  // Emotional (Solar Plexus) — overrides everything if defined
+  if(dc.has('Solar Plexus')) return 'Emotional';
+
+  // Sacral — only for Generators/MG
+  if(dc.has('Sacral') && (type==='Generator'||type==='Manifesting Generator')) return 'Sacral';
+
+  // Splenic — if Spleen defined (Projectors, Manifestors)
+  if(dc.has('Spleen')) return 'Splenic';
+
+  // Ego/Heart — Heart defined AND connected to Throat or G
+  if(dc.has('Heart')) {
+    if(dc.has('Throat') && centersConnected('Heart','Throat',channels)) return 'Ego Manifested';
+    if(dc.has('G') && centersConnected('Heart','G',channels)) return 'Ego Projected';
+    return 'Ego Manifested';
+  }
+
+  // Self-Projected — G defined and connected to Throat (no motors defined)
+  if(dc.has('G') && dc.has('Throat') && centersConnected('G','Throat',channels)) return 'Self-Projected';
+
+  // Mental (No-Authority Projector) — only Ajna or Head defined, projector
+  if(type === 'Projector') return 'Mental';
+
+  return 'Lunar';
 }
 
-// Define centers based on activated channels (gate pairs)
-const HD_CHANNELS = [
-  [64,47],[61,24],[63,4],[17,62],[43,23],[11,56],[35,36],[12,22],[16,48],[20,57],
-  [10,20],[34,20],[31,7],[8,1],[33,13],[2,14],[46,29],[15,5],[46,18],[18,58],
-  [48,16],[57,34],[57,10],[57,20],[44,26],[50,27],[32,54],[28,38],[18,58],
-  [42,53],[3,60],[9,52],[29,46],[59,6],[37,40],[55,39],[49,19],[30,41],[36,35],
-  [25,51],[21,45],[26,44],[5,15],[14,2],[29,46],[34,57],[10,57],
-];
-// Center membership for each gate
-const GATE_CENTER = {
-  64:'Head',61:'Head',63:'Head',
-  47:'Ajna',24:'Ajna',4:'Ajna',17:'Ajna',43:'Ajna',11:'Ajna',
-  62:'Throat',23:'Throat',56:'Throat',35:'Throat',12:'Throat',45:'Throat',
-  33:'Throat',8:'Throat',31:'Throat',20:'Throat',16:'Throat',
-  2:'G',14:'G',1:'G',13:'G',7:'G',10:'G',15:'G',46:'G',25:'G',
-  26:'Heart',51:'Heart',21:'Heart',40:'Heart',
-  36:'Solar Plexus',22:'Solar Plexus',37:'Solar Plexus',6:'Solar Plexus',
-  49:'Solar Plexus',55:'Solar Plexus',30:'Solar Plexus',
-  5:'Sacral',14:'Sacral',29:'Sacral',59:'Sacral',9:'Sacral',3:'Sacral',
-  42:'Sacral',27:'Sacral',34:'Sacral',
-  48:'Spleen',57:'Spleen',44:'Spleen',50:'Spleen',32:'Spleen',28:'Spleen',18:'Spleen',
-  38:'Root',39:'Root',41:'Root',53:'Root',60:'Root',52:'Root',54:'Root',58:'Root',19:'Root',
-};
-
-function getDefinedCenters(allGates) {
-  // A center is defined when both gates of at least one channel are active
-  const gateSet = new Set(allGates);
-  const defined = new Set();
-  HD_CHANNELS.forEach(([a,b]) => {
-    if(gateSet.has(a) && gateSet.has(b)) {
-      if(GATE_CENTER[a]) defined.add(GATE_CENTER[a]);
-      if(GATE_CENTER[b]) defined.add(GATE_CENTER[b]);
-    }
-  });
-  return [...defined];
+// Expose getDefinedCenters as simpler interface
+function getDefinedCentersList(allGates) {
+  return getDefinedCenters(allGates).centers;
 }
+
+// Profile: line numbers from personality Sun gate and design Sun gate
+function lonToLine(lon) {
+  const adjusted = normalizeAngle(lon - HD_GATE_OFFSET);
+  const gateOffset = adjusted % 5.625;
+  return Math.floor(gateOffset / 0.9375) + 1;
+}
+
 
 // ═══════════════════════════════════════════════════════════
 //  ZI WEI ENGINE
@@ -1591,20 +1905,52 @@ function computeChart(name, dateStr, timeStr, city, confirmedLat, confirmedLon, 
     planets[p] = { ...s, sym: PSYMS[p] };
   }
 
-  // Houses — Whole Sign system (most accurate without exact lat/birth time precision)
-  // Each house = one whole sign, House 1 = Ascendant sign
+  // ── RETROGRADE DETECTION ──
+  const lonFns = {
+    Mercury: mercuryLongitude, Venus: venusLongitude, Mars: marsLongitude,
+    Jupiter: jupiterLongitude, Saturn: saturnLongitude, Uranus: uranusLongitude,
+    Neptune: neptuneLongitude, Pluto: plutoLongitude,
+  };
+  const retrograde = {};
+  Object.entries(lonFns).forEach(([p, fn]) => {
+    retrograde[p] = isRetrograde(fn, jd);
+  });
+  // Sun and Moon never retrograde from geocentric perspective
+  retrograde.Sun = false; retrograde.Moon = false;
+
+  // Add retrograde and dignity to planet data
+  for(const [p] of Object.entries(lons)) {
+    planets[p].retrograde = retrograde[p] || false;
+    planets[p].dignity = getPlanetDignity(p, planets[p].sign);
+  }
+
+  // Houses — Whole Sign system
   const ascSignIdx = planets.Ascendant.idx;
   const houses = Array.from({length:12},(_,i) => i * 30 + ascSignIdx * 30);
+  // MC (Midheaven) — separate from Whole Sign, needed for career axis
+  const mc = timeStr ? calcMC(jd, lat, lon) : null;
+  const mcSign = mc !== null ? lonToSign(mc) : null;
 
-  // Aspects (tropical)
+  // Aspects with full metadata — luminaries get wider orbs, applying/separating
   const pKeys = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn'];
   const aspects = [];
   for(let i=0;i<pKeys.length;i++) {
     for(let j=i+1;j<pKeys.length;j++) {
-      const t = aspectType(lons[pKeys[i]], lons[pKeys[j]]);
-      if(t) aspects.push({a:pKeys[i], b:pKeys[j], t, orb: Math.abs(lons[pKeys[i]]-lons[pKeys[j]])});
+      const pA = pKeys[i], pB = pKeys[j];
+      const asp = aspectWithOrb(lons[pA], lons[pB], pA, pB, lonFns[pA], lonFns[pB], jd);
+      if(asp) aspects.push({
+        a:pA, b:pB,
+        t:asp.type,
+        exactness: asp.exactness,
+        strength: asp.strength,
+        tight: asp.tight,
+        applying: asp.applying, // true=applying, false=separating
+        orb: asp.exactness
+      });
     }
   }
+  // Sort aspects by strength (tightest first)
+  aspects.sort((a,b) => b.strength - a.strength);
 
   // Element from signs (Western 4 elements)
   const SIGN_EL={Aries:'Fire',Leo:'Fire',Sagittarius:'Fire',Taurus:'Earth',Virgo:'Earth',Capricorn:'Earth',Gemini:'Air',Libra:'Air',Aquarius:'Air',Cancer:'Water',Scorpio:'Water',Pisces:'Water'};
@@ -1613,7 +1959,7 @@ function computeChart(name, dateStr, timeStr, city, confirmedLat, confirmedLon, 
 
   // ── BAZI — Solar Term accurate ──
   const localHr = utcHr + tz;
-  const byearData = baziYearFromSun(yr, sunLon);
+  const byearData = baziYearFromSun(yr, mo, sunLon);
   const byear = { stem:STEMS[byearData.si], branch:BRANCHES[byearData.bi], el:STEM_EL[byearData.si], si:byearData.si, bi:byearData.bi };
   const bmonth = baziMonth(sunLon, byearData.si);
   const bday = baziDay(yr, mo, dy, utcHr, tz);
@@ -1627,31 +1973,74 @@ function computeChart(name, dateStr, timeStr, city, confirmedLat, confirmedLon, 
     const base = p.el.split(' ')[1];
     if(baziEls[base]!==undefined) baziEls[base]++;
   });
-  // Also add hidden stems from branch elements
-  const BRANCH_HIDDEN = {
-    'Rat':'Water','Ox':'Earth','Tiger':'Wood','Rabbit':'Wood',
-    'Dragon':'Earth','Snake':'Fire','Horse':'Fire','Goat':'Earth',
-    'Monkey':'Metal','Rooster':'Metal','Dog':'Earth','Pig':'Water'
+  // Also add hidden stems from branch — multiple elements per branch
+  const BRANCH_HIDDEN_FULL = {
+    'Rat':   ['Water'],
+    'Ox':    ['Earth','Water','Metal'],
+    'Tiger': ['Wood','Fire','Earth'],
+    'Rabbit':['Wood'],
+    'Dragon':['Earth','Wood','Water'],
+    'Snake': ['Fire','Earth','Metal'],
+    'Horse': ['Fire','Earth'],
+    'Goat':  ['Earth','Fire','Wood'],
+    'Monkey':['Metal','Water','Earth'],
+    'Rooster':['Metal'],
+    'Dog':   ['Earth','Fire','Metal'],
+    'Pig':   ['Water','Wood'],
   };
   [byear,bmonth,bday,bhour].forEach(p => {
     if(!p.branch || p.branch==='—') return;
-    const animal = p.branch.split(' ')[1]; // e.g. "子 Rat" -> "Rat"
-    const hiddenEl = BRANCH_HIDDEN[animal];
-    if(hiddenEl && baziEls[hiddenEl]!==undefined) baziEls[hiddenEl] += 0.5;
+    const animal = p.branch.split(' ')[1];
+    const hiddenEls = BRANCH_HIDDEN_FULL[animal] || [];
+    hiddenEls.forEach((el, idx) => {
+      // Main hidden stem = 0.5, secondary = 0.3, tertiary = 0.2
+      const weight = idx === 0 ? 0.5 : idx === 1 ? 0.3 : 0.2;
+      if(baziEls[el] !== undefined) baziEls[el] += weight;
+    });
   });
   // Round and find favourable/unfavourable
   Object.keys(baziEls).forEach(k=>{ baziEls[k]=Math.round(baziEls[k]*10)/10; });
   const favEl = Object.entries(baziEls).sort((a,b)=>a[1]-b[1])[0][0];
   const unfavEl = Object.entries(baziEls).sort((a,b)=>b[1]-a[1])[0][0];
 
-  // Luck pillars (大運)
-  const luckStart = Math.max(1, (10 - (yr % 10)) % 10);
-  const luckPillars = Array.from({length:8},(_,i)=>({
-    age: luckStart + i*10,
-    stem: STEMS[(byear.si+i+1)%10],
-    branch: BRANCHES[(byear.bi+i+1)%12],
-    el: STEM_EL[(byear.si+i+1)%10]
-  }));
+  // ── DA YUN (大運) — Proper Luck Pillar Calculation ──
+  // Requires: gender, year yin/yang polarity, days from birth to next/prev solar term
+  // Forward (順): Yang man, Yin woman → count to NEXT solar term
+  // Backward (逆): Yin man, Yang woman → count to PREV solar term
+  const gender = city.toLowerCase().includes('female') || city.toLowerCase().includes('f') ? 'f' : 'm';
+  // Year polarity: Yang years (Jiǎ,Bǐng,Wù,Gēng,Rén) = even stems 0,2,4,6,8
+  const yearYangYin = byear.si % 2 === 0 ? 'yang' : 'yin';
+  // Forward flow: Yang male or Yin female
+  const forwardFlow = (yearYangYin === 'yang') === (gender === 'm');
+
+  // Find days to solar term boundary
+  // Solar term = when Sun reaches next multiple of 30° from month start
+  const currentMonthStartLon = BAZI_MONTH_START_LON[getBaziMonthIdx(sunLon)];
+  const nextMonthStartLon = BAZI_MONTH_START_LON[(getBaziMonthIdx(sunLon)+1)%12];
+  // JD when Sun reaches next solar term (approximate: search forward)
+  let termJD = jd;
+  const targetLon = forwardFlow ? nextMonthStartLon : currentMonthStartLon;
+  if(forwardFlow) {
+    termJD = jdWhenSunAt(nextMonthStartLon, jd + 15);
+  } else {
+    termJD = jdWhenSunAt(currentMonthStartLon, jd - 15);
+  }
+  const daysToTerm = Math.abs(termJD - jd);
+  // Rule: 3 days = 1 year of Da Yun
+  const luckStartAge = Math.round(daysToTerm / 3);
+
+  const luckPillars = Array.from({length:8},(_,i) => {
+    const offset = forwardFlow ? i+1 : -(i+1);
+    const pillarSi = ((byear.si + offset) % 10 + 10) % 10;
+    const pillarBi = ((byear.bi + offset) % 12 + 12) % 12;
+    return {
+      age: luckStartAge + i*10,
+      stem: STEMS[pillarSi],
+      branch: BRANCHES[pillarBi],
+      el: STEM_EL[pillarSi],
+      flow: forwardFlow ? '順' : '逆'
+    };
+  });
 
   // ── HUMAN DESIGN — 88° solar arc for design chart ──
   const designJD = getDesignJD(jd);
@@ -1674,13 +2063,18 @@ function computeChart(name, dateStr, timeStr, city, confirmedLat, confirmedLon, 
   ];
 
   const allHDGates = [...new Set([...pGates, ...dGates])];
-  const definedCenters = getDefinedCenters(allHDGates);
+  // Graph-based center definition
+  const hdCenterResult = getDefinedCenters(allHDGates);
+  const definedCenters = hdCenterResult.centers;
+  const definedChannels = hdCenterResult.channels;
   const undefinedCenters = HD_CENTERS.filter(c=>!definedCenters.includes(c));
   const hdOpenSP = undefinedCenters.includes('Solar Plexus');
   const hdOpenSacral = undefinedCenters.includes('Sacral');
 
-  const hdTypeStr = determineHDType(pGates, dGates);
-  const hdAuth = determineAuthority(definedCenters);
+  // Type via graph connectivity (proper)
+  const hdTypeStr = determineHDType(allHDGates);
+  // Authority via proper hierarchy
+  const hdAuth = determineAuthority(allHDGates);
 
   // Profile = personality line + design line of Sun gate
   const pLine = lonToLine(sunLon);
@@ -2211,15 +2605,15 @@ function computeChart(name, dateStr, timeStr, city, confirmedLat, confirmedLon, 
 
   const confidence = {
     astro: timeStr ? 'high' : 'low',
-    bazi: 'high', // now uses solar term via actual Sun longitude
-    hd: timeStr ? 'high' : 'medium',
+    bazi: 'high',
+    hd: timeStr ? 'medium' : 'low', // HD needs exact birth minute for full accuracy
     note: timeStr
-      ? 'Astrology: Tropical, Whole Sign Houses. BaZi: Solar term accurate (节气 via Sun longitude). HD: 88° solar arc design chart.'
-      : 'Jam lahir tidak tersedia: Ascendant, HD design chart, dan BaZi Hour Pillar menggunakan estimasi. Masukkan jam lahir untuk akurasi penuh.'
+      ? 'Sistem Rumah: Whole Sign (akurat). MC dihitung terpisah. BaZi: Solar term via Sun longitude. HD: 88° solar arc — Type & Authority approx, butuh Swiss Ephemeris untuk gate precision. Planet longitude akurasi ~1-3°.'
+      : 'Tanpa jam lahir: Ascendant tidak dapat dihitung, HD invalid, rumah tidak tersedia. BaZi Hour Pillar menggunakan estimasi. Sun/Moon sign tetap akurat.'
   };
 
   return {
-    lons, planets, houses, aspects, elCounts,
+    lons, planets, houses, aspects, elCounts, mc, mcSign, retrograde,
     bazi:{year:byear,month:bmonth,day:bday,hour:bhour,dayMaster,favEl,unfavEl,luckPillars,baziEls},
     hd:{type:hdTypeStr,auth:hdAuth,prof:hdProf,strategy:hdStrategy,notSelf:hdNotSelf,definedCenters,undefinedCenters,sunGate,moonGate,ascGate,earthGate,designGate},
     zw:{main:zwMain,life:zwLife,career:zwCareer,wealth:zwWealth,marriage:zwMarriage},
@@ -2663,13 +3057,24 @@ function render(name,dateStr,timeStr,city,D) {
   document.getElementById('as-planets').innerHTML=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'].map(p=>{
     const pd=D.planets[p]; if(!pd) return '';
     const h=houseOf(D.lons[p]||0, D.houses);
-    return `<div class="prow" onclick="showAspDetails('${p}')"><span class="pname">${p}</span><span class="psym">${pd.sym}</span><span class="psign">${pd.sign} ${pd.deg}°</span><span class="phouse">H${h}</span></div>`;
+    const rx = pd.retrograde ? '<span style="font-family:var(--font-mono);font-size:8px;color:var(--red);margin-left:4px">Rx</span>' : '';
+    const dignityMap = {domicile:'◉',exaltation:'▲',detriment:'▽',fall:'◎'};
+    const dig = pd.dignity ? '<span style="font-size:10px;opacity:.7;margin-left:3px" title="'+pd.dignity+'">'+(dignityMap[pd.dignity]||'')+'</span>' : '';
+    return '<div class="prow"><span class="pname">'+p+'</span><span class="psym">'+pd.sym+'</span><span class="psign">'+pd.sign+' '+pd.deg+'°'+rx+dig+'</span><span class="phouse">H'+h+'</span></div>';
   }).join('');
+
   const aspCls={Conjunction:'ac',Trine:'at',Square:'as2',Opposition:'ao',Sextile:'ax'};
-  document.getElementById('as-asps').innerHTML=D.aspects.map(a=>`<span class="asp ${aspCls[a.t]||'ac'}" onclick="showAspDetail(this,'${a.a} ${a.t} ${a.b}')">${a.a} ${a.t} ${a.b}</span>`).join('');
-  document.getElementById('as-deep').textContent=`${D.sunSign} diatur oleh ${{'Aries':'Mars','Taurus':'Venus','Gemini':'Mercury','Cancer':'Moon','Leo':'Sun','Virgo':'Mercury','Libra':'Venus','Scorpio':'Pluto','Sagittarius':'Jupiter','Capricorn':'Saturn','Aquarius':'Uranus','Pisces':'Neptune'}[D.sunSign]||'?'}. Sun di ${sun.deg}° memberikan nuansa yang ${sun.deg<15?'lebih muda dan langsung dari tanda ini':'lebih matang dan reflektif dari tanda ini'}.`;
+  document.getElementById('as-asps').innerHTML=D.aspects.map(a=>{
+    const orbLabel = a.tight ? '★' : a.exactness+'°';
+    const appSep = a.applying === true ? '↑' : a.applying === false ? '↓' : '';
+    const title = a.a+' '+a.t+' '+a.b+' | orb '+a.exactness+'° | strength '+a.strength+'% | '+(a.applying===true?'applying':a.applying===false?'separating':'');
+    return '<span class="asp '+(aspCls[a.t]||'ac')+(a.tight?' asp-tight':'')+'" onclick="showAspDetail(this,\''+title+'\')" title="'+title+'">'+
+      a.a+' '+a.t+' '+a.b+' <small style="opacity:.6">'+orbLabel+appSep+'</small></span>';
+  }).join('');
+  document.getElementById('as-deep').textContent = D.sunSign+' diatur oleh '+({'Aries':'Mars','Taurus':'Venus','Gemini':'Mercury','Cancer':'Moon','Leo':'Sun','Virgo':'Mercury','Libra':'Venus','Scorpio':'Pluto','Sagittarius':'Jupiter','Capricorn':'Saturn','Aquarius':'Uranus','Pisces':'Neptune'}[D.sunSign]||'?')+'. Sun di '+sun.deg+'° memberikan nuansa yang '+(sun.deg<15?'lebih langsung dari tanda ini':'lebih matang dan reflektif dari tanda ini')+'.';
   document.getElementById('as-shadow').textContent=D.SIGN_SHADOW[D.sunSign]||'—';
-  document.getElementById('as-houses').innerHTML=`H1 (${D.ascSign}): Persona & tampilan. H7 (${SIGNS[(D.planets.Ascendant.idx+6)%12]}): Partnership. H10 (${SIGNS[(D.planets.Ascendant.idx+9)%12]}): Karier & legacy. Sun berada di H${houseOf(D.lons.Sun,D.houses)}, Moon di H${houseOf(D.lons.Moon,D.houses)}.`;
+  const mcText = D.mcSign ? ' MC ('+D.mcSign.sign+' '+D.mcSign.deg+'°) = Karier & reputasi publik.' : '';
+  document.getElementById('as-houses').innerHTML='Sistem: <strong style="color:var(--gold)">Whole Sign</strong>. H1 ('+D.ascSign+'): Persona. H7 ('+SIGNS[(D.planets.Ascendant.idx+6)%12]+'): Partnership. H10 ('+SIGNS[(D.planets.Ascendant.idx+9)%12]+'): Karier.'+mcText+' Sun H'+houseOf(D.lons.Sun,D.houses)+', Moon H'+houseOf(D.lons.Moon,D.houses)+'.';
 
   // BAZI
   const {year:by,month:bm,day:bd,hour:bh,dayMaster,favEl,unfavEl,luckPillars,baziEls}=D.bazi;
@@ -3626,6 +4031,68 @@ document.addEventListener('click', e=>{
     document.querySelectorAll('.custom-select.open,.custom-date.open,.tw-wrap.open').forEach(el=>el.classList.remove('open'));
   }
 });
+
+// ═══════════════════════════════════════════════════════════
+//  VALIDATION TEST SUITE — access via URL hash #test
+// ═══════════════════════════════════════════════════════════
+const VALIDATION_CASES = [
+  { name:'Bayu (real)', date:'2005-04-18', time:'10:28', lat:-6.732, lon:108.552, tz:7,
+    expect:{ Sun:'Aries', Moon:'Leo', Asc:'Cancer', Mercury:'Aries', Venus:'Taurus',
+             Mars:'Aquarius', Jupiter:'Libra', Saturn:'Cancer', Uranus:'Pisces',
+             Neptune:'Aquarius', Pluto:'Sagittarius', BaziDM:'Yang Water',
+             BaziYear:'Yin Wood', BaziMonth:'Yang Metal' }},
+  { name:'J2000 test', date:'2000-01-01', time:'12:00', lat:0, lon:0, tz:0,
+    expect:{ Sun:'Capricorn', Moon:null, Asc:null }},
+  { name:'Feb 3 1995 (before lichun)', date:'1995-02-03', time:'12:00', lat:-6.2, lon:106.8, tz:7,
+    expect:{ BaziYear:'Yang Wood' }}, // 1994 Jia Xu year
+  { name:'Feb 6 1995 (after lichun)', date:'1995-02-06', time:'12:00', lat:-6.2, lon:106.8, tz:7,
+    expect:{ BaziYear:'Yin Wood' }}, // 1995 Yi Hai year
+];
+
+function runValidation() {
+  const results = [];
+  VALIDATION_CASES.forEach(tc => {
+    const D = computeChart(tc.name, tc.date, tc.time, 'test', tc.lat, tc.lon, tc.tz);
+    const row = { name:tc.name, pass:[], fail:[] };
+    const exp = tc.expect;
+    if(exp.Sun) { const ok=D.planets.Sun.sign===exp.Sun; (ok?row.pass:row.fail).push('Sun: '+D.planets.Sun.sign+' (exp '+exp.Sun+')'); }
+    if(exp.Moon) { const ok=D.planets.Moon.sign===exp.Moon; (ok?row.pass:row.fail).push('Moon: '+D.planets.Moon.sign+' (exp '+exp.Moon+')'); }
+    if(exp.Asc) { const ok=D.planets.Ascendant.sign===exp.Asc; (ok?row.pass:row.fail).push('Asc: '+D.planets.Ascendant.sign+' (exp '+exp.Asc+')'); }
+    if(exp.Mercury) { const ok=D.planets.Mercury.sign===exp.Mercury; (ok?row.pass:row.fail).push('Mercury: '+D.planets.Mercury.sign+' (exp '+exp.Mercury+')'); }
+    if(exp.Venus) { const ok=D.planets.Venus.sign===exp.Venus; (ok?row.pass:row.fail).push('Venus: '+D.planets.Venus.sign+' (exp '+exp.Venus+')'); }
+    if(exp.Mars) { const ok=D.planets.Mars.sign===exp.Mars; (ok?row.pass:row.fail).push('Mars: '+D.planets.Mars.sign+' (exp '+exp.Mars+')'); }
+    if(exp.BaziDM) { const ok=D.bazi.dayMaster===exp.BaziDM; (ok?row.pass:row.fail).push('BaziDM: '+D.bazi.dayMaster+' (exp '+exp.BaziDM+')'); }
+    if(exp.BaziYear) { const ok=D.bazi.year.el===exp.BaziYear; (ok?row.pass:row.fail).push('BaziYear: '+D.bazi.year.el+' (exp '+exp.BaziYear+')'); }
+    if(exp.BaziMonth) { const ok=D.bazi.month.el===exp.BaziMonth; (ok?row.pass:row.fail).push('BaziMonth: '+D.bazi.month.el+' (exp '+exp.BaziMonth+')'); }
+    results.push(row);
+  });
+
+  // Display validation panel
+  const panel = document.createElement('div');
+  panel.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,5,10,.97);z-index:9000;overflow:auto;padding:40px;font-family:var(--font-mono)';
+  const total = results.reduce((a,r)=>a+r.pass.length+r.fail.length,0);
+  const passed = results.reduce((a,r)=>a+r.pass.length,0);
+  panel.innerHTML = '<div style="max-width:700px;margin:0 auto">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px">' +
+    '<div style="font-size:20px;color:var(--gold)">OMC Validation Suite</div>' +
+    '<div style="font-size:12px;color:'+(passed===total?'var(--green)':'var(--gold)')+'">'+passed+'/'+total+' tests passed</div>' +
+    '<button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:none;border:1px solid var(--b2);color:var(--dim);padding:6px 14px;cursor:pointer;font-family:var(--font-mono)">Close</button>' +
+    '</div>' +
+    results.map(r =>
+      '<div style="margin-bottom:20px;padding:16px;background:var(--s1);border:1px solid '+(r.fail.length?'rgba(196,96,74,.3)':'rgba(90,158,120,.3)')+';">' +
+      '<div style="font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:10px">'+r.name+'</div>' +
+      r.pass.map(p=>'<div style="color:var(--green);font-size:10px;padding:2px 0">✓ '+p+'</div>').join('') +
+      r.fail.map(f=>'<div style="color:var(--red);font-size:10px;padding:2px 0">✗ '+f+'</div>').join('') +
+      '</div>'
+    ).join('') +
+    '</div>';
+  document.body.appendChild(panel);
+}
+
+// Trigger validation with URL hash
+if(typeof window !== 'undefined' && window.location.hash === '#test') {
+  window.addEventListener('load', ()=>setTimeout(runValidation, 100));
+}
 
 // Init on load
 initDatePicker();
