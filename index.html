@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AXIOM — Metaphysical Intelligence v3</title>
+<title>OMC — Metaphysical Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -19,8 +19,8 @@
   --font-mono:'DM Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflow-x:hidden;min-height:100vh}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflow-x:hidden;min-height:100vh;max-width:100vw}
 ::selection{background:var(--golddim);color:var(--gold)}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -280,14 +280,218 @@ select option{background:#11111c}
 .natal-wrap{position:relative;display:inline-block}
 .natal-tt{position:absolute;background:var(--s1);border:1px solid var(--b2);padding:10px 14px;border-radius:var(--r);font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text);pointer-events:none;display:none;z-index:50;white-space:nowrap;backdrop-filter:blur(12px)}
 
+/* ══ CITY AUTOCOMPLETE ══ */
+.city-wrap{position:relative}
+.city-wrap input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;color:var(--text);font-family:var(--font-sans);font-size:14px;outline:none;transition:border-color .2s}
+.city-wrap input:focus{border-color:var(--gold);background:rgba(201,168,76,.03)}
+.city-wrap input.confirmed{border-color:rgba(90,158,120,.6)!important;background:rgba(90,158,120,.04)!important}
+.city-wrap input.error{border-color:rgba(196,96,74,.6)!important}
+.city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s2);border:1px solid rgba(201,168,76,.3);border-radius:var(--r);z-index:400;display:none;max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.city-dropdown.show{display:block;animation:fadeIn .15s ease}
+.city-opt{padding:12px 15px;font-family:var(--font-sans);font-size:13px;color:var(--dim);cursor:pointer;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;transition:background .15s}
+.city-opt:last-child{border-bottom:none}
+.city-opt:hover{background:var(--golddim);color:var(--text)}
+.city-opt-meta{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--muted)}
+.city-status{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;margin-top:6px;min-height:14px;transition:color .2s}
+.city-status.ok{color:var(--green)}.city-status.warn{color:var(--gold)}.city-status.err{color:var(--red)}
+
+/* SOUL DIMENSIONS */
+.soul-dim{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--b1)}
+.soul-dim:last-child{border-bottom:none}
+.soul-dim-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+.soul-dim-source{font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-top:2px}
+.soul-dim-bar{height:2px;background:var(--s3);border-radius:2px;overflow:hidden;margin-top:5px;grid-column:1/-1}
+.soul-dim-fill{height:100%;border-radius:2px;transition:width 1.5s cubic-bezier(.4,0,.2,1);width:0%}
+.soul-dim-score{font-family:var(--font-serif);font-size:18px;color:var(--gold)}
+
+/* CONVERGENCE CARDS */
+.conv-card{border:1px solid var(--b1);border-radius:var(--r);padding:20px;margin-bottom:12px;position:relative;overflow:hidden;transition:border-color .2s}
+.conv-card:hover{border-color:rgba(201,168,76,.25)}
+.conv-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px}
+.conv-signal{font-family:var(--font-mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.conv-systems{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.conv-sys-tag{font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;padding:3px 8px;border:1px solid rgba(201,168,76,.25);color:var(--muted);border-radius:var(--r)}
+.conv-pattern{font-size:13px;color:var(--dim);line-height:1.8;margin-bottom:10px}
+.conv-action{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--green);padding:10px 12px;background:rgba(90,158,120,.06);border:1px solid rgba(90,158,120,.2);border-radius:var(--r);line-height:1.6}
+.conv-action::before{content:'→ ';opacity:.6}
+
+/* ACTION BLOCKS */
+.action-block{padding:14px 0;border-bottom:1px solid var(--b1)}
+.action-block:last-child{border-bottom:none}
+.action-domain{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.action-text{font-size:13px;color:var(--dim);line-height:1.75}
+.custom-select{position:relative;user-select:none}
+.cs-display{display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;cursor:pointer;transition:border-color .2s,background .2s}
+.cs-display:hover,.custom-select.open .cs-display{border-color:var(--gold);background:rgba(201,168,76,.03)}
+.cs-val{font-family:var(--font-sans);font-size:14px;color:var(--text)}
+.cs-val.placeholder{color:var(--muted)}
+.cs-arrow{font-size:11px;color:var(--gold);opacity:.7;transition:transform .2s}
+.custom-select.open .cs-arrow{transform:rotate(180deg)}
+.cs-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s2);border:1px solid rgba(201,168,76,.3);border-radius:var(--r);z-index:400;overflow:hidden;display:none;animation:fadeIn .15s ease}
+.custom-select.open .cs-dropdown{display:block}
+/* Year dropdown needs scroll */
+#yearSelDropdown{max-height:200px;overflow-y:auto;overflow-x:hidden}
+#yearSelDropdown::-webkit-scrollbar{width:3px}
+#yearSelDropdown::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:2px}
+/* Month dropdown */
+#monthSelDropdown{max-height:220px;overflow-y:auto}
+.cs-opt{padding:13px 15px;font-family:var(--font-sans);font-size:14px;color:var(--dim);cursor:pointer;transition:background .15s,color .15s;border-bottom:1px solid var(--b1)}
+.cs-opt:last-child{border-bottom:none}
+.cs-opt:hover{background:var(--golddim);color:var(--gold)}
+.cs-opt.selected{color:var(--gold)}
+
+/* SM variant for inside date picker */
+.custom-select.sm .cs-display{padding:8px 12px}
+.custom-select.sm .cs-val{font-size:13px}
+
+/* ══ CUSTOM DATE PICKER ══ */
+.custom-date{position:relative;user-select:none}
+.cd-display{display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;cursor:pointer;transition:border-color .2s,background .2s}
+.cd-display:hover,.custom-date.open .cd-display{border-color:var(--gold);background:rgba(201,168,76,.03)}
+.cd-val{font-family:var(--font-sans);font-size:14px;color:var(--text)}
+.cd-val.placeholder{color:var(--muted)}
+.cd-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s2);border:1px solid rgba(201,168,76,.3);border-radius:var(--r);z-index:300;display:none;animation:fadeIn .15s ease;padding:16px}
+.custom-date.open .cd-panel{display:block}
+.cd-panel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.cd-selects{display:flex;gap:8px;flex:1}
+.cd-selects .custom-select{flex:1}
+.cd-nav{background:none;border:1px solid var(--b2);color:var(--gold);width:32px;height:32px;border-radius:var(--r);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.cd-nav:hover{border-color:var(--gold);background:var(--golddim)}
+.cd-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:8px}
+.cd-weekdays span{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;color:var(--muted);text-align:center;padding:4px 0}
+.cd-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cd-day{font-family:var(--font-mono);font-size:11px;color:var(--dim);text-align:center;padding:7px 2px;border-radius:var(--r);cursor:pointer;transition:all .15s;border:1px solid transparent}
+.cd-day:hover{background:var(--golddim);color:var(--gold);border-color:rgba(201,168,76,.2)}
+.cd-day.selected{background:var(--gold);color:var(--bg);font-weight:700}
+.cd-day.today{border-color:rgba(201,168,76,.35);color:var(--gold)}
+.cd-day.empty{cursor:default;pointer-events:none}
+.cd-day.other-month{opacity:.25}
+
+/* ══ SLOT WHEEL TIME PICKER ══ */
+.tw-wrap{position:relative}
+.tw-field{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;cursor:pointer;transition:border-color .2s,background .2s}
+.tw-field:hover,.tw-wrap.open .tw-field{border-color:var(--gold);background:rgba(201,168,76,.03)}
+.tw-icon{font-size:18px;opacity:.5}
+.tw-field>span:nth-child(2){font-family:var(--font-serif);font-size:22px;color:var(--gold);letter-spacing:.08em;flex:1}
+.tw-edit{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase}
+.tw-panel{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--s2);border:1px solid rgba(201,168,76,.3);border-radius:var(--r);z-index:250;padding:16px 20px 20px;animation:fadeIn .15s ease}
+.tw-wrap.open .tw-panel{display:block}
+.tw-label-row{display:grid;grid-template-columns:1fr 40px 1fr;margin-bottom:8px}
+.tw-label-row span{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--muted);text-align:center;text-transform:uppercase}
+.tw-drums{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;position:relative;height:180px}
+.tw-colon{font-family:var(--font-serif);font-size:32px;color:var(--gold);text-align:center;opacity:.7}
+.tw-drum{height:180px;overflow:hidden;position:relative;cursor:grab}
+.tw-drum:active{cursor:grabbing}
+.tw-drum-inner{display:flex;flex-direction:column;will-change:transform}
+.tw-item{height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:26px;font-weight:300;color:rgba(237,232,223,0.2);transition:none;flex-shrink:0;user-select:none}
+.tw-drum::before,.tw-drum::after{content:'';position:absolute;left:0;right:0;height:68px;z-index:2;pointer-events:none}
+.tw-drum::before{top:0;background:linear-gradient(to bottom,var(--s2) 10%,transparent 100%)}
+.tw-drum::after{bottom:0;background:linear-gradient(to top,var(--s2) 10%,transparent 100%)}
+.tw-drums::before{content:'';position:absolute;top:calc(50% - 22px);left:0;right:0;height:44px;border-top:1px solid rgba(201,168,76,.3);border-bottom:1px solid rgba(201,168,76,.3);pointer-events:none;z-index:1;border-radius:2px}
+.tw-confirm{width:100%;margin-top:14px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;padding:11px;cursor:pointer;border-radius:var(--r);transition:all .2s}
+.tw-confirm:hover{background:var(--gold);color:var(--bg)}
+
 /* MOBILE */
+/* ══════════ MOBILE RESPONSIVE ══════════ */
 @media(max-width:768px){
-  .topbar{padding:14px 18px}.hero{grid-template-columns:1fr;padding:28px 18px}
-  .tabs{padding:0 18px}.tpcont{padding:20px 18px}
-  .g2,.g3{grid-template-columns:1fr}.r2{grid-template-columns:1fr}
-  .fcard{padding:28px 18px}.bpillars{grid-template-columns:repeat(2,1fr)}
-  .hdcards{grid-template-columns:repeat(2,1fr)}.nxgrid{grid-template-columns:1fr}
-  .zwg{grid-template-columns:repeat(3,1fr)}.soul-box{display:none}
+  /* Prevent ALL horizontal overflow */
+  body,#dash,#landing{ overflow-x:hidden; max-width:100vw; }
+  *{ box-sizing:border-box; max-width:100%; }
+
+  /* TOPBAR — compact, no overflow */
+  .topbar{ padding:12px 16px; gap:8px; }
+  .tb-logo{ font-size:18px; letter-spacing:.2em; flex-shrink:0; }
+  .tb-mid{ flex:1; min-width:0; overflow:hidden; }
+  .tb-name{
+    font-size:10px; letter-spacing:.1em;
+    white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; max-width:100%;
+  }
+  .tb-btn{ padding:6px 12px; font-size:8px; letter-spacing:.1em; flex-shrink:0; }
+
+  /* HERO — single column, compact */
+  .hero{
+    grid-template-columns:1fr;
+    padding:24px 16px 20px;
+    gap:20px;
+  }
+  .h-name{ font-size:clamp(28px,8vw,44px); margin-bottom:8px; }
+  .h-dob{
+    font-size:9px; letter-spacing:.1em;
+    white-space:normal; word-break:break-word;
+    line-height:1.6;
+  }
+  .badges{ gap:6px; margin-bottom:12px; }
+  .badge{ font-size:7px; letter-spacing:.12em; padding:4px 9px; }
+  .conf-row{ gap:8px; flex-direction:column; }
+  .ci-lbl{ font-size:8px; letter-spacing:.1em; }
+  .soul-box{ display:none; }
+
+  /* TABS */
+  .tabs{ padding:0 12px; }
+  .tab{ padding:13px 14px; font-size:8px; letter-spacing:.15em; }
+
+  /* TAB CONTENT */
+  .tpcont{ padding:16px; }
+  .g2,.g3{ grid-template-columns:1fr; gap:16px; }
+  .r2{ grid-template-columns:1fr; gap:12px; }
+
+  /* PANELS */
+  .panel{ padding:20px 16px; }
+  .plabel{ font-size:7px; letter-spacing:.28em; }
+  .ptitle{ font-size:20px; }
+
+  /* FORM */
+  .fcard{ padding:24px 16px; }
+  .fstep-title{ font-size:26px; }
+
+  /* BAZI */
+  .bpillars{ grid-template-columns:repeat(2,1fr); gap:8px; }
+
+  /* HD cards */
+  .hdcards{ grid-template-columns:repeat(2,1fr); gap:8px; }
+
+  /* NUMEROLOGY */
+  .nxgrid{ grid-template-columns:1fr; gap:10px; }
+
+  /* ZI WEI */
+  .zwg{ grid-template-columns:repeat(3,1fr); gap:6px; }
+
+  /* TRAIT BARS */
+  .tr-name{ font-size:8px; letter-spacing:.12em; }
+
+  /* PLANET TABLE */
+  .prow{ padding:7px 0; }
+  .pname{ font-size:8px; width:64px; }
+  .psign{ font-size:14px; }
+
+  /* IQ quote */
+  .iq{ font-size:15px; padding:14px 18px; }
+
+  /* SHADOW BOX */
+  .sbox{ padding:14px 16px; }
+  .stext{ font-size:12px; }
+
+  /* DEPTH CARDS */
+  .dcard{ padding:18px 14px; }
+  .dtitle{ font-size:18px; }
+  .dbody{ font-size:12px; }
+
+  /* COMPAT */
+  .csc-big{ font-size:clamp(56px,20vw,96px); }
+
+  /* TRANSIT CARDS */
+  .tcard{ grid-template-columns:36px 1fr auto; gap:10px; padding:12px; }
+  .tsym{ font-size:18px; }
+  .tname{ font-size:8px; letter-spacing:.1em; }
+  .tdesc{ font-size:11px; }
+
+  /* CANVAS responsive */
+  canvas{ max-width:100% !important; height:auto !important; }
+  #natalC{ width:100% !important; height:auto !important; }
+
+  /* SHARE CARD */
+  #shareCard{ padding:28px 20px; }
 }
 </style>
 </head>
@@ -313,8 +517,8 @@ select option{background:#11111c}
   </div>
   <div class="landing-content">
     <div class="logo">
-      <div class="logomark">A<em>X</em>IOM</div>
-      <div class="logosub">Metaphysical Intelligence Platform · v3</div>
+      <div class="logomark">O<em>M</em>C</div>
+      <div class="logosub">Metaphysical Intelligence Platform</div>
     </div>
     <p class="tagline">Bukan ramalan. Sebuah sistem untuk memahami<br>arsitektur energi dalam dirimu.</p>
     <div class="fcard">
@@ -322,17 +526,109 @@ select option{background:#11111c}
         <div class="fstep-num">// Langkah 01 dari 02</div>
         <div class="fstep-title">Siapa kamu?</div>
         <div class="fi"><label>Nama Lengkap</label><input id="iName" type="text" placeholder="Tuliskan namamu" autocomplete="off"></div>
-        <div class="fi"><label>Gender</label><select id="iGen"><option value="">Pilih...</option><option value="m">Male</option><option value="f">Female</option><option value="n">Non-binary</option></select></div>
+
+        <!-- CUSTOM GENDER SELECTOR -->
+        <div class="fi">
+          <label>Jenis Kelamin</label>
+          <div class="custom-select" id="genderSelect">
+            <div class="cs-display" onclick="toggleCS('genderSelect')">
+              <span class="cs-val" id="genderVal">Pilih...</span>
+              <span class="cs-arrow">↓</span>
+            </div>
+            <div class="cs-dropdown" id="genderDropdown">
+              <div class="cs-opt" onclick="selectCS('genderSelect','genderVal','iGen','m','Pria')">Pria</div>
+              <div class="cs-opt" onclick="selectCS('genderSelect','genderVal','iGen','f','Perempuan')">Perempuan</div>
+              <div class="cs-opt" onclick="selectCS('genderSelect','genderVal','iGen','n','Non-biner')">Non-biner</div>
+            </div>
+          </div>
+          <input type="hidden" id="iGen">
+        </div>
+
         <button class="btn" onclick="toStep2()"><span>Lanjutkan →</span></button>
       </div>
+
       <div class="fstep" id="fs2">
         <div class="fstep-num">// Langkah 02 dari 02 · Data Kelahiran</div>
         <div class="fstep-title">Kapan & di mana?</div>
-        <div class="r2">
-          <div class="fi"><label>Tanggal Lahir</label><input id="iDate" type="date"></div>
-          <div class="fi"><label>Jam Lahir</label><input id="iTime" type="time"><span class="hint">Krusial untuk Ascendant & BaZi</span></div>
+
+        <!-- CUSTOM DATE PICKER -->
+        <div class="fi">
+          <label>Tanggal Lahir</label>
+          <div class="custom-date" id="datePicker">
+            <div class="cd-display" onclick="toggleDatePicker()">
+              <span class="cd-val" id="dateDisplay">Pilih tanggal lahir</span>
+              <span class="cs-arrow">✦</span>
+            </div>
+            <div class="cd-panel" id="datePanel">
+              <div class="cd-panel-top">
+                <button class="cd-nav" onclick="cdNavYear(-1)">‹</button>
+                <div class="cd-selects">
+                  <div class="custom-select sm" id="monthSel">
+                    <div class="cs-display sm" onclick="toggleCS('monthSel')">
+                      <span class="cs-val" id="monthVal">Jan</span><span class="cs-arrow">↓</span>
+                    </div>
+                    <div class="cs-dropdown" id="monthSelDropdown"></div>
+                  </div>
+                  <div class="custom-select sm" id="yearSel">
+                    <div class="cs-display sm" onclick="toggleCS('yearSel')">
+                      <span class="cs-val" id="yearVal">1995</span><span class="cs-arrow">↓</span>
+                    </div>
+                    <div class="cs-dropdown" id="yearSelDropdown"></div>
+                  </div>
+                </div>
+                <button class="cd-nav" onclick="cdNavYear(1)">›</button>
+              </div>
+              <div class="cd-weekdays">
+                <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+              </div>
+              <div class="cd-grid" id="cdGrid"></div>
+            </div>
+          </div>
+          <input type="hidden" id="iDate" value="1995-08-17">
         </div>
-        <div class="fi"><label>Kota Kelahiran</label><input id="iCity" type="text" placeholder="mis. Jakarta, Indonesia" autocomplete="off"></div>
+
+        <!-- CUSTOM TIME PICKER -->
+        <div class="fi">
+          <label>Jam Lahir <span style="color:var(--muted);font-size:.85em">(opsional tapi penting)</span></label>
+          <!-- SLOT WHEEL TIME PICKER -->
+          <div class="tw-wrap" id="twWrap">
+            <div class="tw-field" onclick="toggleTW()">
+              <span class="tw-icon">☽</span>
+              <span id="twDisplay">07 : 30</span>
+              <span class="tw-edit">ubah</span>
+            </div>
+            <div class="tw-panel" id="twPanel">
+              <div class="tw-label-row"><span>JAM</span><span>MENIT</span></div>
+              <div class="tw-drums">
+                <div class="tw-drum" id="twHourDrum">
+                  <div class="tw-drum-inner" id="twHourInner"></div>
+                </div>
+                <div class="tw-colon">:</div>
+                <div class="tw-drum" id="twMinDrum">
+                  <div class="tw-drum-inner" id="twMinInner"></div>
+                </div>
+              </div>
+              <div class="tw-selector"></div>
+              <button class="tw-confirm" onclick="confirmTW()">Pilih waktu ini</button>
+            </div>
+          </div>
+          <input type="hidden" id="iTime" value="07:30">
+          <span class="hint">Krusial untuk Ascendant & BaZi Hour</span>
+        </div>
+
+        <div class="fi">
+          <label>Kota Kelahiran <span style="color:var(--red);font-size:.9em">*wajib</span></label>
+          <div class="city-wrap" id="cityWrap">
+            <input id="iCity" type="text" placeholder="Ketik nama kota..." autocomplete="off" oninput="onCityInput()" onblur="onCityBlur()">
+            <div class="city-dropdown" id="cityDropdown"></div>
+          </div>
+          <div class="city-status" id="cityStatus"></div>
+          <input type="hidden" id="iCityLat">
+          <input type="hidden" id="iCityLon">
+          <input type="hidden" id="iCityTz">
+          <input type="hidden" id="iCityConfirmed" value="0">
+          <span class="hint">Mempengaruhi Ascendant, timezone, dan BaZi Hour Pillar</span>
+        </div>
         <div class="confhint" id="chint" style="display:none">
           <div class="cdot" id="cdot"></div><div class="chint-text" id="ctxt"></div>
         </div>
@@ -366,11 +662,11 @@ select option{background:#11111c}
 <!-- DASHBOARD -->
 <div id="dash">
   <nav class="topbar">
-    <div class="tb-logo">A<em>X</em>IOM</div>
-    <div class="tb-mid">
-      <div class="tb-name" id="tbName">—</div>
+    <div class="tb-logo">O<em>M</em>C</div>
+    <div class="tb-mid" style="flex:1;min-width:0;overflow:hidden;padding:0 12px">
+      <div class="tb-name" id="tbName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
     </div>
-    <button class="tb-btn" onclick="reset()">← Reset</button>
+    <button class="tb-btn" onclick="reset()" style="flex-shrink:0">← Atur Ulang</button>
   </nav>
 
   <div class="hero">
@@ -409,38 +705,71 @@ select option{background:#11111c}
 
   <!-- OVERVIEW -->
   <div class="tp on" id="t-overview"><div class="tpcont">
-    <div class="g2">
-      <div>
+
+    <!-- ROW 1: Soul Score anatomy + Emotional Architecture -->
+    <div class="g2" style="margin-bottom:24px">
+      <div class="panel">
+        <div class="plabel">Soul Score · Anatomy</div>
+        <div style="display:flex;align-items:center;gap:24px;margin-bottom:20px">
+          <div>
+            <div style="font-family:var(--font-serif);font-size:72px;font-weight:300;color:var(--gold);line-height:1" id="ov-soul-num">—</div>
+            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--muted)" id="ov-soul-lbl">—</div>
+          </div>
+          <div style="flex:1;font-size:12px;color:var(--dim);line-height:1.7" id="ov-soul-desc">—</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px" id="ov-soul-dims"></div>
+        <div style="margin-top:14px;font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--muted);line-height:1.6;border-top:1px solid var(--b1);padding-top:12px">Formula: Resonansi Astro (25%) + Keseimbangan BaZi (25%) + Koherensi HD (20%) + Integrasi Shadow (20%) + Keselarasan Numerologi (10%)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px">
         <div class="panel">
-          <div class="plabel">Cross-System Fusion · Identity Profile</div>
+          <div class="plabel">Arsitektur Emosi</div>
+          <div style="font-family:var(--font-serif);font-size:22px;font-weight:400;color:var(--text);margin-bottom:8px;text-transform:capitalize" id="ov-emot-arch">—</div>
+          <div style="font-size:13px;color:var(--dim);line-height:1.8" id="ov-emot-desc">—</div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Identitas Lintas Sistem</div>
           <div class="ptitle" id="ov-title">—</div>
           <div class="psub" id="ov-sub">—</div>
           <div class="traits" id="ov-traits"></div>
         </div>
-        <div class="panel" style="margin-top:24px">
-          <div class="plabel">Natal Chart Wheel</div>
-          <div style="display:flex;justify-content:center;position:relative" class="natal-wrap" id="natalWrap">
-            <canvas id="natalC" width="400" height="400" style="cursor:crosshair"></canvas>
-            <div class="natal-tt" id="natalTT"></div>
-          </div>
-        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:22px">
+    </div>
+
+    <!-- ROW 2: Cross-system convergences (the real fusion) -->
+    <div class="panel" style="margin-bottom:24px">
+      <div class="plabel">Titik Konvergensi Lintas Sistem · Di Mana Semua Menunjuk ke Arah Sama</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;font-family:var(--font-serif);font-style:italic">Ini bukan kelima sistem yang berdiri sendiri. Ini adalah sistem yang saling memvalidasi.</div>
+      <div id="ov-convergences"></div>
+    </div>
+
+    <!-- ROW 3: Actionable + Chart -->
+    <div class="g2">
+      <div style="display:flex;flex-direction:column;gap:20px">
         <div class="panel">
-          <div class="plabel">Core Synthesis</div>
-          <div class="iq" id="ov-insight">—</div>
+          <div class="plabel">Implikasi Praktis · Apa Artinya Ini</div>
+          <div id="ov-actions"></div>
         </div>
         <div class="panel">
-          <div class="plabel">Primary Shadow</div>
-          <div class="sbox"><div class="slabel">⚠ BLIND SPOT</div><div class="stext" id="ov-shadow">—</div></div>
-        </div>
-        <div class="panel">
-          <div class="plabel">Element Balance</div>
-          <div style="display:flex;justify-content:center"><canvas id="elemC" width="240" height="240"></canvas></div>
+          <div class="plabel">Keseimbangan Elemen</div>
+          <div style="display:flex;justify-content:center"><canvas id="elemC" width="220" height="220"></canvas></div>
           <div class="epills" id="elPills"></div>
         </div>
       </div>
+      <div>
+        <div class="panel">
+          <div class="plabel">Bagan Kelahiran Roda</div>
+          <div style="display:flex;justify-content:center;position:relative" class="natal-wrap" id="natalWrap">
+            <canvas id="natalC" width="380" height="380" style="cursor:crosshair;max-width:100%"></canvas>
+            <div class="natal-tt" id="natalTT"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:20px">
+          <div class="plabel">Shadow Utama</div>
+          <div class="sbox" style="margin-top:0"><div class="slabel">⚠ BLIND SPOT PRIMER</div><div class="stext" id="ov-shadow">—</div></div>
+        </div>
+      </div>
     </div>
+
   </div></div>
 
   <!-- ASTROLOGY -->
@@ -583,12 +912,28 @@ select option{background:#11111c}
 
   <!-- SHADOW -->
   <div class="tp" id="t-depth"><div class="tpcont">
-    <div style="max-width:700px;margin:0 auto">
+    <div style="max-width:760px;margin:0 auto">
       <div style="margin-bottom:32px">
         <div style="font-family:var(--font-serif);font-size:34px;font-weight:300;margin-bottom:8px" id="dp-title">—</div>
         <div style="font-family:var(--font-serif);font-size:16px;font-style:italic;color:var(--dim)" id="dp-sub">—</div>
       </div>
+
+      <!-- Gift ↔ Wound -->
+      <div style="margin-bottom:28px">
+        <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px">Gift ↔ Wound Equivalence <span style="flex:1;height:1px;background:var(--b1);display:block"></span></div>
+        <div id="dp-giftwound"></div>
+      </div>
+
+      <!-- Shadow cards -->
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px">Pattern Analysis <span style="flex:1;height:1px;background:var(--b1);display:block"></span></div>
       <div id="dp-cards"></div>
+
+      <!-- Contradiction section -->
+      <div style="margin-top:28px">
+        <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.35em;color:rgba(196,96,74,0.7);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px">Kontradiksi Antar Sistem — Resolusi <span style="flex:1;height:1px;background:rgba(196,96,74,0.15);display:block"></span></div>
+        <div style="font-family:var(--font-serif);font-size:14px;font-style:italic;color:var(--muted);margin-bottom:20px">Sistem yang berbeda kadang "berbicara" tentang hal yang berbeda. Bukan error — ini adalah kompleksitas yang nyata. OMC menyelesaikannya menjadi satu sintesis.</div>
+        <div id="dp-contradictions"></div>
+      </div>
     </div>
   </div></div>
 
@@ -622,16 +967,95 @@ select option{background:#11111c}
   <div class="tp" id="t-compat"><div class="tpcont">
     <div class="panel" style="max-width:640px;margin:0 auto 28px">
       <div class="plabel">Analisis Kompatibilitas</div>
-      <div class="r2" style="margin-bottom:14px">
-        <div class="fi" style="margin:0"><label>Nama</label><input id="cn" type="text" placeholder="Nama mereka" autocomplete="off"></div>
-        <div class="fi" style="margin:0"><label>Tanggal Lahir</label><input id="cd" type="date"></div>
+
+      <!-- Nama -->
+      <div class="fi">
+        <label>Nama Partner</label>
+        <input id="cn" type="text" placeholder="Nama mereka" autocomplete="off">
       </div>
-      <div class="r2">
-        <div class="fi" style="margin:0"><label>Jam Lahir (opt)</label><input id="ct" type="time"></div>
-        <div class="fi" style="margin:0"><label>Kota Lahir (opt)</label><input id="cc" type="text" placeholder="Kota"></div>
+
+      <!-- Tanggal lahir partner — custom calendar -->
+      <div class="fi">
+        <label>Tanggal Lahir <span style="color:var(--red);font-size:.9em">*wajib</span></label>
+        <div class="custom-date" id="cdatePicker2">
+          <div class="cd-display" onclick="toggleDatePicker2()">
+            <span class="cd-val" id="cDateDisplay" style="color:var(--muted)">Pilih tanggal lahir partner</span>
+            <span class="cs-arrow">✦</span>
+          </div>
+          <div class="cd-panel" id="cdatePanel2">
+            <div class="cd-panel-top">
+              <button class="cd-nav" onclick="cdNavYear2(-1)">‹</button>
+              <div class="cd-selects">
+                <div class="custom-select sm" id="cMonthSel">
+                  <div class="cs-display sm" onclick="toggleCS('cMonthSel')">
+                    <span class="cs-val" id="cMonthVal">Jan</span><span class="cs-arrow">↓</span>
+                  </div>
+                  <div class="cs-dropdown" id="cMonthSelDropdown"></div>
+                </div>
+                <div class="custom-select sm" id="cYearSel">
+                  <div class="cs-display sm" onclick="toggleCS('cYearSel')">
+                    <span class="cs-val" id="cYearVal">2000</span><span class="cs-arrow">↓</span>
+                  </div>
+                  <div class="cs-dropdown" id="cYearSelDropdown"></div>
+                </div>
+              </div>
+              <button class="cd-nav" onclick="cdNavYear2(1)">›</button>
+            </div>
+            <div class="cd-weekdays">
+              <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+            </div>
+            <div class="cd-grid" id="cdGrid2"></div>
+          </div>
+        </div>
+        <input type="hidden" id="cd">
       </div>
-      <button class="btn" style="margin-top:18px" onclick="doCompat()"><span>Analyze →</span></button>
+
+      <!-- Jam lahir partner — custom wheel -->
+      <div class="fi">
+        <label>Jam Lahir <span style="color:var(--gold);font-size:.9em">(penting untuk akurasi)</span></label>
+        <div class="tw-wrap" id="twWrap2">
+          <div class="tw-field" onclick="toggleTW2()">
+            <span class="tw-icon">☽</span>
+            <span id="twDisplay2">— : —</span>
+            <span class="tw-edit">pilih</span>
+          </div>
+          <div class="tw-panel" id="twPanel2">
+            <div class="tw-label-row"><span>JAM</span><span>MENIT</span></div>
+            <div class="tw-drums">
+              <div class="tw-drum" id="twHourDrum2">
+                <div class="tw-drum-inner" id="twHourInner2"></div>
+              </div>
+              <div class="tw-colon">:</div>
+              <div class="tw-drum" id="twMinDrum2">
+                <div class="tw-drum-inner" id="twMinInner2"></div>
+              </div>
+            </div>
+            <button class="tw-confirm" onclick="confirmTW2()">Pilih waktu ini</button>
+          </div>
+        </div>
+        <input type="hidden" id="ct">
+        <span class="hint">Tanpa jam lahir: Ascendant & HD kurang akurat</span>
+      </div>
+
+      <!-- Kota partner — required dengan autocomplete -->
+      <div class="fi">
+        <label>Kota Lahir <span style="color:var(--red);font-size:.9em">*wajib</span></label>
+        <div class="city-wrap" id="cityWrap2">
+          <input id="cc" type="text" placeholder="Ketik nama kota..." autocomplete="off"
+            oninput="onCityInput2()" onblur="onCityBlur2()">
+          <div class="city-dropdown" id="cityDropdown2"></div>
+        </div>
+        <div class="city-status" id="cityStatus2"></div>
+        <input type="hidden" id="ccLat">
+        <input type="hidden" id="ccLon">
+        <input type="hidden" id="ccTz">
+        <input type="hidden" id="ccConfirmed" value="0">
+        <span class="hint">Mempengaruhi Ascendant dan timezone kalkulasi</span>
+      </div>
+
+      <button class="btn" style="margin-top:18px" onclick="doCompat()"><span>Analisis →</span></button>
     </div>
+
     <div id="compat-res" style="display:none">
       <div class="csc-big" id="cs-score">—</div>
       <div class="csc-lbl" id="cs-lbl">—</div>
@@ -674,7 +1098,7 @@ select option{background:#11111c}
         </div>
         <div class="panel">
           <div class="plabel">Disclaimer</div>
-          <div class="pbody" style="font-size:11px;color:var(--muted);line-height:1.85">AXIOM adalah <em style="color:var(--dim)">interpretive metaphysical framework</em>, bukan sistem ilmiah yang telah terverifikasi. Semua kalkulasi menggunakan model astronomis yang disederhanakan. Interpretasi bersifat eksploratif dan subjektif — bukan diagnosis, prediksi pasti, atau saran profesional. Gunakan sebagai cermin refleksi, bukan peta mutlak.</div>
+          <div class="pbody" style="font-size:11px;color:var(--muted);line-height:1.85">OMC adalah <em style="color:var(--dim)">interpretive metaphysical framework</em>, bukan sistem ilmiah yang telah terverifikasi. Semua kalkulasi menggunakan model astronomis yang disederhanakan. Interpretasi bersifat eksploratif dan subjektif — bukan diagnosis, prediksi pasti, atau saran profesional. Gunakan sebagai cermin refleksi, bukan peta mutlak.</div>
         </div>
       </div>
     </div>
@@ -699,7 +1123,7 @@ select option{background:#11111c}
         </div>
         <div style="position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.5),transparent)"></div>
         <div style="position:relative;z-index:1" id="shareCardContent"></div>
-        <div style="position:absolute;bottom:14px;right:18px;font-family:var(--font-mono);font-size:7px;letter-spacing:.35em;color:rgba(201,168,76,0.3)">AXIOM · METAPHYSICAL INTELLIGENCE</div>
+        <div style="position:absolute;bottom:14px;right:18px;font-family:var(--font-mono);font-size:7px;letter-spacing:.35em;color:rgba(201,168,76,0.3)">OMC · METAPHYSICAL INTELLIGENCE</div>
       </div>
       <div style="margin-top:14px;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-align:center">Tekan & tahan (mobile) atau screenshot untuk menyimpan</div>
     </div>
@@ -849,70 +1273,249 @@ function houseOf(lon, houses) {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  BAZI ENGINE — Proper Four Pillars
+//  BAZI ENGINE — Accurate Four Pillars
+//  Based on solar terms (节气) not calendar months
 // ═══════════════════════════════════════════════════════════
 const STEMS=['甲 Jiǎ','乙 Yǐ','丙 Bǐng','丁 Dīng','戊 Wù','己 Jǐ','庚 Gēng','辛 Xīn','壬 Rén','癸 Guǐ'];
 const STEM_EL=['Yang Wood','Yin Wood','Yang Fire','Yin Fire','Yang Earth','Yin Earth','Yang Metal','Yin Metal','Yang Water','Yin Water'];
 const BRANCHES=['子 Rat','丑 Ox','寅 Tiger','卯 Rabbit','辰 Dragon','巳 Snake','午 Horse','未 Goat','申 Monkey','酉 Rooster','戌 Dog','亥 Pig'];
 const BRANCH_EL=['Water','Earth','Wood','Wood','Earth','Fire','Fire','Earth','Metal','Metal','Earth','Water'];
-const SOLAR_TERMS = [20,19,21,20,21,21,23,23,23,23,22,22]; // approx day of month for month start
 
-function baziYear(year) {
-  // Heavenly Stem cycles from 1864 (Jia Zi)
-  const si = ((year-4) % 10 + 10) % 10;
-  const bi = ((year-4) % 12 + 12) % 12;
+// Solar terms: approximate JD offset from Jan 1 each year for each month transition
+// lichun (立春) ~Feb 4, jingzhe ~Mar 6, ... etc.
+// These are the solar longitude thresholds: each 30° = new BaZi month
+// Month branch starts when Sun reaches: 315°(Yin/Tiger), 345°(Mao/Rabbit), 15°(Chen/Dragon)...
+const BAZI_MONTH_START_LON = [315, 345, 15, 45, 75, 105, 135, 165, 195, 225, 255, 285];
+// branch index for each solar month: Tiger=2, Rabbit=3, Dragon=4, Snake=5...
+const BAZI_MONTH_BRANCH =    [2,   3,   4,  5,  6,  7,   8,   9,  10,  11,   0,   1];
+
+function getBaziMonthIdx(sunLonAtBirth) {
+  // Find which solar month we're in based on Sun longitude
+  const norm = normalizeAngle(sunLonAtBirth);
+  for(let i=0;i<12;i++){
+    const start = BAZI_MONTH_START_LON[i];
+    const end = BAZI_MONTH_START_LON[(i+1)%12];
+    if(start < end){
+      if(norm >= start && norm < end) return i;
+    } else {
+      // wrap-around (315–360 + 0–345 for the Tiger month)
+      if(norm >= start || norm < end) return i;
+    }
+  }
+  return 0;
+}
+
+function baziYear(year, sunLon) {
+  // Year changes at lichun (~Feb 4), i.e. when Sun reaches 315°
+  // If Sun < 315° and month is Jan-early Feb, still previous year
+  let baziYr = year;
+  const norm = normalizeAngle(sunLon);
+  if(norm < 315 && new Date().getMonth() === 0) baziYr = year - 1; // rough guard
+  const si = ((baziYr-4) % 10 + 10) % 10;
+  const bi = ((baziYr-4) % 12 + 12) % 12;
   return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
 }
 
-function baziMonth(year, month, day) {
-  // Solar month index (simplified: use ~21st of each month as transition)
-  let mi = month - 1;
-  if(day < SOLAR_TERMS[month-1]) mi = (mi - 1 + 12) % 12;
-  const ySi = ((year-4)%10+10)%10;
-  const si = (ySi % 5 * 2 + mi) % 10;
-  const bi = (mi + 2) % 12;
+function baziYearFromSun(year, sunLon) {
+  // Accurate: year pillar changes at lichun (Sun lon = 315°)
+  let baziYr = year;
+  if(normalizeAngle(sunLon) < 315) {
+    // Before lichun — still previous year in BaZi
+    // But need to check if we're actually in early year (Jan-Feb)
+    // Approximate: if sunLon is in 270–315 range (Capricorn/early Aquarius), previous year
+    const n = normalizeAngle(sunLon);
+    if(n >= 270) baziYr = year - 1;
+  }
+  const si = ((baziYr-4) % 10 + 10) % 10;
+  const bi = ((baziYr-4) % 12 + 12) % 12;
+  return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi, baziYr };
+}
+
+function baziMonth(sunLon, yearSi) {
+  const mi = getBaziMonthIdx(sunLon);
+  const bi = BAZI_MONTH_BRANCH[mi];
+  // Month stem from year stem: (yearSi % 5) * 2 + monthBranch % 2
+  const si = (yearSi % 5 * 2 + bi) % 10;
   return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
 }
 
-function baziDay(year, month, day) {
-  // Julian Day Number method for day pillar
-  const jd = Math.floor(toJD(year, month, day, 12));
+function baziDay(year, month, day, utcHour, tz) {
+  // Use local solar midnight for day pillar
+  // Day changes at 23:00 local time (Zi hour start)
+  // If hour >= 23, next calendar day
+  let adjDay = day, adjMo = month, adjYr = year;
+  const localHour = utcHour + tz;
+  if(localHour >= 23) {
+    // Push to next day
+    const dt = new Date(year, month-1, day);
+    dt.setDate(dt.getDate()+1);
+    adjYr = dt.getFullYear(); adjMo = dt.getMonth()+1; adjDay = dt.getDate();
+  } else if(localHour < 0) {
+    // Pull to previous day
+    const dt = new Date(year, month-1, day);
+    dt.setDate(dt.getDate()-1);
+    adjYr = dt.getFullYear(); adjMo = dt.getMonth()+1; adjDay = dt.getDate();
+  }
+  // JD method — standard BaZi day cycle
+  const jd = Math.floor(toJD(adjYr, adjMo, adjDay, 12));
   const si = ((jd - 11) % 10 + 10) % 10;
   const bi = ((jd - 11) % 12 + 12) % 12;
   return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
 }
 
-function baziHour(daySi, hour) {
-  const bi = Math.floor((hour + 1) / 2) % 12;
+function baziHour(daySi, localHour) {
+  // Hour branch: Zi=23-01, Chou=01-03, Yin=03-05...
+  // Normalize negative hours
+  const h = ((localHour % 24) + 24) % 24;
+  // Zi hour: 23:00-00:59 = branch 0
+  const bi = Math.floor((h + 1) / 2) % 12;
   const si = (daySi % 5 * 2 + bi) % 10;
   return { stem:STEMS[si], branch:BRANCHES[bi], el:STEM_EL[si], si, bi };
 }
 
 // ═══════════════════════════════════════════════════════════
 //  HUMAN DESIGN ENGINE
-//  Gate from hexagram (I Ching → HD gate mapping)
+//  88° solar arc (not 88 days) for design chart
 // ═══════════════════════════════════════════════════════════
-// Gate from ecliptic longitude (each gate = 5.625° = 360/64)
+// Authentic HD gate order on the wheel (I Ching hexagrams mapped clockwise from 0° Aries)
+// Gate 41 starts at ~337.5° (in Pisces), each gate = 5.625°
+// Authentic sequence from Jovian Archive
+const HD_GATE_WHEEL = [41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60];
+// Offset: Gate 41 begins at longitude 337.5° (approx) = Pisces 7.5°
+const HD_GATE_OFFSET = 337.5;
+
 function lonToGate(lon) {
-  // HD wheel starts at gate 41 at 0° Aries (approx)
-  const HDgateOrder = [41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60];
-  const idx = Math.floor(normalizeAngle(lon - 15.15) / (360/64)) % 64;
-  return HDgateOrder[Math.max(0,Math.min(63,idx))];
+  const adjusted = normalizeAngle(lon - HD_GATE_OFFSET);
+  const idx = Math.floor(adjusted / 5.625) % 64;
+  return HD_GATE_WHEEL[Math.max(0,Math.min(63,idx))];
 }
 
-function hdType(sun, moon, asc, earth) {
-  // Simplified but deterministic from actual positions
-  const total = (sun + moon + asc + earth) % 5;
-  return ['Generator','Manifesting Generator','Projector','Manifestor','Reflector'][total];
+function lonToLine(lon) {
+  // Each gate has 6 lines (5.625° / 6 = 0.9375° per line)
+  const adjusted = normalizeAngle(lon - HD_GATE_OFFSET);
+  const gateOffset = adjusted % 5.625;
+  return Math.floor(gateOffset / 0.9375) + 1; // 1-6
+}
+
+// Find JD when Sun reaches target longitude (for 88° solar arc)
+// Newton's method approximation
+function jdWhenSunAt(targetLon, jdApprox) {
+  let jd = jdApprox;
+  for(let iter=0; iter<10; iter++) {
+    const curLon = sunLongitude(jd);
+    let diff = normalizeAngle(targetLon - curLon);
+    if(diff > 180) diff -= 360; // shortest arc
+    if(Math.abs(diff) < 0.001) break;
+    jd += diff / 360; // Sun moves ~1°/day
+  }
+  return jd;
+}
+
+function getDesignJD(birthJD) {
+  // Design = when Sun was exactly 88° LESS than birth Sun longitude
+  const birthSunLon = sunLongitude(birthJD);
+  const designSunTarget = normalizeAngle(birthSunLon - 88);
+  // Approximate: 88 days before birth
+  const jdApprox = birthJD - 88;
+  return jdWhenSunAt(designSunTarget, jdApprox);
+}
+
+// HD Type determination from defined motors and throat connection
+// Simplified but chart-derived: uses personality + design gates
+function determineHDType(pGates, dGates) {
+  // Check sacral definition (gates in sacral channels: 3,5,9,14,27,29,34,42,59)
+  const sacralGates = new Set([3,5,9,14,27,29,34,42,59]);
+  // Throat gates: 12,16,20,23,31,33,35,45,56,62,8
+  const throatGates = new Set([12,16,20,23,31,33,35,45,56,62,8]);
+  // Motor gates (willpower, solar plexus, sacral, root)
+  const motorGates = new Set([21,26,51,35,36,22,6,37,26,40,16,34,42,59,53,60,52,19,39,41,58,38,54]);
+
+  const allGates = new Set([...pGates, ...dGates]);
+  const hasSacral = [...allGates].some(g => sacralGates.has(g));
+  const hasThroat = [...allGates].some(g => throatGates.has(g));
+  const hasMotor = [...allGates].some(g => motorGates.has(g));
+
+  // Reflector: no defined centers (very rare, ~1%)
+  const totalGates = allGates.size;
+  if(totalGates < 4) return 'Reflector';
+  // Manifestor: motor connected to throat (no sacral)
+  if(!hasSacral && hasMotor && hasThroat) return 'Manifestor';
+  // Generator: sacral defined
+  if(hasSacral) {
+    // MG: sacral + motor connected to throat
+    if(hasMotor && hasThroat) return 'Manifesting Generator';
+    return 'Generator';
+  }
+  // Projector: no sacral, no motor-throat
+  return 'Projector';
+}
+
+// HD Authority from defined centers priority
+function determineAuthority(definedCenters) {
+  if(definedCenters.includes('Solar Plexus')) return 'Emotional';
+  if(definedCenters.includes('Sacral')) return 'Sacral';
+  if(definedCenters.includes('Spleen')) return 'Splenic';
+  if(definedCenters.includes('Heart')) return 'Ego Manifested';
+  if(definedCenters.includes('G')) return 'Self-Projected';
+  if(definedCenters.includes('Throat')) return 'Mental';
+  return 'Lunar'; // Reflector
+}
+
+// Define centers based on activated channels (gate pairs)
+const HD_CHANNELS = [
+  [64,47],[61,24],[63,4],[17,62],[43,23],[11,56],[35,36],[12,22],[16,48],[20,57],
+  [10,20],[34,20],[31,7],[8,1],[33,13],[2,14],[46,29],[15,5],[46,18],[18,58],
+  [48,16],[57,34],[57,10],[57,20],[44,26],[50,27],[32,54],[28,38],[18,58],
+  [42,53],[3,60],[9,52],[29,46],[59,6],[37,40],[55,39],[49,19],[30,41],[36,35],
+  [25,51],[21,45],[26,44],[5,15],[14,2],[29,46],[34,57],[10,57],
+];
+// Center membership for each gate
+const GATE_CENTER = {
+  64:'Head',61:'Head',63:'Head',
+  47:'Ajna',24:'Ajna',4:'Ajna',17:'Ajna',43:'Ajna',11:'Ajna',
+  62:'Throat',23:'Throat',56:'Throat',35:'Throat',12:'Throat',45:'Throat',
+  33:'Throat',8:'Throat',31:'Throat',20:'Throat',16:'Throat',
+  2:'G',14:'G',1:'G',13:'G',7:'G',10:'G',15:'G',46:'G',25:'G',
+  26:'Heart',51:'Heart',21:'Heart',40:'Heart',
+  36:'Solar Plexus',22:'Solar Plexus',37:'Solar Plexus',6:'Solar Plexus',
+  49:'Solar Plexus',55:'Solar Plexus',30:'Solar Plexus',
+  5:'Sacral',14:'Sacral',29:'Sacral',59:'Sacral',9:'Sacral',3:'Sacral',
+  42:'Sacral',27:'Sacral',34:'Sacral',
+  48:'Spleen',57:'Spleen',44:'Spleen',50:'Spleen',32:'Spleen',28:'Spleen',18:'Spleen',
+  38:'Root',39:'Root',41:'Root',53:'Root',60:'Root',52:'Root',54:'Root',58:'Root',19:'Root',
+};
+
+function getDefinedCenters(allGates) {
+  // A center is defined when both gates of at least one channel are active
+  const gateSet = new Set(allGates);
+  const defined = new Set();
+  HD_CHANNELS.forEach(([a,b]) => {
+    if(gateSet.has(a) && gateSet.has(b)) {
+      if(GATE_CENTER[a]) defined.add(GATE_CENTER[a]);
+      if(GATE_CENTER[b]) defined.add(GATE_CENTER[b]);
+    }
+  });
+  return [...defined];
 }
 
 // ═══════════════════════════════════════════════════════════
-//  ZI WEI ENGINE — Palace placement from birth hour branch
+//  ZI WEI ENGINE
 // ═══════════════════════════════════════════════════════════
 function zwPalace(birthHourBranch, lunarMonth) {
-  // Life palace (命宮) formula: (14 + lunarMonth - hourBranch) % 12
+  // Life palace (命宮): (14 + lunarMonth - hourBranch) % 12
+  // lunarMonth: 1-12, hourBranch: 0-11
   return ((14 + lunarMonth - birthHourBranch) % 12 + 12) % 12;
 }
+
+// Approximate lunar month from sun longitude
+// New moon = sun and moon at same longitude
+function approxLunarMonth(sunLon) {
+  // Chinese lunar months roughly correspond to sun sign + 1
+  // Start of lunar month 1 (正月) when Sun is in Aquarius (~315° ecliptic start for BaZi)
+  // Approximate: lunar month = floor(sun lon / 30) + 1, wrapped
+  return (Math.floor(normalizeAngle(sunLon) / 30) + 1) % 12 || 12;
+}
+
 
 // ═══════════════════════════════════════════════════════════
 //  MAIN COMPUTE
@@ -946,15 +1549,21 @@ function getLatLon(city) {
 // Approximate timezone from longitude
 function tzFromLon(lon) { return Math.round(lon/15); }
 
-function computeChart(name, dateStr, timeStr, city) {
+function computeChart(name, dateStr, timeStr, city, confirmedLat, confirmedLon, confirmedTz) {
   const d = new Date(dateStr + 'T' + (timeStr||'12:00'));
   const yr = d.getFullYear(), mo = d.getMonth()+1, dy = d.getDate();
   const hr = d.getHours() + d.getMinutes()/60;
-  const [lat, lon] = getLatLon(city);
-  const tz = tzFromLon(lon);
+  // Use confirmed coords if available, else fall back to lookup
+  let lat, lon, tz;
+  if(confirmedLat !== undefined && !isNaN(confirmedLat)) {
+    lat = confirmedLat; lon = confirmedLon; tz = confirmedTz;
+  } else {
+    const ll = getLatLon(city);
+    lat = ll[0]; lon = ll[1]; tz = tzFromLon(lon);
+  }
   const utcHr = hr - tz;
 
-  // Julian Day
+  // Julian Day (UTC)
   const jd = toJD(yr, mo, dy, utcHr, 0);
 
   // Planetary longitudes
@@ -968,7 +1577,8 @@ function computeChart(name, dateStr, timeStr, city) {
   const uraLon = uranusLongitude(jd);
   const nepLon = neptuneLongitude(jd);
   const pluLon = plutoLongitude(jd);
-  const ascLon = timeStr ? calcAscendant(jd, lat, lon) : sunLon; // fallback to sun
+  // Ascendant requires birth time — without it, use Sun as fallback (clearly flagged)
+  const ascLon = timeStr ? calcAscendant(jd, lat, lon) : sunLon;
   const earthLon = normalizeAngle(sunLon + 180);
 
   const lons = { Sun:sunLon, Moon:moonLon, Mercury:mercLon, Venus:venLon, Mars:marLon,
@@ -981,9 +1591,12 @@ function computeChart(name, dateStr, timeStr, city) {
     planets[p] = { ...s, sym: PSYMS[p] };
   }
 
-  const houses = calcHouses(ascLon);
+  // Houses — Whole Sign system (most accurate without exact lat/birth time precision)
+  // Each house = one whole sign, House 1 = Ascendant sign
+  const ascSignIdx = planets.Ascendant.idx;
+  const houses = Array.from({length:12},(_,i) => i * 30 + ascSignIdx * 30);
 
-  // Aspects
+  // Aspects (tropical)
   const pKeys = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn'];
   const aspects = [];
   for(let i=0;i<pKeys.length;i++) {
@@ -993,59 +1606,99 @@ function computeChart(name, dateStr, timeStr, city) {
     }
   }
 
-  // Element from signs
+  // Element from signs (Western 4 elements)
   const SIGN_EL={Aries:'Fire',Leo:'Fire',Sagittarius:'Fire',Taurus:'Earth',Virgo:'Earth',Capricorn:'Earth',Gemini:'Air',Libra:'Air',Aquarius:'Air',Cancer:'Water',Scorpio:'Water',Pisces:'Water'};
   const elCounts={Fire:0,Earth:0,Air:0,Water:0};
   ['Sun','Moon','Mercury','Venus','Mars'].forEach(p=>{ const e=SIGN_EL[planets[p].sign]; if(e) elCounts[e]++; });
 
-  // BAZI
-  const byear = baziYear(yr);
-  const bmonth = baziMonth(yr, mo, dy);
-  const bday = baziDay(yr, mo, dy);
-  const bhour = timeStr ? baziHour(bday.si, Math.floor(hr)) : { stem:'—',branch:'—',el:'—',si:0,bi:0 };
+  // ── BAZI — Solar Term accurate ──
+  const localHr = utcHr + tz;
+  const byearData = baziYearFromSun(yr, sunLon);
+  const byear = { stem:STEMS[byearData.si], branch:BRANCHES[byearData.bi], el:STEM_EL[byearData.si], si:byearData.si, bi:byearData.bi };
+  const bmonth = baziMonth(sunLon, byearData.si);
+  const bday = baziDay(yr, mo, dy, utcHr, tz);
+  const bhour = timeStr ? baziHour(bday.si, localHr) : { stem:'—',branch:'—',el:'—',si:0,bi:0 };
   const dayMaster = bday.el;
 
-  // Element counts from pillars
+  // Element counts from pillars (Five Elements)
   const baziEls = {Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
   [byear,bmonth,bday,bhour].forEach(p => {
     if(!p.el || p.el==='—') return;
     const base = p.el.split(' ')[1];
     if(baziEls[base]!==undefined) baziEls[base]++;
   });
+  // Also add hidden stems from branch elements
+  const BRANCH_HIDDEN = {
+    'Rat':'Water','Ox':'Earth','Tiger':'Wood','Rabbit':'Wood',
+    'Dragon':'Earth','Snake':'Fire','Horse':'Fire','Goat':'Earth',
+    'Monkey':'Metal','Rooster':'Metal','Dog':'Earth','Pig':'Water'
+  };
+  [byear,bmonth,bday,bhour].forEach(p => {
+    if(!p.branch || p.branch==='—') return;
+    const animal = p.branch.split(' ')[1]; // e.g. "子 Rat" -> "Rat"
+    const hiddenEl = BRANCH_HIDDEN[animal];
+    if(hiddenEl && baziEls[hiddenEl]!==undefined) baziEls[hiddenEl] += 0.5;
+  });
+  // Round and find favourable/unfavourable
+  Object.keys(baziEls).forEach(k=>{ baziEls[k]=Math.round(baziEls[k]*10)/10; });
   const favEl = Object.entries(baziEls).sort((a,b)=>a[1]-b[1])[0][0];
   const unfavEl = Object.entries(baziEls).sort((a,b)=>b[1]-a[1])[0][0];
 
-  // Luck pillars
-  const luckStart = (10 - (yr % 10)) % 10 || 10;
+  // Luck pillars (大運)
+  const luckStart = Math.max(1, (10 - (yr % 10)) % 10);
   const luckPillars = Array.from({length:8},(_,i)=>({
     age: luckStart + i*10,
-    stem: STEMS[(byear.si+i)%10],
-    branch: BRANCHES[(byear.bi+i)%12],
-    el: STEM_EL[(byear.si+i)%10]
+    stem: STEMS[(byear.si+i+1)%10],
+    branch: BRANCHES[(byear.bi+i+1)%12],
+    el: STEM_EL[(byear.si+i+1)%10]
   }));
 
-  // HUMAN DESIGN
-  // Design chart = 88° before birth
-  const jd88 = jd - 88/365.25;
-  const designSunLon = sunLongitude(jd88);
+  // ── HUMAN DESIGN — 88° solar arc for design chart ──
+  const designJD = getDesignJD(jd);
+  const designSunLon = sunLongitude(designJD);
+  const designMoonLon = moonLongitude(designJD);
+  const designEarthLon = normalizeAngle(designSunLon + 180);
+  const designMercuryLon = mercuryLongitude(designJD);
 
-  const sunGate = lonToGate(sunLon);
-  const moonGate = lonToGate(moonLon);
-  const ascGate = lonToGate(ascLon);
-  const earthGate = lonToGate(earthLon);
-  const designGate = lonToGate(designSunLon);
+  // Personality (conscious) gates from birth
+  const pGates = [
+    lonToGate(sunLon), lonToGate(earthLon),
+    lonToGate(moonLon), lonToGate(ascLon),
+    lonToGate(mercLon), lonToGate(venLon),
+    lonToGate(marLon),
+  ];
+  // Design (unconscious) gates from 88° prior
+  const dGates = [
+    lonToGate(designSunLon), lonToGate(designEarthLon),
+    lonToGate(designMoonLon), lonToGate(designMercuryLon),
+  ];
 
-  const hdTypeStr = (['Generator','Manifesting Generator','Projector','Manifestor','Reflector'])[(sunGate + moonGate) % 5];
-  const hdAuth = HD_AUTHS[(moonGate + ascGate) % 6];
-  const hdProf = HD_PROFS[(sunGate + designGate) % 12];
+  const allHDGates = [...new Set([...pGates, ...dGates])];
+  const definedCenters = getDefinedCenters(allHDGates);
+  const undefinedCenters = HD_CENTERS.filter(c=>!definedCenters.includes(c));
+  const hdOpenSP = undefinedCenters.includes('Solar Plexus');
+  const hdOpenSacral = undefinedCenters.includes('Sacral');
+
+  const hdTypeStr = determineHDType(pGates, dGates);
+  const hdAuth = determineAuthority(definedCenters);
+
+  // Profile = personality line + design line of Sun gate
+  const pLine = lonToLine(sunLon);
+  const dLine = lonToLine(designSunLon);
+  const hdProf = pLine+'/'+dLine;
+
   const hdStrategy = {Generator:'Wait to Respond','Manifesting Generator':'Wait to Respond then Inform',Projector:'Wait for the Invitation',Manifestor:'Inform before Acting',Reflector:'Wait a Lunar Cycle'}[hdTypeStr];
   const hdNotSelf = {Generator:'Frustration','Manifesting Generator':'Frustration & Anger',Projector:'Bitterness',Manifestor:'Anger',Reflector:'Disappointment'}[hdTypeStr];
-  const definedCenters = HD_CENTERS.filter((_,i) => (sunGate + moonGate + ascGate + i) % 3 !== 0);
-  const undefinedCenters = HD_CENTERS.filter(c=>!definedCenters.includes(c));
 
-  // ZI WEI
-  const lunarMonth = mo; // simplified
-  const hourBranch = timeStr ? Math.floor((Math.floor(hr)+1)/2)%12 : 0;
+  const sunGate = pGates[0];
+  const moonGate = pGates[2];
+  const ascGate = pGates[3];
+  const earthGate = pGates[1];
+  const designGate = dGates[0];
+
+  // ── ZI WEI — Approximate lunar month from Sun longitude ──
+  const lunarMonth = approxLunarMonth(sunLon);
+  const hourBranch = timeStr ? Math.floor(((localHr % 24 + 24) % 24 + 1) / 2) % 12 : 0;
   const zwLife = zwPalace(hourBranch, lunarMonth);
   const zwCareer = (zwLife + 6) % 12;
   const zwWealth = (zwLife + 2) % 12;
@@ -1064,64 +1717,455 @@ function computeChart(name, dateStr, timeStr, city) {
   let soul = vow.reduce((a,b)=>a+b,0)||3;
   while(soul>9&&soul!==11&&soul!==22) soul=soul.toString().split('').map(Number).reduce((a,b)=>a+b,0);
 
-  // FUSION TRAITS — derived from actual chart positions
+  // FUSION TRAITS — weighted by system contextual dominance
+  // HD → behavioral energy | Astro → social persona | BaZi → survival adaptation
   const fire = elCounts.Fire, water = elCounts.Water, earth = elCounts.Earth, air = elCounts.Air;
+
+  // Month branch contributes to "environmental pressure" — weighted heavier in BaZi
+  const BRANCH_TEMP = {'Rat':'cold','Ox':'cold','Tiger':'warming','Rabbit':'warm','Dragon':'dry','Snake':'hot','Horse':'hot','Goat':'hot-dry','Monkey':'cooling','Rooster':'cool','Dog':'dry','Pig':'cold'};
+  const monthAnimal = bmonth.branch.split(' ')[1];
+  const monthTemp = BRANCH_TEMP[monthAnimal] || 'neutral';
+  const monthPressure = monthTemp.includes('hot') ? 'fire' : monthTemp.includes('cold') ? 'water' : monthTemp.includes('warm') ? 'wood' : 'earth';
+
+  // BaZi Day Master strength (simplified season-aware)
+  const dmElement = dayMaster.split(' ')[1]; // Wood/Fire/Earth/Metal/Water
+  const seasonSupport = {
+    Wood: monthPressure==='wood'||monthPressure==='water',
+    Fire: monthPressure==='fire'||monthPressure==='wood',
+    Earth: monthPressure==='earth'||monthPressure==='fire',
+    Metal: monthPressure==='earth'||monthPressure==='metal',
+    Water: monthPressure==='water'||monthPressure==='metal',
+  }[dmElement] || false;
+  const dmStrength = seasonSupport ? 'strong' : 'weak'; // simplified
+
+  // Traits now differentiate by authority context (HD), not just count
+  const hdConserving = hdTypeStr === 'Projector' || hdTypeStr === 'Reflector';
   const traits = [
-    {n:'Leadership', s: Math.min(98, 45 + fire*12 + (planets.Sun.idx===4?20:0) + (lp===1||lp===8?15:0))},
-    {n:'Intuition', s: Math.min(98, 40 + water*14 + (planets.Moon.idx===11||planets.Moon.idx===3?18:0))},
-    {n:'Creativity', s: Math.min(98, 38 + (fire+air)*9 + (lp===3?18:0))},
-    {n:'Emotional Depth', s: Math.min(98, 35 + water*15 + (planets.Moon.idx===8||planets.Moon.idx===3?20:0))},
-    {n:'Analytical', s: Math.min(98, 30 + (air+earth)*12 + (planets.Mercury.idx===5||planets.Mercury.idx===5?18:0))},
-    {n:'Spiritual', s: Math.min(98, 25 + water*12 + (lp===7||lp===11?22:0))},
+    {n:'Kepemimpinan',    s: Math.min(95, 40 + fire*10 + (planets.Sun.idx===4?18:0) + (lp===1||lp===8?14:0) - (hdConserving?10:0))},
+    {n:'Intuisi',         s: Math.min(95, 38 + water*13 + (planets.Moon.idx===11||planets.Moon.idx===3?16:0) + (hdAuth==='Splenic'?15:0))},
+    {n:'Kreativitas',     s: Math.min(95, 35 + (fire+air)*8 + (lp===3||lp===6?15:0))},
+    {n:'Kedalaman Emosi', s: Math.min(95, 33 + water*13 + (hdOpenSP?15:0) + (planets.Moon.idx===8?18:0))},
+    {n:'Analitis',        s: Math.min(95, 28 + (air+earth)*11 + (planets.Mercury.idx===5?16:0) + (lp===7?14:0))},
+    {n:'Rohani',          s: Math.min(95, 22 + water*11 + (lp===7||lp===9||lp===11?20:0))},
   ].sort((a,b)=>b.s-a.s);
 
-  // SOUL SCORE
-  const soulScore = Math.round((traits.reduce((a,t)=>a+t.s,0)/traits.length + lp*4 + (definedCenters.length/9)*20) / 3);
-  const soulLabel = soulScore>=80?'Luminous':soulScore>=65?'Attuned':soulScore>=50?'Emerging':'Seeking';
+  // ── SOUL SCORE — dimensional, transparent anatomy ──
+  const SIGN_EL2 = {Aries:'Fire',Leo:'Fire',Sagittarius:'Fire',Taurus:'Earth',Virgo:'Earth',Capricorn:'Earth',Gemini:'Air',Libra:'Air',Aquarius:'Air',Cancer:'Water',Scorpio:'Water',Pisces:'Water'};
 
-  // SHADOWS
-  const sunSign = planets.Sun.sign;
+  const aspHarmony = aspects.filter(a=>a.t==='Trine'||a.t==='Sextile').length;
+  const aspTension = aspects.filter(a=>a.t==='Square'||a.t==='Opposition').length;
+  const elBalance = 4 - Math.max(...Object.values(elCounts));
+  const astroScore = Math.min(100, Math.round(50 + aspHarmony*8 - aspTension*4 + elBalance*6 + (SIGN_EL2[planets.Sun.sign]===SIGN_EL2[planets.Moon.sign]?10:0)));
+
+  const baziMax = Math.max(...Object.values(baziEls));
+  const baziMin = Math.min(...Object.values(baziEls).filter(v=>v>0));
+  const baziBalance = Math.round(100 - (baziMax - baziMin) * 15);
+  const baziScore = Math.min(100, Math.max(30, baziBalance + (dmStrength==='strong'?12:-5)));
+
+  const defRatio = definedCenters.length / 9;
+  const hdScore = Math.min(100, Math.round(40 + defRatio*40 + (hdAuth==='Sacral'||hdAuth==='Emotional'?8:0)));
+
+  const shadowBase = Math.max(20, 70 - aspTension*8 + water*10 + (lp===7||lp===9||lp===11?12:0));
+  const shadowScore = Math.min(90, Math.round(shadowBase));
+  const numCoherence = 100 - Math.abs(lp - dest)*8 - Math.abs(lp - soul)*5;
+  const numScore = Math.min(100, Math.max(30, Math.round(numCoherence)));
+
+  const soulDimensions = [
+    { label:'Resonansi Astrologis', score: astroScore, weight:0.25, source:'Sun/Moon/Aspect', color:'#c9a84c' },
+    { label:'Keseimbangan BaZi', score: baziScore, weight:0.25, source:'Five Elements + Season', color:'#5a9e78' },
+    { label:'Koherensi HD', score: hdScore, weight:0.20, source:'Centers/Gates', color:'#6b7fd4' },
+    { label:'Integrasi Shadow', score: shadowScore, weight:0.20, source:'Depth Pattern', color:'#8b6fb5' },
+    { label:'Keselarasan Numerologi', score: numScore, weight:0.10, source:'LP/Destiny/Soul', color:'#4a9e9e' },
+  ];
+  const soulScore = Math.round(soulDimensions.reduce((acc,d)=>acc+d.score*d.weight,0));
+  const soulLabel = soulScore>=82?'Luminous':soulScore>=68?'Attuned':soulScore>=52?'Emerging':'Seeking';
+  const soulDesc = {
+    Luminous:'Sistem-sistem utama dalam bagan lahirmu menunjukkan koherensi yang cukup tinggi. Ini bukan berarti hidup tanpa konflik — tapi kapasitas untuk mengintegrasikan pengalaman relatif besar.',
+    Attuned:'Ada resonansi kuat di sebagian besar dimensi, dengan beberapa area yang masih dalam proses kalibrasi. Pattern yang muncul berulang adalah area terbesar untuk pertumbuhan.',
+    Emerging:'Sistem-sistem dalam bagan lahirmu menunjukkan tension yang produktif. Bukan kelemahan — ini energi transformasi yang belum sepenuhnya diarahkan.',
+    Seeking:'Chart-mu menunjukkan banyak internal pull yang berbeda arah. Ini kondisi yang umum — dan biasanya berarti adaptasi yang kamu kembangkan untuk bertahan lebih dominan daripada blueprint aslinya.'
+  }[soulLabel];
+
+  // ── ERROR TOLERANCE ANALYSIS ──
+  // How sensitive is this chart to birth time uncertainty?
+  const ascSensitive = timeStr; // without time, ascendant is unknown
+  // Ascendant changes sign roughly every 2 hours
+  // HD design calculation: sensitive to minutes
+  // BaZi hour pillar: changes every 2 hours
+  const birthTimeSensitivity = !timeStr ? 'high' :
+    (dy === new Date(yr, mo-1, dy+1, 0, 0).getDate()) ? 'medium' : // near midnight
+    (bmonth.branch !== baziMonth(sunLon, byearData.si).branch) ? 'medium' : 'low';
+
+  const sensitivityNote = {
+    high: 'Tanpa jam lahir: Ascendant, HD Authority, dan BaZi Hour Pillar tidak dapat dihitung. Hasil ini menggunakan estimasi. Akurasi bisa berbeda ±1-2 sign untuk Ascendant.',
+    medium: 'Jam lahir tersedia, tapi lahir dekat pergantian batas (tengah malam atau solar term). Beberapa hasil mungkin sensitif terhadap perbedaan ±30 menit.',
+    low: 'Jam lahir dan koordinat lengkap. Hasil relatif stabil untuk variasi waktu normal (±15 menit).'
+  }[birthTimeSensitivity];
+
+  // ── SYMBOLIC CONFLICT ENGINE ──
+  // This engine PRESERVES contradictions instead of resolving them smoothly.
+  // It reads ADAPTATION (coping patterns) not just natal blueprint.
+
+  const SIGN_EL_MAP = {Aries:'Fire',Leo:'Fire',Sagittarius:'Fire',Taurus:'Earth',Virgo:'Earth',Capricorn:'Earth',Gemini:'Air',Libra:'Air',Aquarius:'Air',Cancer:'Water',Scorpio:'Water',Pisces:'Water'};
+  const sunEl = SIGN_EL_MAP[planets.Sun.sign] || 'Fire';
+  const moonEl = SIGN_EL_MAP[planets.Moon.sign] || 'Water';
+
+  // Read signals per system (domain-specific, not averaged)
+  const signals = {
+    // HD → behavioral mechanism (how you actually operate day-to-day)
+    behavioralEnergy: hdTypeStr==='Generator'||hdTypeStr==='Manifesting Generator' ? 'high' :
+                      hdTypeStr==='Manifestor' ? 'initiating' : 'conserving',
+    // Astrology → social persona (how you appear in social contexts)
+    socialPersona: sunEl==='Fire'||sunEl==='Air' ? 'expansive' : 'contractive',
+    // BaZi → survival adaptation (what you do under pressure)
+    survivalMode: dmStrength==='strong' ? 'dominant' : 'adaptive',
+    // Moon → emotional processing style
+    emotionalProcess: moonEl==='Water'?'absorptive': moonEl==='Fire'?'expressive': moonEl==='Air'?'deflective':'containing',
+    // LP → life trajectory pull
+    trajectoryPull: (lp===1||lp===8||lp===22)?'power':(lp===2||lp===6||lp===9)?'service':(lp===3||lp===5)?'expression':'depth',
+    // Month branch → environmental pressure / temperament
+    environmentalPressure: monthPressure,
+    // Aspect tension → internal friction level
+    frictionLevel: aspTension>=3?'high':aspTension>=1?'medium':'low',
+  };
+
+  // Detect BEHAVIORAL CONTRADICTIONS (not resolved — preserved as tension)
+  const contradictions = [];
+
+  // Contradiction: expansive persona + conserving behavioral energy
+  if(signals.socialPersona==='expansive' && signals.behavioralEnergy==='conserving') {
+    contradictions.push({
+      title: 'Persona Ekspansif, Mekanisme Konservasi Energi',
+      systemA: 'Sun '+planets.Sun.sign+' (Astro: Social Persona)',
+      signalA: 'Tampil ekspresif, engaging, dan menarik secara sosial',
+      systemB: 'HD '+hdTypeStr+' (Behavioral Mechanism)',
+      signalB: 'Sistem yang tidak dirancang untuk output energi terus-menerus',
+      resolution: 'Kamu mungkin terlihat selalu berenergi — padahal di baliknya sedang dalam mode recovery yang tidak terlihat. Orang membaca silence-mu sebagai rejection karena mereka terbiasa dengan versi ekspresifmu.',
+      cost: 'Semakin besar persona sosialmu, semakin besar ekspektasi orang terhadap konsistensinya. Dan biaya untuk mempertahankan konsistensi itu tidak kelihatan dari luar.',
+      adaptation: 'Kemungkinan kamu sudah mengembangkan kemampuan untuk "on demand" mengaktifkan persona sosial — tapi dengan biaya energi internal yang tidak proporsional.'
+    });
+  }
+
+  // Contradiction: dominant survival mode + absorptive emotional processing
+  if(signals.survivalMode==='dominant' && signals.emotionalProcess==='absorptive') {
+    contradictions.push({
+      title: 'Drive Dominansi, Sensitivitas Emosi Tersembunyi',
+      systemA: 'BaZi '+dayMaster+' Strong (Survival Mode)',
+      signalA: 'Kecenderungan mendominasi situasi dan mengambil kontrol',
+      systemB: 'Moon '+planets.Moon.sign+(hdOpenSP?' + HD Open SP':''),
+      signalB: 'Menyerap emosi lingkungan tanpa sadar, sangat sensitif terhadap rejection',
+      resolution: 'Kamu menampilkan kepercayaan diri dan kontrol, tapi di dalam ada lapisan sensitivitas yang jauh lebih besar dari yang orang duga. Kombinasi ini sering menciptakan pola: mendorong keras ke luar, collapse di dalam.',
+      cost: 'Orang dengan pola ini sering tidak mendapat ruang untuk vulnerable karena "image kuat" yang mereka proyeksikan. Lama-lama kelelahan emosi tanpa tempat untuk diproses.',
+      adaptation: 'Kemungkinan kamu sudah belajar untuk mengubah emosi menjadi ambisi — yang membuat kamu produktif, tapi jarang benar-benar diproses.'
+    });
+  }
+
+  // Contradiction: high friction (aspect tension) + service trajectory
+  if(signals.frictionLevel==='high' && signals.trajectoryPull==='service') {
+    contradictions.push({
+      title: 'Internal Friction Tinggi, Dorongan Melayani',
+      systemA: aspTension+' Square/Opposition Aspects',
+      signalA: 'Tension internal yang signifikan antara berbagai dorongan',
+      systemB: 'Life Path '+lp,
+      signalB: 'Dorongan kuat untuk berkontribusi dan melayani orang lain',
+      resolution: 'Kamu sering membantu orang lain memproses konflik mereka — padahal konflik internal-mu sendiri belum sepenuhnya diselesaikan. Ini bukan kemunafikan. Ini adalah cara lain untuk menghindari duduk dengan ketidaknyamanan diri sendiri.',
+      cost: 'Orang yang sangat helpful seringkali adalah orang yang paling kesulitan meminta bantuan. Dan makin banyak orang yang bergantung padamu, makin sulit untuk berhenti.',
+      adaptation: 'Helping behavior bisa menjadi coping mechanism yang sangat functional — sampai kamu burnout.'
+    });
+  }
+
+  // Contradiction: fast cognitive style + weak/adaptive survival mode
+  if((air>=2||planets.Mercury.idx===0||planets.Mercury.idx===1) && signals.survivalMode==='adaptive') {
+    contradictions.push({
+      title: 'Proses Berpikir Cepat, Eksekusi yang Butuh Konteks',
+      systemA: 'Mercury '+planets.Mercury.sign+' / Air x'+air,
+      signalA: 'Koneksi antar ide sangat cepat, sering sampai sebelum orang lain',
+      systemB: 'BaZi '+dayMaster+' '+dmStrength+' — Month '+bmonth.branch,
+      signalB: 'Ritme eksekusi yang butuh kondisi yang tepat untuk optimal',
+      resolution: 'Kamu bisa melihat solusinya dengan jelas, tapi eksekusinya butuh energi dan kondisi yang tidak selalu tersedia. Ini menciptakan frustasi yang sering kamu alami sebagai "gagal memulai" padahal sebenarnya sedang menunggu alignment yang tepat.',
+      cost: 'Orang dengan pola ini sering dilihat sebagai underperformer — padahal sebenarnya sedang menunggu kondisi yang right. Tapi dunia tidak selalu menunggu.',
+      adaptation: 'Kemungkinan kamu sudah mengembangkan kemampuan untuk "fake momentum" — terlihat bergerak padahal masih dalam proses alignment internal.'
+    });
+  }
+
+  // Contradiction: expression trajectory + containing emotional process
+  if(signals.trajectoryPull==='expression' && signals.emotionalProcess==='containing') {
+    contradictions.push({
+      title: 'Dorongan Ekspresif, Proses Emosi yang Menutup',
+      systemA: 'Life Path '+lp,
+      signalA: 'Terdorong kuat untuk mengekspresikan dan berbagi dengan dunia',
+      systemB: 'Moon '+planets.Moon.sign,
+      signalB: 'Memproses emosi secara internal, jarang menunjukkan kerentanan sesungguhnya',
+      resolution: 'Kamu sangat ekspresif tentang ide, kreativitas, dan pandangan — tapi sangat selektif tentang apa yang benar-benar sedang kamu rasakan. Ada gap antara apa yang kamu bagikan dan apa yang kamu simpan.',
+      cost: 'Orang mengenalmu melalui ekspresimu, tapi jarang melalui perasaanmu. Ini menciptakan koneksi yang terasa dalam di satu sisi, tapi satu dimensi di sisi lain.',
+      adaptation: 'Expression bisa menjadi armor — cara untuk terlihat open tanpa benar-benar vulnerable.'
+    });
+  }
+
+  // Universal fallback — always one if none triggered
+  if(contradictions.length === 0) {
+    contradictions.push({
+      title: 'Koherensi yang Menciptakan Blind Spot Tersendiri',
+      systemA: planets.Sun.sign+' ☉ + '+hdTypeStr,
+      signalA: 'Sistem yang relatif konsisten dalam cara beroperasi',
+      systemB: 'BaZi '+dayMaster+' + LP'+lp,
+      signalB: 'Jalur hidup yang relatif selaras dengan energi dasar',
+      resolution: 'Chart-mu menunjukkan sedikit internal conflict yang terbuka. Ini bukan berarti hidupmu tanpa konflik — tapi konfliknya cenderung lebih tersembunyi dan subtle. Justru orang dengan koherensi tinggi sering tidak menyadari blind spot mereka sendiri karena semuanya "terasa benar".',
+      cost: 'Koherensi yang tinggi sering membuat seseorang sulit untuk berempati dengan cara beroperasi yang berbeda. Kamu mungkin tidak sadar betapa berbedanya cara kerja internal-mu dibanding orang lain.',
+      adaptation: 'Kamu mungkin telah mengembangkan sense of self yang cukup kuat — tapi ini juga bisa berarti resistensi terhadap feedback yang challenging.'
+    });
+  }
+
+  // ── BEHAVIORAL LABELS (not archetypal) ──
+  // These describe what you actually DO, not who you essentially ARE
+  const BEHAVIORAL_LABELS = {
+    // Sun sign behavioral tendency (not identity)
+    Aries:      'cenderung bertindak sebelum sepenuhnya memproses konsekuensi',
+    Taurus:     'cenderung mempertahankan posisi lebih lama dari yang optimal',
+    Gemini:     'cenderung mengoleksi perspektif tanpa selalu settling di satu',
+    Cancer:     'cenderung merawat orang lain sebagai cara mengelola kecemasanmu sendiri',
+    Leo:        'cenderung mengaitkan self-worth dengan respons orang lain terhadapmu',
+    Virgo:      'cenderung menganalisis sebagai cara menunda eksekusi atau keputusan',
+    Libra:      'cenderung menunda keputusan sampai ada tekanan eksternal yang memaksanya',
+    Scorpio:    'cenderung menyimpan grievance lebih lama dari yang disadari orang lain',
+    Sagittarius:'cenderung reframing situasi sulit sebagai "pelajaran" sebagai cara menghindari duduk dengan sakitnya',
+    Capricorn:  'cenderung mengukur nilai diri melalui produktivitas dan pencapaian',
+    Aquarius:   'cenderung intellectualizing perasaan daripada merasakannya',
+    Pisces:     'cenderung melebur ke dalam konteks emosional sekitar sampai kehilangan referensi diri sendiri',
+  };
+
+  // HD behavioral tendency (mechanism, not identity)
+  const HD_BEHAVIORAL = {
+    Generator:            'cenderung melanjutkan hal-hal yang sudah tidak memuaskan karena menghentikannya terasa seperti kegagalan',
+    'Manifesting Generator': 'cenderung memulai lebih banyak dari yang bisa diselesaikan, lalu merasa bersalah atas yang ditinggalkan',
+    Projector:            'cenderung memberikan pandangan yang tidak diminta, kemudian merasa tidak dihargai ketika tidak disambut',
+    Manifestor:           'cenderung bergerak tanpa memberitahu orang lain, kemudian merasa tidak dipahami atas resistance yang muncul',
+    Reflector:            'cenderung merefleksikan energi sekitar sampai tidak jelas mana identitas aslinya',
+  };
+
+  // BaZi adaptation under stress
+  const BAZI_STRESS_PATTERN = {
+    'Yang Wood': 'ketika tertekan, cenderung mendorong lebih keras alih-alih mundur untuk recalibrate',
+    'Yin Wood':  'ketika tertekan, cenderung mengikuti yang paling kuat di sekitar sampai arah aslinya hilang',
+    'Yang Fire': 'ketika tertekan, cenderung intensify output sampai burnout tiba-tiba',
+    'Yin Fire':  'ketika tertekan, cenderung menginternalisasi dan menyalahkan diri sebelum orang lain',
+    'Yang Earth':'ketika tertekan, cenderung overcommit pada semua orang dan akhirnya tidak bisa memenuhi apapun',
+    'Yin Earth': 'ketika tertekan, cenderung diam dan bertahan sampai situasinya terlewati',
+    'Yang Metal':'ketika tertekan, cenderung menjadi lebih rigid dan demanding terhadap standar',
+    'Yin Metal': 'ketika tertekan, cenderung self-critical dan menarik diri dari situasi yang tidak sempurna',
+    'Yang Water':'ketika tertekan, cenderung menghindar dengan selalu punya alasan berikutnya untuk tidak settle',
+    'Yin Water': 'ketika tertekan, cenderung overthink sampai paralysis sebelum memutuskan apapun',
+  };
+
+  const behavioralLabel = BEHAVIORAL_LABELS[planets.Sun.sign] || 'cenderung beroperasi dengan pola yang tidak selalu konsisten dari luar';
+  const hdBehavioral = HD_BEHAVIORAL[hdTypeStr] || 'cenderung beroperasi dengan cara yang tidak selalu dipahami orang lain';
+  const baziStress = BAZI_STRESS_PATTERN[dayMaster] || 'ketika tertekan, cenderung menggunakan survival pattern yang tidak selalu optimal jangka panjang';
+
+  // Emotional architecture
+  const emotArch = water>=2 || moonEl==='Water' ? 'porous' : water===0 ? 'armored' : 'selective';
+  const emotArchDesc = {
+    porous: 'arsitektur emosi yang permeabel — kamu menyerap energi orang lain dengan mudah, baik disadari maupun tidak',
+    armored: 'arsitektur emosi yang terstruktur — kamu memproses melalui logika sebelum perasaan, yang memberi stabilitas tapi kadang jarak',
+    selective: 'arsitektur emosi yang selektif — kamu memilih kapan membuka dan kapan menutup dengan cukup presisi'
+  }[emotArch];
+
+  if(signals.socialEnergy==='high' && signals.hdEnergy==='conserving') {
+    contradictions.push({
+      title:'Charisma Eksternal, Baterai Internal Terbatas',
+      systemA:'Sun '+planets.Sun.sign+' ('+sunEl+')',
+      signalA:'Tampil ekspresif dan menarik secara sosial',
+      systemB:'HD '+hdTypeStr,
+      signalB:'Energi tidak dirancang untuk output terus-menerus',
+      resolution:'Kamu mungkin terlihat seperti orang yang selalu energik — padahal di balik itu sedang memproses dan recovery. Orang sering salah baca kelelahananmu sebagai penolakan.',
+      cost:'Charisma yang besar = magnet proyeksi. Orang akan meletakkan harapan yang tidak pernah kamu minta.',
+    });
+  }
+  if(signals.emotionalOpen==='open' && signals.authorityStyle==='assertive') {
+    contradictions.push({
+      title:'Power Drive dengan Luka Emosi yang Tidak Terselesaikan',
+      systemA:'LP'+lp+' / Sun '+planets.Sun.sign,
+      signalA:'Dorongan kuat menuju authority dan kontrol',
+      systemB:'Moon '+planets.Moon.sign+' / HD Open SP',
+      signalB:'Batas emosi yang permeabel dan mudah terpengaruh',
+      resolution:'Kombinasi ini menciptakan pola: kamu mendorong keras ke luar untuk achievements, tapi secara emosional masih sangat mudah dipengaruhi oleh opini orang yang kamu hormati.',
+      cost:'Semakin tinggi posisimu, semakin banyak energi emosional yang harus kamu manage dari orang sekitar.',
+    });
+  }
+  if(signals.cognitiveStyle==='fast' && signals.internalEnergy==='low') {
+    contradictions.push({
+      title:'Pikiran Cepat, Eksekusi Lambat',
+      systemA:'Mercury '+planets.Mercury.sign+' / Air x'+air,
+      signalA:'Proses berpikir yang cepat dan banyak koneksi',
+      systemB:'BaZi '+dayMaster,
+      signalB:'Ritme internal yang lebih lambat dan butuh recovery',
+      resolution:'Kamu bisa melihat solusi lebih cepat dari rata-rata, tapi sering frustasi karena tubuh dan energimu tidak bisa mengeksekusi secepat pikiranmu inginkan.',
+      cost:'Orang intuitif yang cepat adalah target proyeksi "oracle". Kamu sering dimintai jawaban atas masalah yang seharusnya diselesaikan orang itu sendiri.',
+    });
+  }
+  if(dayMaster.includes('Metal') && (moonEl==='Water'||hdOpenSP)) {
+    contradictions.push({
+      title:'Standar Tinggi, Sensitivitas Tersembunyi',
+      systemA:'BaZi '+dayMaster,
+      signalA:'Presisi, struktur, dan standar yang tidak mudah kompromi',
+      systemB:'Moon '+planets.Moon.sign+(hdOpenSP?' / HD Open SP':''),
+      signalB:'Lapisan emosi yang jauh lebih dalam dari yang terlihat',
+      resolution:'Dari luar kamu terlihat tegas, principled, dan tidak mudah goyah. Tapi di dalam ada sensitivitas yang besar — yang sering kamu sembunyikan karena takut terlihat lemah.',
+      cost:'Menjaga fasad ketegasan itu melelahkan. Biayanya sering muncul dalam bentuk fisik: tension, susah tidur, atau somatik.',
+    });
+  }
+  if(hdTypeStr==='Projector' && (fire>=2||lp===1||lp===8)) {
+    contradictions.push({
+      title:'Energi Pemimpin di dalam Sistem yang Butuh Undangan',
+      systemA:'LP'+lp+' / Fire x'+fire,
+      signalA:'Drive yang kuat untuk memimpin dan menginisiasi',
+      systemB:'HD Projector',
+      signalB:'Sistem yang dirancang untuk menunggu undangan — bukan mendorong',
+      resolution:'Kamu punya kapasitas kepemimpinan yang nyata, tapi cara mencapainya berbeda dari kebanyakan. Mendorong langsung akan selalu menciptakan resistance. Kamu dirancang untuk diundang.',
+      cost:'Menunggu undangan terasa seperti pasif dan tidak produktif — padahal itu adalah cara paling efisien yang tersedia untukmu.',
+    });
+  }
+  // Default jika tidak ada kontradiksi spesifik
+  if(contradictions.length === 0) {
+    contradictions.push({
+      title:'Koherensi Sistem yang Tidak Biasa',
+      systemA:planets.Sun.sign+' ☉',
+      signalA:'Identitas yang cukup konsisten lintas konteks',
+      systemB:hdTypeStr+' × LP'+lp,
+      signalB:'Strategi hidup yang selaras dengan energi dasarmu',
+      resolution:'Chart-mu menunjukkan relatif sedikit internal conflict. Ini bukan berarti hidupmu mudah — tapi cara kamu beroperasi cenderung lebih konsisten dari rata-rata. Tantanganmu bukan konflik internal, tapi bagaimana dunia luar bereaksi terhadap konsistensimu.',
+      cost:'Konsistensi yang kuat sering membuat orang di sekitarmu tidak nyaman. Kamu menjadi cermin, dan tidak semua orang siap bercermin.',
+    });
+  }
+
+  // Cross-system convergence — multi-validated patterns
+  const convergences = [];
+  if((moonEl==='Water' || water >= 2) && hdOpenSP) convergences.push({
+    signal:'Amplifikasi Emosi Lintas Tiga Sistem',
+    systems:['Moon '+planets.Moon.sign, 'HD Open Solar Plexus', 'Water x'+(water||0)],
+    reads:['Moon Water: proses emosi secara mendalam dan visceral','HD Open SP: menyerap emosi orang lain sebagai milik sendiri','Elemen Water: layer tambahan permeabilitas emosional'],
+    convergence:'Ketiga sistem menunjuk ke pola yang sama: kamu tidak hanya merasakan emosimu sendiri. Kamu menyerapnya dari ruangan. Dan kamu sering tidak bisa membedakan mana yang asli milikmu.',
+    action:'Sebelum bereaksi terhadap emosi besar — tanya dulu: "Apakah ini milikku, atau yang kuambil dari sekitar?"'
+  });
+  if(dayMaster.includes('Wood') && hdTypeStr === 'Projector') convergences.push({
+    signal:'Visi Jauh, Eksekusi Tergantung Konteks',
+    systems:['BaZi '+dayMaster, 'HD '+hdTypeStr, 'LP'+lp],
+    reads:['Wood: tumbuh terus, selalu melihat potensi ke depan','Projector: sistem yang paling efisien membaca orang dan situasi','LP'+lp+': perjalanan melalui depth, bukan breadth'],
+    convergence:'Kamu memiliki kapasitas strategis dan visioner yang nyata. Tapi ketiga sistem ini sekaligus menunjukkan: nilai terbesarmu muncul ketika diundang, bukan ketika mendorong. Eksekusi mandiri sering berakhir kelelahan.',
+    action:'Identifikasi 3 orang dalam hidupmu yang benar-benar melihat nilaimu. Fokuskan energi untuk deep collaboration dengan mereka.'
+  });
+  if(fire >= 2 && (lp===1||lp===8||planets.Sun.idx===4)) convergences.push({
+    signal:'Mesin Kepemimpinan yang Butuh Arah yang Tepat',
+    systems:['Sun '+planets.Sun.sign,'Fire x'+fire,'LP'+lp],
+    reads:['Sun '+planets.Sun.sign+': identitas yang kuat dan ekspresif','Fire x'+fire+': energi inisiasi dan ambisi tinggi','LP'+lp+': jalur menuju pengaruh dan power'],
+    convergence:'Tiga sistem ini menunjuk ke potensi kepemimpinan yang besar. Tapi Fire tanpa arah membakar dirinya sendiri. Pertanyaan kritis bukan "bagaimana cara memimpin?" — tapi "memimpin menuju apa?"',
+    action:'Tulis satu kalimat: apa yang ingin kamu ubah di dunia sebelum kamu mati? Jawaban itu adalah kompas energimu.'
+  });
+  if(baziEls.Metal >= 2 && earth >= 1 && (lp===4||lp===7||lp===22)) convergences.push({
+    signal:'Arsitek Realita — Builder yang Tidak Bisa Berhenti',
+    systems:['BaZi Metal x'+baziEls.Metal,'Earth x'+earth,'LP'+lp],
+    reads:['Metal: presisi, struktur, cutting through noise','Earth: fondasi, kestabilan, keandalan','LP'+lp+': jalur melalui membangun sesuatu yang bertahan'],
+    convergence:'Kamu dirancang untuk membangun. Tiga sistem ini konsisten: kamu butuh project nyata untuk merasa hidup. Tapi Metal+Earth bisa berubah jadi rigidity — ketika cara menjadi lebih penting dari tujuan.',
+    action:'Setiap 6 bulan: tanya apakah sistem yang kamu bangun masih melayani manusianya, atau kamu sudah melayani sistemnya.'
+  });
+  if(water >= 2 && (lp===7||lp===9||lp===11||lp===12)) convergences.push({
+    signal:'Pencari yang Tidak Bisa Berhenti Mencari',
+    systems:['Water x'+water,'LP'+lp,'Moon '+planets.Moon.sign],
+    reads:['Water: kedalaman, pencarian, tidak ada yang fixed','LP'+lp+': jalur melalui wisdom dan inner knowing','Moon '+planets.Moon.sign+': proses secara emosional dan intuitif'],
+    convergence:'Kamu memiliki kapasitas intuisi dan pemahaman yang dalam. Tapi tiga sistem ini juga menunjukkan: kamu sering lebih nyaman mencari daripada menemukan. Karena menemukan berarti harus komit.',
+    action:'Bedakan antara "aku belum tahu" dan "aku takut tahu". Keduanya terasa sama dari dalam.'
+  });
+  if(convergences.length === 0) convergences.push({
+    signal:'Pola Unik yang Tidak Mudah Dikategorikan',
+    systems:[planets.Sun.sign+' ☉', hdTypeStr, 'LP'+lp, dayMaster],
+    reads:[planets.Sun.sign+': identitas inti yang kuat',hdTypeStr+': cara beroperasi yang spesifik','LP'+lp+': jalur hidup yang unik',dayMaster+': bahan dasar energetik'],
+    convergence:'Kombinasi empat sistem ini jarang bertemu dengan cara yang persis sama. Ini bukan berarti kamu lebih baik atau lebih buruk dari rata-rata — ini berarti blueprint-mu tidak punya template yang sudah jadi. Kamu harus menemukannya sendiri.',
+    action:'Berhenti mencari role model yang persis seperti kamu. Tidak ada. Pelajari dari banyak orang, tapi jangan replikasi siapapun.'
+  });
+
+  // Actionable layer
   const SIGN_SHADOW={
-    Aries:'Keberanian yang tampak di luarmu menyembunyikan ketakutan terdalam: bahwa kamu tidak cukup baik jika bukan yang pertama.',
-    Taurus:'Stabilitas yang kamu bangun sering menjadi dinding, bukan fondasi. Kamu menahan karena takut kehilangan, bukan karena benar-benar memilih.',
-    Gemini:'Kamu bisa membicarakan segalanya, tapi sangat jarang membicarakan apa yang benar-benar menyakitimu.',
-    Cancer:'Kamu merawat semua orang di sekitarmu — kecuali dirimu sendiri. Dan itu bukan keikhlasan. Itu trauma yang terorganisir.',
-    Leo:'Kamu membutuhkan validasi lebih dari yang kamu akui. Ketika tidak mendapatkannya, kamu tidak kecewa. Kamu hancur.',
-    Virgo:'Perfeksionismemu bukan tentang kualitas. Ini tentang ketakutan bahwa jika kamu tidak sempurna, kamu tidak layak dicintai.',
-    Libra:'Kamu menghindari konflik bukan karena damai. Kamu menghindarinya karena takut tidak disukai.',
-    Scorpio:'Intens, mendalam, powerful — tapi kamu jarang membiarkan seseorang masuk sepenuhnya. Kepercayaan adalah senjatamu yang paling ditakuti.',
-    Sagittarius:'Kamu terus bergerak bukan karena petualangan. Kamu berlari dari keheningan yang akan memaksamu duduk dengan dirimu sendiri.',
-    Capricorn:'Ambisimu adalah perisai. Di baliknya ada seseorang yang sangat takut gagal di depan mata orang yang mereka kagumi.',
-    Aquarius:'Kamu ingin mengubah dunia tapi susah masuk ke dalam hubungan nyata. Idealismemu adalah jarak yang nyaman.',
-    Pisces:'Kamu merasakan segalanya dengan begitu dalam sampai sering melarikan diri ke dunia yang kamu ciptakan sendiri.'
+    Aries:'Kamu menyerang sebelum diserang — bukan karena berani, tapi karena takut lebih dulu terlihat lemah. Keberanian yang kamu tunjukkan ke dunia adalah perisai, bukan identitas.',
+    Taurus:'Kamu menyebut dirimu stabil. Orang sekitarmu menyebutnya sulit berubah. Keduanya benar. Pertanyaannya: seberapa banyak yang kamu pertahankan karena memang berharga, dan seberapa banyak karena melepasnya terasa seperti kalah?',
+    Gemini:'Kamu bisa berbicara tentang segalanya kecuali satu hal: apa yang benar-benar menyakitimu. Kata-kata adalah perisaimu. Kefasihan adalah cara kamu tidak pernah harus duduk dengan keheningan.',
+    Cancer:'Kamu merawat semua orang sebagai cara untuk tidak perlu dirawat. Karena menjadi yang dibutuhkan lebih aman daripada menjadi yang membutuhkan.',
+    Leo:'Kamu membutuhkan cermin — seseorang yang melihatmu dan mengkonfirmasi bahwa kamu nyata, penting, ada. Dan ketika cermin itu tidak ada atau tidak memantulkan yang kamu inginkan, bukan kamu yang hancur. Tapi seluruh narasi dirimu.',
+    Virgo:'Bukan standar tinggimu yang menjadi masalah. Masalahnya adalah kamu menerapkan standar yang sama kepada dirimu seperti kepada hasil kerjamu. Dan kamu tidak pernah benar-benar selesai.',
+    Libra:'Kamu bukan orang yang suka damai. Kamu adalah orang yang takut konflik. Keduanya terlihat sama dari luar, tapi hanya satu yang membayar harga di dalam.',
+    Scorpio:'Kamu tidak pernah benar-benar melepaskan. Kamu hanya menyimpan lebih dalam. Dan setiap orang yang pernah mengkhianatimu masih hidup di suatu tempat dalam arsitektur keputusanmu.',
+    Sagittarius:'Kamu menyebut dirimu bebas. Tapi kamu selalu lari dari sesuatu yang spesifik. Perbedaan antara petualangan dan pelarian: salah satunya memilih tujuan, yang lain hanya menjauhi sesuatu.',
+    Capricorn:'Kamu bekerja sangat keras untuk orang yang mungkin sudah tidak ada dalam hidupmu lagi — seorang ayah, guru, atau versi dirimu sendiri yang pernah merasa tidak cukup. Achievement-mu adalah jawaban atas pertanyaan yang tidak pernah lagi relevan.',
+    Aquarius:'Kamu peduli pada manusia secara universal tetapi sering kesulitan dengan manusia yang spesifik — manusia yang membutuhkan sesuatu yang tidak konsisten, tidak logis, dan tidak bisa diperbaiki dengan framework.',
+    Pisces:'Kamu tidak menghindari realita karena kamu tidak mampu menghadapinya. Kamu menghindarinya karena kamu merasakannya terlalu dalam. Dunia yang kamu ciptakan dalam kepalamu bukan delusi — itu perlindungan.'
   };
   const HD_SHADOW={
-    Generator:'Kamu sering melakukan sesuatu karena merasa harus, bukan karena sacral merespons. Itulah kenapa kamu kelelahan tanpa tahu kenapa.',
-    'Manifesting Generator':'Speed-mu membuatmu sering melewatkan langkah. Dan ketika sesuatu tidak berhasil, kamu menyalahkan keputusanmu — padahal masalahnya di proses.',
-    Projector:'Kamu melihat orang dengan sangat jelas, tapi sering memberikan guidance tanpa diundang, lalu merasa pahit ketika tidak dihargai.',
-    Manifestor:'Kamu bergerak cepat dan jarang memberi tahu orang lain. Itu bukan kebebasan — itu cara untuk tidak perlu accountable.',
-    Reflector:'Kamu menyerap energi semua orang. Di lingkungan toxic, kamu yang pertama sakit dan paling susah pulih.'
+    Generator:'Kamu menghabiskan energi untuk hal-hal yang tidak pernah benar-benar kamu pilih. Bukan karena dipaksa — tapi karena jauh lebih mudah berkata iya daripada duduk dengan ketidakpastian dari menunggu sesuatu yang benar-benar mengaktifkanmu.',
+    'Manifesting Generator':'Kamu meninggalkan banyak hal di tengah jalan dan menyebutnya pivot. Tapi ada biaya tersembunyi: setiap unfinished loop yang kamu tinggalkan tetap aktif di sistem sarafmu, dan itu yang membuatmu kelelahan meski tidak pernah berhenti bergerak.',
+    Projector:'Kamu melihat orang dengan sangat jelas — potensinya, blind spot-nya, cara terbaik untuk maju. Dan kamu membagikannya, seringkali tanpa diminta. Lalu merasa tidak dihargai. Tapi pertanyaannya: apakah kamu memberi karena ingin membantu, atau karena ingin diakui bahwa kamu melihat?',
+    Manifestor:'Kamu bergerak cepat dan jarang memberitahu orang lain rencanamu — bukan karena kamu lupa, tapi karena bagian dirimu percaya bahwa menjelaskan adalah kelemahan. Itu bukan kebebasan. Itu adalah cara menghindari kemungkinan ditolak sebelum sempat memulai.',
+    Reflector:'Kamu sangat adaptif sehingga kadang tidak tahu lagi mana yang asli darimu dan mana yang terserap dari lingkunganmu. Di lingkungan yang salah, kamu tidak hanya tidak nyaman — kamu secara perlahan berhenti menjadi dirimu sendiri.'
   };
   const LP_SHADOW={
-    1:'Independensi yang kamu banggakan bisa jadi isolasi. Kamu butuh orang lain tapi tidak mau mengakuinya.',
-    2:'Kamu begitu fokus pada kebutuhan orang lain sampai lupa bertanya apa yang kamu sendiri butuhkan.',
-    3:'Kreativitasmu bisa menjadi cara mengalihkan perhatian dari rasa sakit yang belum pernah benar-benar kamu akui.',
-    4:'Kamu membangun struktur untuk merasa aman. Tapi struktur yang terlalu kaku bisa menjadi penjara yang kamu bangun sendiri.',
-    5:'Kamu menolak komitmen bukan karena kebebasan adalah nilaimu. Kadang karena kamu takut ditinggalkan duluan.',
-    6:'Kamu merawat karena mencintai. Tapi sebagian darimu melakukannya karena takut tidak diterima jika berhenti.',
-    7:'Kamu mencari jawaban di buku dan sistem karena bertanya langsung terasa terlalu rentan.',
-    8:'Kamu bekerja keras untuk membuktikan sesuatu kepada seseorang yang mungkin sudah tidak ada dalam hidupmu lagi.',
-    9:'Wisdom-mu datang dari luka. Tapi kamu sering menolong orang lain sebagai cara menghindari menolong dirimu sendiri.',
-    11:'Intuisimu begitu kuat sampai kamu tidak selalu percaya padanya. Dan itu yang paling sering mengkhianatimu.',
-    22:'Visimu besar. Tapi ada rasa takut bahwa kamu tidak cukup besar untuk mewujudkannya.',
-    33:'Kamu memberi dengan sangat dalam sampai lupa bahwa kamu sendiri layak menerimanya.'
+    1:'Kamu butuh orang lain lebih dari yang kamu akui. Independensimu adalah ideologi yang kamu bangun sebagai pertahanan terhadap kemungkinan ditinggalkan.',
+    2:'Kamu sangat baik dalam membaca kebutuhan orang lain. Tapi ketika ada yang bertanya apa yang kamu butuhkan, kamu blank — bukan karena tidak ada, tapi karena kamu tidak terbiasa menganggap kebutuhanmu cukup penting untuk disuarakan.',
+    3:'Kamu belajar dari kegagalan dengan sangat baik. Tapi kamu juga menggunakan "aku masih belajar" sebagai alasan untuk tidak pernah benar-benar komit pada satu versi dirimu.',
+    4:'Strukturmu adalah cara kamu merasa aman di dunia yang tidak pasti. Tapi semakin rigid sistemmu, semakin besar ketakutan di baliknya yang coba kamu sembunyikan.',
+    5:'Kamu menghindari komitmen yang dalam bukan karena kamu butuh kebebasan — tapi karena kamu tahu terlalu dekat dengan seseorang berarti mereka bisa melihatmu dengan jelas. Dan kamu belum yakin apa yang akan mereka lihat.',
+    6:'Kamu memberi dengan tulus. Tapi di balik ketulusanmu ada pertanyaan yang tidak pernah kamu suarakan: "Apakah mereka akan tetap ada jika aku berhenti memberi?"',
+    7:'Kamu mencari jawaban di buku, sistem, dan framework karena bertanya langsung kepada seseorang terasa terlalu expose. Knowledge adalah cara aman untuk dekat tanpa benar-benar dekat.',
+    8:'Kamu bekerja keras untuk membuktikan sesuatu kepada seseorang yang mungkin sudah tidak ada — atau tidak pernah peduli dengan cara yang kamu harap. Achievement terbesarmu mungkin dibangun di atas pondasi approval yang tidak pernah datang.',
+    9:'Wisdom-mu datang dari luka yang sudah kamu proses. Tapi kamu menolong orang lain dengan begitu aktif sampai kamu lupa: menolong orang lain adalah cara yang sangat elegan untuk menghindari menolong dirimu sendiri.',
+    11:'Intuisimu tajam — terlalu tajam kadang-kadang. Dan ketajaman itu membuatmu sulit percaya bahwa sesuatu bisa sesederhana kelihatannya. Kamu mencari hidden layer di setiap situasi, termasuk hubunganmu yang paling sederhana.',
+    22:'Visimu besar dan nyata. Tapi di balik setiap langkah besar ada satu pertanyaan yang tidak pernah kamu jawab dengan jujur: apakah aku cukup besar untuk ini? Dan ketakutan itu — bukan ketidakmampuan — adalah yang paling sering menghentikanmu.',
+    33:'Kamu memberi dengan sangat dalam. Tapi pemberianmu sering datang dari tempat yang tidak sehat: dari rasa bahwa kamu harus selalu berguna untuk layak dicintai. Dan itu bukan kemurahan hati. Itu adalah anxiety yang terlihat mulia.'
+  };
+  const sunSign = planets.Sun.sign;
+
+  // ── GIFT ↔ WOUND EQUIVALENCE ──
+  // Every gift has an exact cost. This is the "truth" layer.
+  const GIFT_WOUND = {
+    Aries:    {gift:'Keberanian untuk memulai apa yang orang lain takut mulai',wound:'Kamu sering memulai perang yang tidak perlu karena tidak bisa duduk dengan rasa tidak aman'},
+    Taurus:   {gift:'Kemampuan membangun sesuatu yang bertahan — fondasi yang tidak mudah goyah',wound:'Kamu bisa bertahan di situasi yang sudah tidak sehat terlalu lama karena berubah terasa lebih menakutkan dari tetap'},
+    Gemini:   {gift:'Kemampuan melihat banyak perspektif sekaligus dan menjembatani yang berbeda',wound:'Kamu jarang bisa duduk dengan satu kebenaran cukup lama untuk membiarkannya mengubahmu'},
+    Cancer:   {gift:'Kapasitas empati dan pemeliharaan yang membuat orang merasa benar-benar dilihat',wound:'Kamu menyerap luka orang lain sebagai tanggung jawabmu, sampai tidak jelas lagi mana lukamu sendiri'},
+    Leo:      {gift:'Kemampuan memberi cahaya — kehadiran yang membuat orang merasa lebih berani hanya dengan berada dekatmu',wound:'Kamu bergantung pada pantulan cahaya itu untuk tahu bahwa kamu nyata'},
+    Virgo:    {gift:'Kemampuan melihat apa yang kurang dan memperbaikinya — craftmanship yang tidak punya kompromi',wound:'Kamu menerapkan standar perbaikan yang sama pada dirimu sendiri, dan kamu tidak pernah selesai'},
+    Libra:    {gift:'Kemampuan menciptakan harmoni dan membuat semua pihak merasa didengar',wound:'Kamu sering mengorbankan pendapatmu sendiri untuk mempertahankan kenyamanan yang kamu tidak benar-benar rasakan'},
+    Scorpio:  {gift:'Kemampuan melihat di balik permukaan dan memahami motivasi yang tidak terucap',wound:'Kamu menggunakan kemampuan itu untuk selalu bersiap diserang — bahkan oleh orang yang tidak punya niat itu'},
+    Sagittarius:{gift:'Kemampuan melihat makna di mana orang lain hanya melihat kejadian, dan menginspirasi orang untuk percaya pada sesuatu yang lebih besar',wound:'Kamu menghindari setiap situasi yang memaksamu duduk dengan sesuatu yang tidak bisa kamu ubah menjadi pelajaran atau petualangan'},
+    Capricorn:{gift:'Kemampuan membangun struktur jangka panjang dan mencapai hal yang orang lain anggap terlalu ambisius',wound:'Kamu mendefinisikan nilai dirimu dari pencapaian, yang berarti kegagalan bukan hanya kegagalan — itu ancaman eksistensial'},
+    Aquarius: {gift:'Kemampuan melihat sistem dan pola yang tidak terlihat orang lain, dan membayangkan yang belum ada',wound:'Kamu menggunakan abstraksi sebagai jarak yang aman dari keterhubungan yang sebenarnya'},
+    Pisces:   {gift:'Kemampuan merasakan apa yang tidak terucap dan menciptakan keindahan dari yang tidak terlihat',wound:'Boundary-mu begitu permeabel sampai kamu sering tidak tahu di mana kamu berakhir dan orang lain dimulai'}
+  };
+
+  const giftWound = GIFT_WOUND[sunSign] || {
+    gift:'Kapasitas unik yang belum sepenuhnya teridentifikasi dalam chart ini',
+    wound:'Setiap kekuatan yang belum disadari memiliki shadow yang bekerja tanpa pengawasan'
+  };
+
+  const actions = {
+    career: dayMaster.includes('Wood')?'Kamu tumbuh dengan proyek jangka panjang yang punya akar — bukan sprint. Hindari lingkungan yang reward volume over depth.':
+            dayMaster.includes('Fire')?'Kamu butuh peran yang punya meaning nyata, bukan hanya achievement. Tanpa api tujuan yang jelas, kamu akan membakar dirimu pada hal yang salah.':
+            dayMaster.includes('Earth')?'Kamu adalah orang yang membuat sistem berjalan. Tapi kamu sering undervalue diri sendiri karena kontribusimu tidak dramatis — ia hanya membuat semuanya tidak runtuh.':
+            dayMaster.includes('Metal')?'Kamu paling powerful dalam peran yang butuh presisi dan prinsip. Tapi awasi: Metal yang terlalu rigid bisa memutus koneksi yang kamu butuhkan untuk maju.':
+            'Kamu bekerja terbaik dalam lingkungan yang berubah dan membutuhkan adaptasi. Stabilitas yang terlalu lama membuatmu tidak efisien.',
+    relationship: hdOpenSP?'Dengan Solar Plexus open: setiap relasi yang intense akan terasa lebih intense bagimu daripada bagi orang lain. Ini bukan kelemahan — tapi kamu perlu partner yang secara emosional sudah cukup stabil, bukan yang butuh kamu stabilkan.':
+                  'HD center-mu menunjukkan cara relasionalmu yang spesifik. Pastikan hubunganmu dibangun di atas siapa kamu, bukan siapa yang dibutuhkan orang lain darimu.',
+    growth: 'Shadow primer: '+(SIGN_SHADOW[sunSign]||'').split('.')[0]+'.'
   };
 
   const shadows = [
-    {type:'dshadow',icon:'🌑',title:'Shadow: '+sunSign,body:SIGN_SHADOW[sunSign]||'—'},
-    {type:'dwound',icon:'🩸',title:'Core Wound · Day Master '+dayMaster,body:`Sebagai ${dayMaster} Day Master, pola luka terdalammu adalah kecenderungan ${dayMaster.includes('Wood')?'mendorong diri terlalu keras untuk tumbuh sampai collapse':dayMaster.includes('Fire')?'membakar diri dalam passion, lalu tiba-tiba menarik diri setelah puncaknya':dayMaster.includes('Earth')?'terlalu mengakomodasi sampai batasmu sendiri menjadi tidak jelas bagi siapapun termasuk dirimu':dayMaster.includes('Metal')?'memegang standar terlalu tinggi sehingga hampir tidak ada yang cukup baik — termasuk dirimu':'mengalir mengikuti orang lain, kehilangan arah, dan menyebutnya fleksibilitas'}. Ini bukan kepribadian — ini pola yang bisa dikenali dan diinterupsi.`},
-    {type:'dpat',icon:'🔁',title:'Karmic Loop · '+hdTypeStr,body:`Sebagai ${hdTypeStr}, pola berulang terbesarmu adalah ${hdTypeStr==='Generator'?'tetap dalam situasi yang salah terlalu lama karena merasa "harus" ada':hdTypeStr==='Manifesting Generator'?'memulai banyak hal dengan semangat lalu meninggalkan beberapa di tengah jalan, menciptakan karmic debt unfinished business':hdTypeStr==='Projector'?'memberikan energy dan wisdom ke orang yang tidak mengundang atau menghargainya, lalu merasa invisible dan pahit':hdTypeStr==='Manifestor'?'bertindak sendiri tanpa melibatkan orang lain, menciptakan resistance yang kamu baca sebagai hambatan eksternal':'menyerap dynamic orang sekitarmu dan menyebutnya sebagai perasaanmu sendiri'}. Ini bukan karakter tetap — ini kondisi yang bisa diubah.`},
-    {type:'dgift',icon:'✦',title:'Hidden Architecture',body:`Kombinasi ${sunSign} ☉ × ${hdTypeStr} × Life Path ${lp} menghasilkan sesuatu yang jarang: ${traits[0].n} dan ${traits[1].n} yang tidak membutuhkan panggung untuk beroperasi. Kekuatan terbesarmu bekerja paling efektif ketika kamu berhenti mencoba membuktikannya.`},
+    {type:'dshadow', icon:'🌑', title:'Shadow Primer: '+sunSign, body: SIGN_SHADOW[sunSign]||'—'},
+    {type:'dgift',   icon:'⚖', title:'Gift ↔ Wound: '+sunSign,
+     body: 'GIFT: '+giftWound.gift+'\n\nWOUND: '+giftWound.wound},
+    {type:'dwound',  icon:'🩸', title:'Core Pattern: '+dayMaster+' Day Master',
+     body: 'Sebagai '+dayMaster+' Day Master, pola yang paling sering berulang tanpa disadari adalah '+(
+       dayMaster.includes('Wood')?'mendorong pertumbuhan terus-menerus — bahkan ketika situasinya membutuhkan istirahat, bukan ekspansi. Kamu menyebut ini ambisi. Orang terdekatmu menyebutnya tidak bisa berhenti.':
+       dayMaster.includes('Fire')?'membakar dengan sangat terang lalu menghilang. Cycle antara all-in dan collapse yang orang sekitarmu sudah hafal, tapi kamu masih setiap kali merasa seperti pertama kali.':
+       dayMaster.includes('Earth')?'mengakomodasi sedikit lagi, sedikit lagi — sampai batas yang kamu punya sudah tidak kelihatan, bahkan oleh kamu sendiri. Kamu tidak kehilangan batas karena dipaksa. Kamu secara perlahan mengikisnya sendiri.':
+       dayMaster.includes('Metal')?'memegang standar yang bahkan tidak selalu kamu bisa artikulasikan — kamu hanya tahu ketika sesuatu tidak memenuhinya. Dan daftar yang tidak memenuhinya, termasuk dirimu sendiri, terus bertambah.':
+       'mengalir mengikuti orang dan situasi di sekitarmu dengan cara yang terasa seperti fleksibilitas — sampai seseorang bertanya: "apa sebenarnya yang kamu mau?" dan kamu baru sadar kamu tidak tahu.')},
+    {type:'dpat', icon:'🔁', title:'Karmic Loop: '+hdTypeStr,
+     body: HD_SHADOW[hdTypeStr]||'—'},
   ];
 
   // TIMELINE
@@ -1167,8 +2211,11 @@ function computeChart(name, dateStr, timeStr, city) {
 
   const confidence = {
     astro: timeStr ? 'high' : 'low',
-    bazi: 'high',
+    bazi: 'high', // now uses solar term via actual Sun longitude
     hd: timeStr ? 'high' : 'medium',
+    note: timeStr
+      ? 'Astrology: Tropical, Whole Sign Houses. BaZi: Solar term accurate (节气 via Sun longitude). HD: 88° solar arc design chart.'
+      : 'Jam lahir tidak tersedia: Ascendant, HD design chart, dan BaZi Hour Pillar menggunakan estimasi. Masukkan jam lahir untuk akurasi penuh.'
   };
 
   return {
@@ -1177,12 +2224,15 @@ function computeChart(name, dateStr, timeStr, city) {
     hd:{type:hdTypeStr,auth:hdAuth,prof:hdProf,strategy:hdStrategy,notSelf:hdNotSelf,definedCenters,undefinedCenters,sunGate,moonGate,ascGate,earthGate,designGate},
     zw:{main:zwMain,life:zwLife,career:zwCareer,wealth:zwWealth,marriage:zwMarriage},
     numerology:{lp,dest,soul,LP_MEANING,LP_SHADOW},
-    traits, soulScore, soulLabel,
+    traits, soulScore, soulLabel, soulDesc, soulDimensions,
     shadows, phases, curAge,
     transits, transSun, transMoon, transSat, transJup, transMar,
     confidence, SIGN_SHADOW, HD_SHADOW,
     sunSign, moonSign:planets.Moon.sign, ascSign:planets.Ascendant.sign,
-    sunGate, moonGate
+    sunGate, moonGate,
+    fusion:{ convergences, emotArch, emotArchDesc, actions, contradictions, giftWound,
+             behavioralLabel, hdBehavioral, baziStress, signals, dmStrength, monthPressure },
+    errorTolerance: { sensitivity: birthTimeSensitivity, note: sensitivityNote }
   };
 }
 
@@ -1529,23 +2579,68 @@ function render(name,dateStr,timeStr,city,D) {
     {t:D.bazi.dayMaster,c:'br'},{t:D.hd.prof,c:'bt'},{t:`Gate ${D.sunGate}`,c:'bt'}
   ].map(b=>`<span class="badge ${b.c}">${b.t}</span>`).join('');
 
-  const confMap={high:{col:'var(--green)',t:'High precision'},medium:{col:'var(--gold)',t:'Medium precision'},low:{col:'var(--red)',t:'Low — add birth time'}};
-  document.getElementById('hConf').innerHTML=[{l:'Astrology',v:D.confidence.astro},{l:'BaZi',v:D.confidence.bazi},{l:'HD',v:D.confidence.hd}]
-    .map(c=>`<div class="ci"><div class="ci-dot" style="background:${confMap[c.v].col}"></div><div class="ci-lbl">${c.l}: ${confMap[c.v].t}</div></div>`).join('');
+  const confMap={high:{col:'var(--green)',t:'Presisi tinggi'},medium:{col:'var(--gold)',t:'Medium'},low:{col:'var(--red)',t:'Rendah'}};
+  document.getElementById('hConf').innerHTML =
+    [{l:'Astrology',v:D.confidence.astro},{l:'BaZi',v:D.confidence.bazi},{l:'HD',v:D.confidence.hd}]
+    .map(c=>'<div class="ci"><div class="ci-dot" style="background:'+confMap[c.v].col+'"></div><div class="ci-lbl">'+c.l+': '+confMap[c.v].t+'</div></div>').join('')
+    + '<div style="width:100%;margin-top:6px;font-family:var(--font-mono);font-size:8px;color:var(--muted);letter-spacing:.1em;line-height:1.6">'
+    + (D.errorTolerance ? D.errorTolerance.note : D.confidence.note)
+    + '</div>';
+
+
 
   // Soul Score
   document.getElementById('soulNumBig').textContent=D.soulScore;
   document.getElementById('soulLabel').textContent=D.soulLabel.toUpperCase();
   setTimeout(()=>drawSoulRing(document.getElementById('soulRingC'),D.soulScore),150);
 
-  // OVERVIEW
-  document.getElementById('ov-title').textContent=`${D.sunSign} × ${D.hd.type} × LP${lp}`;
-  document.getElementById('ov-sub').textContent=`${D.ascSign} Ascendant · ${D.bazi.dayMaster} · Gate ${D.sunGate}`;
-  document.getElementById('ov-traits').innerHTML=D.traits.map(t=>`<div class="tr-row"><div class="tr-head"><span class="tr-name">${t.n}</span><span class="tr-val">${t.s}</span></div><div class="tbar"><div class="tfill" data-s="${t.s}"></div></div></div>`).join('');
-  document.getElementById('ov-insight').textContent=`${D.sunSign} yang beroperasi sebagai ${D.hd.type} — kombinasi ini menciptakan seseorang dengan visi internal yang kuat namun perlu strategi spesifik: ${D.hd.strategy}. Life Path ${lp} (${LP_MEANING[lp]||'—'}) menambahkan dimensi yang membuat pattern ini lengkap. Gate ${D.sunGate} sebagai Human Design Sun Gate memperkuat ini dengan frekuensi yang sangat spesifik.`;
-  document.getElementById('ov-shadow').textContent=D.shadows[0].body;
+  // OVERVIEW — Soul Score Anatomy
+  document.getElementById('ov-soul-num').textContent = D.soulScore;
+  document.getElementById('ov-soul-lbl').textContent = D.soulLabel.toUpperCase();
+  document.getElementById('ov-soul-desc').textContent = D.soulDesc;
+  document.getElementById('ov-soul-dims').innerHTML = D.soulDimensions.map(d=>
+    '<div class="soul-dim">' +
+      '<div><div class="soul-dim-label">'+d.label+'</div><div class="soul-dim-source">'+d.source+'</div></div>' +
+      '<div class="soul-dim-score">'+d.score+'</div>' +
+      '<div class="soul-dim-bar" style="grid-column:1/-1"><div class="soul-dim-fill" data-s="'+d.score+'" style="background:'+d.color+'"></div></div>' +
+    '</div>'
+  ).join('');
 
-  // Natal + Element
+  // OVERVIEW — Emotional Architecture
+  document.getElementById('ov-emot-arch').textContent = D.fusion.emotArch;
+  document.getElementById('ov-emot-desc').textContent = D.fusion.emotArchDesc;
+
+  // OVERVIEW — behavioral layer (not archetypal)
+  document.getElementById('ov-title').textContent = D.sunSign+' × '+D.hd.type+' × LP'+lp;
+  document.getElementById('ov-sub').textContent = D.ascSign+' Ascendant · '+D.bazi.dayMaster+' ('+D.fusion.dmStrength+') · Month: '+D.bazi.month.branch;
+  document.getElementById('ov-traits').innerHTML = D.traits.map(t=>
+    '<div class="tr-row"><div class="tr-head"><span class="tr-name">'+t.n+'</span><span class="tr-val">'+t.s+'</span></div><div class="tbar"><div class="tfill" data-s="'+t.s+'"></div></div></div>'
+  ).join('');
+
+  // Convergences with behavioral reads
+  document.getElementById('ov-convergences').innerHTML = D.fusion.convergences.map(c=>
+    '<div class="conv-card">' +
+      '<div class="conv-signal">'+c.signal+'</div>' +
+      '<div class="conv-systems">'+c.systems.map(s=>'<span class="conv-sys-tag">'+s+'</span>').join('')+'</div>' +
+      (c.reads ? '<div style="margin-bottom:10px">'+c.reads.map(r=>'<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--muted);padding:3px 0;display:flex;gap:8px"><span style="color:rgba(201,168,76,0.4)">→</span>'+r+'</div>').join('')+'</div>' : '') +
+      '<div class="conv-pattern">'+(c.convergence||c.pattern)+'</div>' +
+      '<div class="conv-action">'+(c.action)+'</div>' +
+    '</div>'
+  ).join('');
+
+  // Behavioral layer — what you DO
+  const bl = D.fusion.behavioralLabel;
+  const hb = D.fusion.hdBehavioral;
+  const bs = D.fusion.baziStress;
+  document.getElementById('ov-actions').innerHTML =
+    '<div class="action-block"><div class="action-domain">Tendensi Perilaku Utama (Sun ' + D.sunSign + ')</div><div class="action-text">Kamu ' + bl + '. Ini bukan kepribadian — ini pola yang bisa dikenali.</div></div>' +
+    '<div class="action-block"><div class="action-domain">Mekanisme HD (' + D.hd.type + ')</div><div class="action-text">Kamu ' + hb + '</div></div>' +
+    '<div class="action-block"><div class="action-domain">Pola Stres BaZi (' + D.bazi.dayMaster + ' — ' + D.fusion.dmStrength + ')</div><div class="action-text">Kamu ' + bs + '</div></div>';
+
+  // Shadow
+  document.getElementById('ov-shadow').textContent = D.shadows[0].body;
+
+  // Natal + Element charts
   setTimeout(()=>{
     const nc=document.getElementById('natalC');
     const tt=document.getElementById('natalTT');
@@ -1557,7 +2652,7 @@ function render(name,dateStr,timeStr,city,D) {
   const elKeys=Object.keys(D.elCounts);
   document.getElementById('elPills').innerHTML=elKeys.map(el=>{
     const v=D.elCounts[el];
-    return `<span class="epill" style="border-color:rgba(255,255,255,0.1);color:var(--dim)">${el} <span style="color:var(--gold)">${v}</span></span>`;
+    return '<span class="epill" style="border-color:rgba(255,255,255,0.1);color:var(--dim)">'+el+' <span style="color:var(--gold)">'+v+'</span></span>';
   }).join('');
 
   // ASTROLOGY
@@ -1629,9 +2724,47 @@ function render(name,dateStr,timeStr,city,D) {
   document.getElementById('num-shadow').textContent=LP_SHADOW?LP_SHADOW[nlp]||'—':'—';
 
   // SHADOW
-  document.getElementById('dp-title').textContent=`Arsitektur Shadow: ${name.split(' ')[0]}`;
-  document.getElementById('dp-sub').textContent='Pola yang paling kuat bukan yang terlihat. Yang mengubah hidup adalah yang tidak pernah diakui.';
-  document.getElementById('dp-cards').innerHTML=D.shadows.map(s=>`<div class="dcard ${s.type}"><div class="dicon">${s.icon}</div><div class="dtitle">${s.title}</div><div class="dbody">${s.body}</div></div>`).join('');
+  document.getElementById('dp-title').textContent = 'Arsitektur Shadow: '+name.split(' ')[0];
+  document.getElementById('dp-sub').textContent = 'Setiap kekuatan punya harga yang setara. Setiap sistem punya perspektif yang berbeda. Ini adalah layer yang paling jujur.';
+
+  // Gift ↔ Wound
+  const gw = D.fusion.giftWound;
+  document.getElementById('dp-giftwound').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">' +
+      '<div style="background:rgba(90,158,120,.05);border:1px solid rgba(90,158,120,.2);border-radius:var(--r);padding:20px">' +
+        '<div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--green);text-transform:uppercase;margin-bottom:10px">✦ GIFT</div>' +
+        '<div style="font-size:13px;color:var(--dim);line-height:1.8">'+(gw?gw.gift:'—')+'</div>' +
+      '</div>' +
+      '<div style="background:rgba(196,96,74,.05);border:1px solid rgba(196,96,74,.2);border-radius:var(--r);padding:20px">' +
+        '<div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:10px">⚖ WOUND</div>' +
+        '<div style="font-size:13px;color:var(--dim);line-height:1.8">'+(gw?gw.wound:'—')+'</div>' +
+      '</div>' +
+    '</div>';
+
+  // Shadow cards — gift body with newline handling
+  document.getElementById('dp-cards').innerHTML = D.shadows.map(s=>{
+    const bodyHtml = s.body.split('\n\n').map(p=>'<p style="margin-bottom:10px">'+p+'</p>').join('');
+    return '<div class="dcard '+s.type+'"><div class="dicon">'+s.icon+'</div><div class="dtitle">'+s.title+'</div><div class="dbody">'+bodyHtml+'</div></div>';
+  }).join('');
+
+  // Contradictions
+  document.getElementById('dp-contradictions').innerHTML = D.fusion.contradictions.map(c=>
+    '<div style="background:var(--s2);border:1px solid rgba(196,96,74,.15);border-radius:var(--r);padding:22px;margin-bottom:14px">' +
+      '<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:rgba(196,96,74,.8);text-transform:uppercase;margin-bottom:12px">'+c.title+'</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">' +
+        '<div style="padding:10px 12px;background:rgba(107,127,212,.06);border:1px solid rgba(107,127,212,.15);border-radius:var(--r)">' +
+          '<div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--blue2);margin-bottom:5px">'+c.systemA+'</div>' +
+          '<div style="font-size:12px;color:var(--muted)">'+c.signalA+'</div>' +
+        '</div>' +
+        '<div style="padding:10px 12px;background:rgba(139,111,181,.06);border:1px solid rgba(139,111,181,.15);border-radius:var(--r)">' +
+          '<div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:#b89cd6;margin-bottom:5px">'+c.systemB+'</div>' +
+          '<div style="font-size:12px;color:var(--muted)">'+c.signalB+'</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:13px;color:var(--dim);line-height:1.8;margin-bottom:12px;padding:12px 14px;background:var(--s1);border-left:2px solid rgba(201,168,76,.3)">'+c.resolution+'</div>' +
+      '<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:rgba(196,96,74,.7);padding:8px 0">BIAYA: '+c.cost+'</div>' +
+    '</div>'
+  ).join('');
 
   // TIMELINE
   document.getElementById('tl-wrap').innerHTML=D.phases.map(p=>{
@@ -1680,34 +2813,221 @@ function zwClick(i) {
 // ═══════════════════════════════════════════════════════════
 //  COMPATIBILITY
 // ═══════════════════════════════════════════════════════════
+// ── Compat form state ──
+let _c2Year=2000, _c2Month=0, _c2Day=1, _c2Confirmed=false;
+let _c2TimeSet=false, _c2H=12, _c2M=0;
+let _c2CityConfirmed=false;
+
+// Date picker 2
+function initDatePicker2() {
+  const mDrop=document.getElementById('cMonthSelDropdown');
+  if(mDrop.children.length) return; // already inited
+  MONTHS_ID.forEach((m,i)=>{
+    const d=document.createElement('div');
+    d.className='cs-opt'+(i===_c2Month?' selected':'');
+    d.textContent=m;
+    d.onclick=()=>{
+      _c2Month=i;
+      document.getElementById('cMonthVal').textContent=MONTHS_SHORT[i];
+      document.getElementById('cMonthSel').classList.remove('open');
+      mDrop.querySelectorAll('.cs-opt').forEach(o=>o.classList.remove('selected'));
+      d.classList.add('selected');
+      renderCdGrid2();
+    };
+    mDrop.appendChild(d);
+  });
+  const yDrop=document.getElementById('cYearSelDropdown');
+  yDrop.style.maxHeight='200px'; yDrop.style.overflowY='auto';
+  const curY=new Date().getFullYear();
+  for(let y=curY;y>=1920;y--){
+    const d=document.createElement('div');
+    d.id='cyd-'+y;
+    d.className='cs-opt'+(y===_c2Year?' selected':'');
+    d.textContent=y;
+    d.onclick=(()=>{const yr=y;return ()=>{
+      _c2Year=yr;
+      document.getElementById('cYearVal').textContent=yr;
+      document.getElementById('cYearSel').classList.remove('open');
+      yDrop.querySelectorAll('.cs-opt').forEach(o=>o.classList.remove('selected'));
+      d.classList.add('selected');
+      renderCdGrid2();
+    };})();
+    yDrop.appendChild(d);
+  }
+  document.getElementById('cYearSel').querySelector('.cs-display').addEventListener('click',()=>{
+    setTimeout(()=>{const s=yDrop.querySelector('.selected');if(s)s.scrollIntoView({block:'center',behavior:'instant'});},20);
+  });
+  document.getElementById('cMonthVal').textContent=MONTHS_SHORT[_c2Month];
+  document.getElementById('cYearVal').textContent=_c2Year;
+  renderCdGrid2();
+}
+
+function toggleDatePicker2() {
+  const dp=document.getElementById('cdatePicker2');
+  const isOpen=dp.classList.contains('open');
+  document.querySelectorAll('.custom-select.open,.custom-date.open,.tw-wrap.open').forEach(e=>e.classList.remove('open'));
+  if(!isOpen){ initDatePicker2(); dp.classList.add('open'); }
+}
+
+function cdNavYear2(dir){
+  _c2Month+=dir;
+  if(_c2Month>11){_c2Month=0;_c2Year++;}
+  if(_c2Month<0){_c2Month=11;_c2Year--;}
+  document.getElementById('cMonthVal').textContent=MONTHS_SHORT[_c2Month];
+  document.getElementById('cYearVal').textContent=_c2Year;
+  document.querySelectorAll('#cYearSelDropdown .cs-opt').forEach(o=>o.classList.toggle('selected',parseInt(o.textContent)===_c2Year));
+  document.querySelectorAll('#cMonthSelDropdown .cs-opt').forEach((o,i)=>o.classList.toggle('selected',i===_c2Month));
+  renderCdGrid2();
+}
+
+function renderCdGrid2(){
+  const grid=document.getElementById('cdGrid2');
+  if(!grid) return;
+  grid.innerHTML='';
+  const firstDay=new Date(_c2Year,_c2Month,1).getDay();
+  const dim=new Date(_c2Year,_c2Month+1,0).getDate();
+  for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='cd-day empty';grid.appendChild(e);}
+  for(let d=1;d<=dim;d++){
+    const el=document.createElement('div');
+    el.className='cd-day'+(d===_c2Day&&_c2Confirmed?' selected':'');
+    el.textContent=d;
+    el.onclick=()=>{
+      _c2Day=d; _c2Confirmed=true;
+      grid.querySelectorAll('.cd-day').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+      const ds=_c2Year+'-'+String(_c2Month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      document.getElementById('cd').value=ds;
+      document.getElementById('cDateDisplay').textContent=d+' '+MONTHS_ID[_c2Month]+' '+_c2Year;
+      document.getElementById('cDateDisplay').style.color='';
+      setTimeout(()=>document.getElementById('cdatePicker2').classList.remove('open'),200);
+    };
+    grid.appendChild(el);
+  }
+}
+
+// Time wheel 2
+function initWheels2(){
+  buildDrum('twHourInner2',24,v=>pad2(v),_c2H);
+  buildDrum('twMinInner2',60,v=>pad2(v),_c2M);
+  setupDrumDrag('twHourDrum2','twHourInner2',24,v=>{_c2H=v;updateTWDisplay2();});
+  setupDrumDrag('twMinDrum2','twMinInner2',60,v=>{_c2M=v;updateTWDisplay2();});
+}
+function updateTWDisplay2(){
+  const t=pad2(_c2H)+' : '+pad2(_c2M);
+  document.getElementById('twDisplay2').textContent=t;
+  document.getElementById('twDisplay2').style.color='var(--gold)';
+  document.getElementById('ct').value=pad2(_c2H)+':'+pad2(_c2M);
+  _c2TimeSet=true;
+}
+function toggleTW2(){
+  const el=document.getElementById('twWrap2');
+  const isOpen=el.classList.contains('open');
+  document.querySelectorAll('.custom-select.open,.custom-date.open,.tw-wrap.open').forEach(e=>e.classList.remove('open'));
+  if(!isOpen) el.classList.add('open');
+}
+function confirmTW2(){ document.getElementById('twWrap2').classList.remove('open'); }
+
+// City autocomplete 2
+function onCityInput2(){
+  const val=document.getElementById('cc').value.trim().toLowerCase();
+  const drop=document.getElementById('cityDropdown2');
+  const status=document.getElementById('cityStatus2');
+  const inp=document.getElementById('cc');
+  _c2CityConfirmed=false;
+  document.getElementById('ccConfirmed').value='0';
+  inp.classList.remove('confirmed','error');
+  status.className='city-status'; status.textContent='';
+  if(val.length<2){drop.classList.remove('show');return;}
+  const matches=CITY_DB.filter(c=>c.n.toLowerCase().includes(val)).slice(0,8);
+  if(!matches.length){drop.classList.remove('show');status.className='city-status warn';status.textContent='Kota tidak ditemukan';return;}
+  drop.innerHTML=matches.map((c,i)=>{
+    const tzStr='UTC'+(c.tz>=0?'+':'')+c.tz;
+    return '<div class="city-opt" onmousedown="selectCity2('+i+',event)"><span class="city-opt-name">'+c.n+'</span><span class="city-opt-meta">'+tzStr+'</span></div>';
+  }).join('');
+  drop._matches=matches;
+  drop.classList.add('show');
+}
+function selectCity2(idx,e){
+  if(e) e.preventDefault();
+  const drop=document.getElementById('cityDropdown2');
+  const c=drop._matches[idx];
+  if(!c) return;
+  const inp=document.getElementById('cc');
+  inp.value=c.n;
+  document.getElementById('ccLat').value=c.lat;
+  document.getElementById('ccLon').value=c.lon;
+  document.getElementById('ccTz').value=c.tz;
+  document.getElementById('ccConfirmed').value='1';
+  _c2CityConfirmed=true;
+  drop.classList.remove('show');
+  inp.classList.add('confirmed');
+  const status=document.getElementById('cityStatus2');
+  status.className='city-status ok';
+  status.textContent='✓ '+c.lat.toFixed(4)+'°, '+c.lon.toFixed(4)+'° · UTC'+(c.tz>=0?'+':'')+c.tz;
+}
+function onCityBlur2(){
+  setTimeout(()=>{
+    document.getElementById('cityDropdown2').classList.remove('show');
+    if(!_c2CityConfirmed && document.getElementById('cc').value.trim()){
+      document.getElementById('cc').classList.add('error');
+      const s=document.getElementById('cityStatus2');
+      s.className='city-status err'; s.textContent='⚠ Pilih kota dari daftar';
+    }
+  },200);
+}
+
+// Init wheels on tab open
+const _origStab = stab;
+
 function doCompat() {
   const n2=document.getElementById('cn').value.trim();
   const d2=document.getElementById('cd').value;
-  if(!n2||!d2) return;
-  const t2=document.getElementById('ct').value||'12:00';
-  const c2=document.getElementById('cc').value||'Jakarta';
-  const D2=computeChart(n2,d2,t2,c2);
+  const t2=document.getElementById('ct').value||'';
+  const cityConfirmed=document.getElementById('ccConfirmed').value==='1';
+
+  if(!n2){ document.getElementById('cn').focus(); return; }
+  if(!d2||!_c2Confirmed){
+    const s=document.getElementById('cDateDisplay');
+    s.style.color='var(--red)'; s.textContent='Pilih tanggal lahir partner terlebih dahulu';
+    return;
+  }
+  if(!cityConfirmed){
+    document.getElementById('cc').classList.add('error');
+    const s=document.getElementById('cityStatus2');
+    s.className='city-status err'; s.textContent='⚠ Pilih kota dari daftar untuk akurasi koordinat';
+    document.getElementById('cc').focus();
+    return;
+  }
+
+  const lat2=parseFloat(document.getElementById('ccLat').value);
+  const lon2=parseFloat(document.getElementById('ccLon').value);
+  const tz2=parseFloat(document.getElementById('ccTz').value);
+
+  const D2=computeChart(n2,d2,t2,document.getElementById('cc').value,lat2,lon2,tz2);
   const D1=_D;
-  // Real comparison using actual chart data
+
   const sunDiff=Math.abs(D1.lons.Sun-D2.lons.Sun);
   const moonDiff=Math.abs(D1.lons.Moon-D2.lons.Moon);
   const venDiff=Math.abs(D1.lons.Venus-D2.lons.Venus);
   const marDiff=Math.abs(D1.lons.Mars-D2.lons.Mars);
-  function harmScore(diff){const n=diff>180?360-diff:diff;return Math.round(100-Math.min(100,(Math.abs(n-60)<15||Math.abs(n-120)<15||Math.abs(n-0)<15)?20:(Math.abs(n-90)<15||Math.abs(n-180)<15)?40:0));}
+  function harmScore(diff){const n=diff>180?360-diff:diff;return Math.round(100-Math.min(100,(Math.abs(n-60)<15||Math.abs(n-120)<15||n<8)?15:(Math.abs(n-90)<15||Math.abs(n-180)<15)?35:0));}
+
   const scores=[
-    {n:'Emotional Resonance',s:harmScore(moonDiff)},
-    {n:'Romantic Chemistry',s:harmScore(venDiff+marDiff/2)},
-    {n:'Intellectual Synergy',s:harmScore(Math.abs(D1.lons.Mercury-D2.lons.Mercury))},
-    {n:'Life Path Alignment',s:100-Math.abs(D1.numerology.lp-D2.numerology.lp)*8},
-    {n:'Energetic Compatibility',s:harmScore(sunDiff)},
+    {n:'Resonansi Emosional', s:harmScore(moonDiff)},
+    {n:'Chemistry Romantis', s:harmScore(venDiff+marDiff/2)},
+    {n:'Sinergi Intelektual', s:harmScore(Math.abs(D1.lons.Mercury-D2.lons.Mercury))},
+    {n:'Keselarasan Life Path', s:Math.max(20,100-Math.abs(D1.numerology.lp-D2.numerology.lp)*9)},
+    {n:'Kompatibilitas Energetik', s:harmScore(sunDiff)},
   ];
   const overall=Math.round(scores.reduce((a,b)=>a+b.s,0)/scores.length);
   const lbl=overall>=80?'Deep Resonance':overall>=65?'Strong Affinity':overall>=50?'Complementary Tension':'Complex Dynamic';
   document.getElementById('cs-score').textContent=overall+'%';
-  document.getElementById('cs-lbl').textContent=lbl+` · ${_raw.name} × ${n2}`;
-  document.getElementById('cs-bars').innerHTML=scores.map(s=>`<div class="tr-row"><div class="tr-head"><span class="tr-name">${s.n}</span><span class="tr-val">${s.s}</span></div><div class="tbar"><div class="tfill" style="width:${s.s}%"></div></div></div>`).join('');
-  document.getElementById('cs-insight').textContent=`Pertemuan antara ${_raw.name} (${D1.sunSign} ☉) dan ${n2} (${D2.sunSign} ☉) — kombinasi ini ${overall>=70?'menciptakan chemistry yang sulit diabaikan karena ada resonansi di level chart yang dalam':overall>=50?'penuh potensi tapi membutuhkan kesadaran penuh dari keduanya untuk tidak terperangkap dalam pattern yang berulang':'mengandung pelajaran besar yang tidak bisa dihindari, dan mungkin itulah titik pertemuannya'}. Area terkuat: ${scores[0].n}.`;
-  document.getElementById('cs-shadow').textContent=`Salah satu dari kalian kemungkinan membawa pola yang belum diselesaikan yang akan teraktivasi. Sun ${_raw.name} ${aspectType(D1.lons.Sun,D2.lons.Sun)||'no major aspect'} Sun ${n2}. Moon ${_raw.name} ${aspectType(D1.lons.Moon,D2.lons.Moon)||'no major aspect'} Moon ${n2}.`;
+  document.getElementById('cs-lbl').textContent=lbl+' · '+_raw.name+' × '+n2;
+  document.getElementById('cs-bars').innerHTML=scores.map(s=>
+    '<div class="tr-row"><div class="tr-head"><span class="tr-name">'+s.n+'</span><span class="tr-val">'+s.s+'</span></div><div class="tbar"><div class="tfill" style="width:'+s.s+'%"></div></div></div>'
+  ).join('');
+  document.getElementById('cs-insight').textContent='Pertemuan antara '+_raw.name+' ('+D1.sunSign+' ☉) dan '+n2+' ('+D2.sunSign+' ☉) — kombinasi ini '+(overall>=70?'menciptakan resonansi yang kuat di level chart. Ada sesuatu yang terasa "familiar" secara energetik.':overall>=50?'penuh potensi tapi membutuhkan kesadaran dari keduanya. Tension yang ada bisa jadi bahan bakar atau hambatan.':'mengandung pelajaran besar. Chemistry-nya nyata, tapi biayanya juga nyata.')+' Area terkuat: '+scores.sort((a,b)=>b.s-a.s)[0].n+'.';
+  document.getElementById('cs-shadow').textContent='Sun '+_raw.name+' '+(aspectType(D1.lons.Sun,D2.lons.Sun)||'tidak ada aspek mayor dengan')+' Sun '+n2+'. Moon '+_raw.name+' '+(aspectType(D1.lons.Moon,D2.lons.Moon)||'tidak ada aspek mayor dengan')+' Moon '+n2+'. Salah satu dari kalian kemungkinan membawa pola yang akan teraktivasi dalam relasi ini.';
   document.getElementById('compat-res').style.display='block';
   setTimeout(()=>{document.querySelectorAll('#cs-bars .tfill').forEach(e=>{const s=e.style.width;e.style.width='0%';setTimeout(()=>e.style.width=s,100);});},100);
 }
@@ -1721,25 +3041,50 @@ function toStep2(){
   document.getElementById('fs2').classList.add('on');
 }
 
-['iDate','iTime','iCity'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',updateConf);
-});
+document.getElementById('iCity').addEventListener('input', updateConf);
 function updateConf(){
   const t=!!document.getElementById('iTime').value;
-  const c=!!document.getElementById('iCity').value.trim();
+  const confirmed=document.getElementById('iCityConfirmed').value==='1';
+  const d=!!document.getElementById('iDate').value;
   const ch=document.getElementById('chint'),dot=document.getElementById('cdot'),txt=document.getElementById('ctxt');
+  if(!d) return;
   ch.style.display='flex';
-  if(t&&c){dot.style.background='var(--green)';txt.textContent='High precision · Semua data tersedia';}
-  else if(!t){dot.style.background='var(--gold)';txt.textContent='Medium — tambahkan jam lahir untuk Ascendant & BaZi Hour';}
-  else{dot.style.background='var(--gold)';txt.textContent='Tambahkan kota untuk koordinat akurat';}
+  if(t&&confirmed){dot.style.background='var(--green)';txt.textContent='Presisi tinggi · Koordinat akurat, Ascendant & BaZi Hour tersedia.';}
+  else if(!t&&confirmed){dot.style.background='var(--gold)';txt.textContent='Sedang · Koordinat kota OK, tapi jam lahir diperlukan untuk Ascendant & BaZi Hour.';}
+  else if(t&&!confirmed){dot.style.background='var(--gold)';txt.textContent='Sedang · Pilih kota dari daftar untuk koordinat akurat.';}
+  else{dot.style.background='var(--red)';txt.textContent='Rendah · Pilih kota dari daftar & tambahkan jam lahir untuk hasil akurat.';}
 }
 
 function runCalc(){
   const name=document.getElementById('iName').value.trim()||'Unknown';
   const date=document.getElementById('iDate').value;
   const time=document.getElementById('iTime').value;
-  const city=document.getElementById('iCity').value.trim()||'Jakarta';
-  if(!date){document.getElementById('iDate').focus();return;}
+  const cityRaw=document.getElementById('iCity').value.trim();
+  const confirmed=document.getElementById('iCityConfirmed').value==='1';
+
+  if(!date||date===''){alert('Pilih tanggal lahir terlebih dahulu.');return;}
+
+  if(!cityRaw){
+    document.getElementById('iCity').focus();
+    document.getElementById('iCity').classList.add('error');
+    const st=document.getElementById('cityStatus');
+    st.className='city-status err';
+    st.textContent='⚠ Kota kelahiran wajib diisi untuk akurasi Ascendant & BaZi.';
+    return;
+  }
+  if(!confirmed){
+    document.getElementById('iCity').classList.add('error');
+    const st=document.getElementById('cityStatus');
+    st.className='city-status err';
+    st.textContent='⚠ Pilih kota dari daftar dropdown agar koordinat tersimpan akurat.';
+    document.getElementById('iCity').focus();
+    return;
+  }
+
+  const lat=parseFloat(document.getElementById('iCityLat').value);
+  const lon=parseFloat(document.getElementById('iCityLon').value);
+  const tz=parseFloat(document.getElementById('iCityTz').value);
+
   document.getElementById('landing').style.display='none';
   document.getElementById('loading').classList.add('on');
   const steps=document.querySelectorAll('.ls');
@@ -1750,15 +3095,31 @@ function runCalc(){
     else{
       clearInterval(iv);
       setTimeout(()=>{
-        const D=computeChart(name,date,time,city);
-        document.getElementById('loading').classList.remove('on');
-        document.getElementById('dash').classList.add('on');
-        render(name,date,time,city,D);
-        setTimeout(()=>document.querySelectorAll('.tfill').forEach(e=>{const s=e.dataset.s;if(s)e.style.width=s+'%';}),400);
+        try {
+          const D=computeChart(name,date,time,cityRaw,lat,lon,tz);
+          markDirty();
+          document.getElementById('loading').classList.remove('on');
+          document.getElementById('dash').classList.add('on');
+          render(name,date,time,cityRaw,D);
+          setTimeout(()=>{
+            document.querySelectorAll('.tfill,.soul-dim-fill').forEach(e=>{
+              const s=e.dataset.s; if(s) e.style.width=s+'%';
+            });
+          },400);
+        } catch(err) {
+          document.getElementById('loading').classList.remove('on');
+          document.getElementById('landing').style.display='';
+          console.error('OMC compute error:', err);
+          alert('Terjadi kesalahan saat menghitung chart. Coba lagi.');
+        }
       },500);
     }
   },280);
 }
+
+// Dirty flags — prevent redundant redraws
+const _rendered = {};
+function markDirty() { Object.keys(_rendered).forEach(k=>delete _rendered[k]); }
 
 function stab(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
@@ -1766,31 +3127,514 @@ function stab(id,btn){
   btn.classList.add('on');
   document.getElementById('t-'+id).classList.add('on');
   setTimeout(()=>{
-    if(id==='overview'||id==='astro'){const nc=document.getElementById('natalC');const tt=document.getElementById('natalTT');if(_D.lons){drawNatal(nc,_D,tt);setupNatalHover(nc,_D,tt);}drawElemPie(document.getElementById('elemC'),_D.elCounts,null);}
-    if(id==='bazi'&&_D.bazi)drawBaziElem(document.getElementById('baziElemC'),_D.bazi.baziEls,_D.bazi.favEl);
-    if(id==='daily'&&_D.sunSign) renderDaily(_D);
+    if((id==='overview'||id==='astro') && _D.lons) {
+      const nc=document.getElementById('natalC');
+      const tt=document.getElementById('natalTT');
+      if(!_rendered.natal){ drawNatal(nc,_D,tt); setupNatalHover(nc,_D,tt); _rendered.natal=1; }
+      if(!_rendered.elem){ drawElemPie(document.getElementById('elemC'),_D.elCounts,null); _rendered.elem=1; }
+    }
+    if(id==='bazi'&&_D.bazi&&!_rendered.baziElem){
+      drawBaziElem(document.getElementById('baziElemC'),_D.bazi.baziEls,_D.bazi.favEl);
+      _rendered.baziElem=1;
+    }
+    if(id==='hd'&&_D.hd&&!_rendered.hd){
+      renderHDBodygraph(document.getElementById('hdBodgraphSVG'),_D.hd.definedCenters,[_D.hd.sunGate,_D.hd.moonGate,_D.hd.ascGate,_D.hd.earthGate],_D.hd.type);
+      _rendered.hd=1;
+    }
+    if(id==='ziwei'&&_D.zw&&!_rendered.ziwei){
+      drawZiWei(document.getElementById('zwC'),_D.zw.life,_D.zw.career,_D.zw.wealth);
+      _rendered.ziwei=1;
+    }
+    if(id==='transit'&&!_rendered.transRadar){
+      drawRadar(document.getElementById('transRadarC'),_D.traits);
+      _rendered.transRadar=1;
+    }
+    if(id==='compat') { initDatePicker2(); initWheels2(); }
     if(id==='share'&&_D.sunSign) renderShareCard();
-    if(id==='hd'&&_D.hd) renderHDBodygraph(document.getElementById('hdBodgraphSVG'),_D.hd.definedCenters,[_D.hd.sunGate,_D.hd.moonGate,_D.hd.ascGate,_D.hd.earthGate],_D.hd.type);
-    if(id==='ziwei'&&_D.zw)drawZiWei(document.getElementById('zwC'),_D.zw.life,_D.zw.career,_D.zw.wealth);
-    if(id==='transit')drawRadar(document.getElementById('transRadarC'),_D.traits);
     document.querySelectorAll('.tfill').forEach(e=>{const s=e.dataset.s;if(s&&!e.style.width)e.style.width=s+'%';});
   },60);
 }
 
 function reset(){
+  markDirty();
+  _cityConfirmed = false;
+  document.getElementById('iCityConfirmed').value='0';
+  document.getElementById('iCity').value='';
+  document.getElementById('iCity').classList.remove('confirmed','error');
+  document.getElementById('cityStatus').textContent='';
+  document.getElementById('cityStatus').className='city-status';
   document.getElementById('dash').classList.remove('on');
   document.getElementById('landing').style.display='';
   document.getElementById('fs2').classList.remove('on');
   document.getElementById('fs1').classList.add('on');
   document.querySelectorAll('.ls').forEach(s=>s.classList.remove('go','ok'));
+  _c2Confirmed=false; _c2TimeSet=false; _c2CityConfirmed=false;
+  document.getElementById('ccConfirmed').value='0';
   document.getElementById('compat-res').style.display='none';
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',i===0));
   document.querySelectorAll('.tp').forEach((p,i)=>p.classList.toggle('on',i===0));
 }
 
+// ═══════════════════════════════════════════════════════════
+//  CITY AUTOCOMPLETE — with lat/lon/timezone
+// ═══════════════════════════════════════════════════════════
+const CITY_DB = [
+  // Indonesia
+  {n:'Jakarta, Indonesia',lat:-6.2088,lon:106.8456,tz:7},
+  {n:'Surabaya, Indonesia',lat:-7.2575,lon:112.7521,tz:7},
+  {n:'Bandung, Indonesia',lat:-6.9175,lon:107.6191,tz:7},
+  {n:'Medan, Indonesia',lat:3.5952,lon:98.6722,tz:7},
+  {n:'Semarang, Indonesia',lat:-6.9932,lon:110.4203,tz:7},
+  {n:'Palembang, Indonesia',lat:-2.9761,lon:104.7754,tz:7},
+  {n:'Makassar, Indonesia',lat:-5.1477,lon:119.4327,tz:8},
+  {n:'Yogyakarta, Indonesia',lat:-7.7956,lon:110.3695,tz:7},
+  {n:'Denpasar, Indonesia',lat:-8.6705,lon:115.2126,tz:8},
+  {n:'Bali, Indonesia',lat:-8.4095,lon:115.1889,tz:8},
+  {n:'Malang, Indonesia',lat:-7.9797,lon:112.6304,tz:7},
+  {n:'Tangerang, Indonesia',lat:-6.1781,lon:106.63,tz:7},
+  {n:'Depok, Indonesia',lat:-6.4025,lon:106.7942,tz:7},
+  {n:'Bekasi, Indonesia',lat:-6.2349,lon:106.9896,tz:7},
+  {n:'Bogor, Indonesia',lat:-6.5971,lon:106.806,tz:7},
+  {n:'Cirebon, Indonesia',lat:-6.7063,lon:108.5573,tz:7},
+  {n:'Aceh, Indonesia',lat:5.5483,lon:95.3238,tz:7},
+  {n:'Padang, Indonesia',lat:-0.9492,lon:100.3543,tz:7},
+  {n:'Pekanbaru, Indonesia',lat:0.5071,lon:101.4478,tz:7},
+  {n:'Batam, Indonesia',lat:1.0456,lon:104.0305,tz:7},
+  {n:'Pontianak, Indonesia',lat:-0.0263,lon:109.3425,tz:7},
+  {n:'Banjarmasin, Indonesia',lat:-3.3186,lon:114.5944,tz:8},
+  {n:'Balikpapan, Indonesia',lat:1.2654,lon:116.8312,tz:8},
+  {n:'Samarinda, Indonesia',lat:-0.5022,lon:117.1536,tz:8},
+  {n:'Manado, Indonesia',lat:1.4748,lon:124.8421,tz:8},
+  {n:'Jayapura, Indonesia',lat:-2.5337,lon:140.7181,tz:9},
+  {n:'Lombok, Indonesia',lat:-8.6529,lon:116.3239,tz:8},
+  {n:'Solo, Indonesia',lat:-7.5755,lon:110.8243,tz:7},
+  {n:'Palu, Indonesia',lat:-0.8917,lon:119.8707,tz:8},
+  {n:'Kupang, Indonesia',lat:-10.1772,lon:123.607,tz:8},
+  // Asia
+  {n:'Singapore',lat:1.3521,lon:103.8198,tz:8},
+  {n:'Kuala Lumpur, Malaysia',lat:3.1390,lon:101.6869,tz:8},
+  {n:'Bangkok, Thailand',lat:13.7563,lon:100.5018,tz:7},
+  {n:'Manila, Philippines',lat:14.5995,lon:120.9842,tz:8},
+  {n:'Ho Chi Minh City, Vietnam',lat:10.8231,lon:106.6297,tz:7},
+  {n:'Hanoi, Vietnam',lat:21.0285,lon:105.8542,tz:7},
+  {n:'Tokyo, Japan',lat:35.6762,lon:139.6503,tz:9},
+  {n:'Seoul, South Korea',lat:37.5665,lon:126.978,tz:9},
+  {n:'Beijing, China',lat:39.9042,lon:116.4074,tz:8},
+  {n:'Shanghai, China',lat:31.2304,lon:121.4737,tz:8},
+  {n:'Hong Kong',lat:22.3193,lon:114.1694,tz:8},
+  {n:'Taipei, Taiwan',lat:25.033,lon:121.5654,tz:8},
+  {n:'Mumbai, India',lat:19.076,lon:72.8777,tz:5.5},
+  {n:'Delhi, India',lat:28.6139,lon:77.209,tz:5.5},
+  {n:'Colombo, Sri Lanka',lat:6.9271,lon:79.8612,tz:5.5},
+  {n:'Dhaka, Bangladesh',lat:23.8103,lon:90.4125,tz:6},
+  {n:'Karachi, Pakistan',lat:24.8607,lon:67.0011,tz:5},
+  {n:'Riyadh, Saudi Arabia',lat:24.7136,lon:46.6753,tz:3},
+  {n:'Dubai, UAE',lat:25.2048,lon:55.2708,tz:4},
+  {n:'Tehran, Iran',lat:35.6892,lon:51.389,tz:3.5},
+  {n:'Istanbul, Turkey',lat:41.0082,lon:28.9784,tz:3},
+  {n:'Cairo, Egypt',lat:30.0444,lon:31.2357,tz:2},
+  // Europe
+  {n:'London, UK',lat:51.5074,lon:-0.1278,tz:0},
+  {n:'Paris, France',lat:48.8566,lon:2.3522,tz:1},
+  {n:'Berlin, Germany',lat:52.52,lon:13.405,tz:1},
+  {n:'Amsterdam, Netherlands',lat:52.3676,lon:4.9041,tz:1},
+  {n:'Rome, Italy',lat:41.9028,lon:12.4964,tz:1},
+  {n:'Madrid, Spain',lat:40.4168,lon:-3.7038,tz:1},
+  {n:'Moscow, Russia',lat:55.7558,lon:37.6173,tz:3},
+  // Americas
+  {n:'New York, USA',lat:40.7128,lon:-74.006,tz:-5},
+  {n:'Los Angeles, USA',lat:34.0522,lon:-118.2437,tz:-8},
+  {n:'Chicago, USA',lat:41.8781,lon:-87.6298,tz:-6},
+  {n:'Houston, USA',lat:29.7604,lon:-95.3698,tz:-6},
+  {n:'Toronto, Canada',lat:43.6532,lon:-79.3832,tz:-5},
+  {n:'Vancouver, Canada',lat:49.2827,lon:-123.1207,tz:-8},
+  {n:'São Paulo, Brazil',lat:-23.5505,lon:-46.6333,tz:-3},
+  {n:'Mexico City, Mexico',lat:19.4326,lon:-99.1332,tz:-6},
+  // Oceania
+  {n:'Sydney, Australia',lat:-33.8688,lon:151.2093,tz:10},
+  {n:'Melbourne, Australia',lat:-37.8136,lon:144.9631,tz:10},
+  {n:'Auckland, New Zealand',lat:-36.8509,lon:174.7645,tz:12},
+];
+
+let _cityConfirmed = false;
+
+function onCityInput() {
+  const val = document.getElementById('iCity').value.trim().toLowerCase();
+  const drop = document.getElementById('cityDropdown');
+  const status = document.getElementById('cityStatus');
+  const inp = document.getElementById('iCity');
+
+  // Reset confirmed state when user types
+  _cityConfirmed = false;
+  document.getElementById('iCityConfirmed').value = '0';
+  inp.classList.remove('confirmed','error');
+  status.className = 'city-status';
+  status.textContent = '';
+
+  if(val.length < 2) { drop.classList.remove('show'); return; }
+
+  const matches = CITY_DB.filter(c => c.n.toLowerCase().includes(val)).slice(0,8);
+
+  if(matches.length === 0) {
+    drop.classList.remove('show');
+    status.className = 'city-status warn';
+    status.textContent = 'Kota tidak ditemukan — ketik lebih lengkap atau coba nama lain';
+    return;
+  }
+
+  drop.innerHTML = matches.map((c,i) => {
+    const tzStr = 'UTC'+(c.tz>=0?'+':'')+c.tz;
+    return '<div class="city-opt" onmousedown="selectCity('+i+',event)">' +
+      '<span class="city-opt-name">'+c.n+'</span>' +
+      '<span class="city-opt-meta">'+tzStr+' · '+c.lat.toFixed(2)+'°, '+c.lon.toFixed(2)+'°</span>' +
+      '</div>';
+  }).join('');
+  drop._matches = matches;
+  drop.classList.add('show');
+  updateConf();
+}
+
+function selectCity(idx, e) {
+  if(e) e.preventDefault();
+  const drop = document.getElementById('cityDropdown');
+  const matches = drop._matches;
+  if(!matches || !matches[idx]) return;
+  const c = matches[idx];
+  const inp = document.getElementById('iCity');
+
+  inp.value = c.n;
+  document.getElementById('iCityLat').value = c.lat;
+  document.getElementById('iCityLon').value = c.lon;
+  document.getElementById('iCityTz').value = c.tz;
+  document.getElementById('iCityConfirmed').value = '1';
+  _cityConfirmed = true;
+
+  drop.classList.remove('show');
+  inp.classList.add('confirmed');
+  inp.classList.remove('error');
+
+  const status = document.getElementById('cityStatus');
+  status.className = 'city-status ok';
+  status.textContent = '✓ Koordinat tersimpan: '+c.lat.toFixed(4)+'°, '+c.lon.toFixed(4)+'° · UTC'+(c.tz>=0?'+':'')+c.tz;
+  updateConf();
+}
+
+function onCityBlur() {
+  setTimeout(() => {
+    document.getElementById('cityDropdown').classList.remove('show');
+    if(!_cityConfirmed && document.getElementById('iCity').value.trim()) {
+      const inp = document.getElementById('iCity');
+      inp.classList.add('error');
+      const status = document.getElementById('cityStatus');
+      status.className = 'city-status err';
+      status.textContent = '⚠ Pilih kota dari daftar agar koordinat akurat';
+    }
+  }, 200);
+}
+
+// Override getLatLon to use confirmed city data
+const _origGetLatLon = getLatLon;
+function getLatLonFromInput() {
+  if(_cityConfirmed) {
+    const lat = parseFloat(document.getElementById('iCityLat').value);
+    const lon = parseFloat(document.getElementById('iCityLon').value);
+    const tz = parseFloat(document.getElementById('iCityTz').value);
+    if(!isNaN(lat)) return [lat, lon, tz];
+  }
+  return null;
+}
+
+// ── Custom Select ──
+function toggleCS(id) {
+  const el = document.getElementById(id);
+  const isOpen = el.classList.contains('open');
+  const insideDatePicker = el.closest('.custom-date');
+
+  if(insideDatePicker) {
+    // Close other selects inside date picker, keep date picker itself open
+    document.querySelectorAll('.custom-select.open').forEach(e=>{
+      if(e !== el) e.classList.remove('open');
+    });
+  } else {
+    // Close everything except this one
+    document.querySelectorAll('.custom-select.open,.custom-date.open').forEach(e=>{
+      if(e !== el) e.classList.remove('open');
+    });
+    document.querySelectorAll('.tw-wrap.open').forEach(e=>e.classList.remove('open'));
+  }
+
+  // Toggle this element — if was open, close it; if was closed, open it
+  el.classList.toggle('open', !isOpen);
+}
+function selectCS(selectId, valId, hiddenId, value, label) {
+  document.getElementById(valId).textContent = label;
+  document.getElementById(valId).classList.remove('placeholder');
+  if(hiddenId) document.getElementById(hiddenId).value = value;
+  document.getElementById(selectId).classList.remove('open');
+  // Mark selected
+  document.querySelectorAll('#'+selectId+' .cs-opt').forEach(o=>o.classList.remove('selected'));
+  event.target.classList.add('selected');
+  updateConf();
+}
+
+// ── Custom Date Picker ──
+let _cdYear = 1995, _cdMonth = 7, _cdDay = 17; // Aug = 7 (0-indexed)
+
+const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+function initDatePicker() {
+  // Populate month dropdown — full names
+  const mDrop = document.getElementById('monthSelDropdown');
+  MONTHS_ID.forEach((m,i)=>{
+    const d = document.createElement('div');
+    d.className = 'cs-opt' + (i===_cdMonth?' selected':'');
+    d.textContent = m;
+    d.onclick = ()=>{
+      _cdMonth=i;
+      document.getElementById('monthVal').textContent=MONTHS_SHORT[i];
+      document.getElementById('monthSel').classList.remove('open');
+      mDrop.querySelectorAll('.cs-opt').forEach(o=>o.classList.remove('selected'));
+      d.classList.add('selected');
+      renderCdGrid();
+    };
+    mDrop.appendChild(d);
+  });
+
+  // Populate year dropdown (2015–1920 descending) — auto scroll to selected
+  const yDrop = document.getElementById('yearSelDropdown');
+  const currentYear = new Date().getFullYear();
+  for(let y=currentYear;y>=1920;y--) {
+    const d = document.createElement('div');
+    d.id = 'yd-'+y;
+    d.className = 'cs-opt' + (y===_cdYear?' selected':'');
+    d.textContent = y;
+    d.onclick = (()=>{ const yr=y; return ()=>{
+      _cdYear=yr;
+      document.getElementById('yearVal').textContent=yr;
+      document.getElementById('yearSel').classList.remove('open');
+      yDrop.querySelectorAll('.cs-opt').forEach(o=>o.classList.remove('selected'));
+      d.classList.add('selected');
+      renderCdGrid();
+    }; })();
+    yDrop.appendChild(d);
+  }
+
+  // Auto-scroll year dropdown to selected on open
+  document.getElementById('yearSel').querySelector('.cs-display').addEventListener('click', ()=>{
+    setTimeout(()=>{
+      const sel = yDrop.querySelector('.selected');
+      if(sel) sel.scrollIntoView({block:'center',behavior:'instant'});
+    }, 20);
+  });
+  document.getElementById('monthVal').textContent = MONTHS_SHORT[_cdMonth];
+  document.getElementById('yearVal').textContent = _cdYear;
+  renderCdGrid();
+  updateDateDisplay();
+}
+
+function toggleDatePicker() {
+  const dp = document.getElementById('datePicker');
+  const isOpen = dp.classList.contains('open');
+  // Close all other things
+  document.querySelectorAll('.custom-select.open,.tw-wrap.open').forEach(e=>e.classList.remove('open'));
+  if(isOpen) {
+    // Close date picker + any inner open selects
+    document.querySelectorAll('#datePicker .custom-select.open').forEach(e=>e.classList.remove('open'));
+    dp.classList.remove('open');
+  } else {
+    dp.classList.add('open');
+  }
+}
+
+function cdNavYear(dir) {
+  _cdMonth += dir;
+  if(_cdMonth > 11) { _cdMonth=0; _cdYear++; }
+  if(_cdMonth < 0) { _cdMonth=11; _cdYear--; }
+  document.getElementById('monthVal').textContent = MONTHS_SHORT[_cdMonth];
+  document.getElementById('yearVal').textContent = _cdYear;
+  document.querySelectorAll('#yearSelDropdown .cs-opt').forEach(o=>{
+    o.classList.toggle('selected', parseInt(o.textContent)===_cdYear);
+  });
+  document.querySelectorAll('#monthSelDropdown .cs-opt').forEach((o,i)=>{
+    o.classList.toggle('selected', i===_cdMonth);
+  });
+  renderCdGrid();
+}
+
+function renderCdGrid() {
+  const grid = document.getElementById('cdGrid');
+  grid.innerHTML = '';
+  const firstDay = new Date(_cdYear, _cdMonth, 1).getDay();
+  const daysInMonth = new Date(_cdYear, _cdMonth+1, 0).getDate();
+  const today = new Date();
+  // Empty cells
+  for(let i=0;i<firstDay;i++){
+    const e=document.createElement('div'); e.className='cd-day empty'; grid.appendChild(e);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const el=document.createElement('div');
+    el.className='cd-day';
+    el.textContent=d;
+    if(d===_cdDay && _cdMonth===_cdMonth) el.classList.add('selected');
+    if(d===today.getDate() && _cdMonth===today.getMonth() && _cdYear===today.getFullYear()) el.classList.add('today');
+    el.onclick=()=>{
+      _cdDay=d;
+      grid.querySelectorAll('.cd-day').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+      updateDateDisplay();
+      setTimeout(()=>document.getElementById('datePicker').classList.remove('open'),200);
+    };
+    grid.appendChild(el);
+  }
+}
+
+function updateDateDisplay() {
+  const val = document.getElementById('cdVal')||document.querySelector('#datePicker .cd-val');
+  const dateStr = _cdYear+'-'+String(_cdMonth+1).padStart(2,'0')+'-'+String(_cdDay).padStart(2,'0');
+  document.getElementById('iDate').value = dateStr;
+  const dispEl = document.getElementById('dateDisplay');
+  if(dispEl) { dispEl.textContent = _cdDay+' '+MONTHS_ID[_cdMonth]+' '+_cdYear; dispEl.classList.remove('placeholder'); }
+  updateConf();
+}
+
+// ── Custom Time Picker ──
+// ── Slot Wheel Time Picker ──
+function pad2(n){return String(n).padStart(2,'0');}
+let _twH=7, _twM=30;
+
+function buildDrum(innerId, count, formatter, current) {
+  const inner = document.getElementById(innerId);
+  inner.innerHTML = '';
+  // Build 3 loops of items for infinite feel
+  const total = count * 3;
+  for(let i=0;i<total;i++){
+    const v = i % count;
+    const el = document.createElement('div');
+    el.className = 'tw-item';
+    el.textContent = formatter(v);
+    inner.appendChild(el);
+  }
+  // Set initial position to middle loop
+  inner._count = count;
+  inner._current = current;
+  setDrumPos(inner, current, false);
+}
+
+function setDrumPos(inner, value, animate) {
+  const count = inner._count;
+  inner._current = ((value % count) + count) % count;
+  // Middle loop offset
+  const idx = count + inner._current;
+  const offset = -(idx * 44 - 68); // center item at position 2 (68px = 44*1.5 visible center)
+  if(animate) { inner.style.transition = 'transform .2s cubic-bezier(.4,0,.2,1)'; }
+  else { inner.style.transition = 'none'; }
+  inner.style.transform = 'translateY('+offset+'px)';
+  // Style items
+  Array.from(inner.children).forEach((el, i) => {
+    const v = i % count;
+    const isActive = v === inner._current;
+    const isNear = Math.abs((i - idx)) === 1;
+    el.style.color = isActive ? 'var(--gold)' : isNear ? 'rgba(237,232,223,0.45)' : 'rgba(237,232,223,0.15)';
+    el.style.fontSize = isActive ? '34px' : isNear ? '22px' : '16px';
+    el.style.fontWeight = isActive ? '400' : '300';
+  });
+}
+
+function initWheels() {
+  buildDrum('twHourInner', 24, v=>pad2(v), _twH);
+  buildDrum('twMinInner', 60, v=>pad2(v), _twM);
+  updateTWDisplay();
+  setupDrumDrag('twHourDrum', 'twHourInner', 24, v=>{ _twH=v; updateTWDisplay(); });
+  setupDrumDrag('twMinDrum', 'twMinInner', 60, v=>{ _twM=v; updateTWDisplay(); });
+}
+
+function setupDrumDrag(drumId, innerId, count, onChange) {
+  const drum = document.getElementById(drumId);
+  const inner = document.getElementById(innerId);
+  let startY=0, startCurrent=0, dragging=false, velocity=0, lastY=0, lastT=0;
+
+  const onStart = (y) => {
+    dragging = true;
+    startY = y;
+    startCurrent = inner._current;
+    velocity = 0;
+    lastY = y; lastT = Date.now();
+    inner.style.transition = 'none';
+  };
+  const onMove = (y) => {
+    if(!dragging) return;
+    const now = Date.now();
+    velocity = (lastY - y) / (now - lastT + 1);
+    lastY=y; lastT=now;
+    const delta = Math.round((startY - y) / 44);
+    const newVal = ((startCurrent + delta) % count + count) % count;
+    setDrumPos(inner, newVal, false);
+  };
+  const onEnd = () => {
+    if(!dragging) return;
+    dragging = false;
+    let snap = inner._current;
+    // Flick
+    if(Math.abs(velocity) > 0.3) snap = ((snap + Math.round(velocity*4)) % count + count) % count;
+    setDrumPos(inner, snap, true);
+    onChange(snap);
+  };
+
+  // Touch
+  drum.addEventListener('touchstart', e=>{ e.preventDefault(); onStart(e.touches[0].clientY); }, {passive:false});
+  drum.addEventListener('touchmove', e=>{ e.preventDefault(); onMove(e.touches[0].clientY); }, {passive:false});
+  drum.addEventListener('touchend', ()=>onEnd());
+  // Mouse
+  drum.addEventListener('mousedown', e=>{ onStart(e.clientY); });
+  document.addEventListener('mousemove', e=>{ if(dragging) onMove(e.clientY); });
+  document.addEventListener('mouseup', ()=>{ if(dragging) onEnd(); });
+  // Click items for quick select
+  drum.addEventListener('click', e=>{
+    const item = e.target.closest('.tw-item');
+    if(!item || dragging) return;
+    const items = Array.from(inner.children);
+    const idx = items.indexOf(item);
+    const val = idx % count;
+    setDrumPos(inner, val, true);
+    onChange(val);
+  });
+}
+
+function updateTWDisplay() {
+  const t = pad2(_twH)+' : '+pad2(_twM);
+  document.getElementById('twDisplay').textContent = t;
+  document.getElementById('iTime').value = pad2(_twH)+':'+pad2(_twM);
+}
+
+function toggleTW() {
+  const el = document.getElementById('twWrap');
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.custom-select.open,.custom-date.open').forEach(e=>e.classList.remove('open'));
+  document.querySelectorAll('.tw-wrap.open').forEach(e=>e.classList.remove('open'));
+  if(!isOpen) { el.classList.add('open'); }
+}
+
+function confirmTW() {
+  document.getElementById('twWrap').classList.remove('open');
+  updateConf();
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.custom-select')&&!e.target.closest('.custom-date')&&!e.target.closest('.tw-wrap')) {
+    document.querySelectorAll('.custom-select.open,.custom-date.open,.tw-wrap.open').forEach(el=>el.classList.remove('open'));
+  }
+});
+
+// Init on load
+initDatePicker();
+initWheels();
+
 // Default
-document.getElementById('iDate').value='1995-08-17';
-document.getElementById('iTime').value='07:30';
+document.getElementById('iCity').value = '';
+
+
 
 // ═══════════════════════════════════════════════════════════
 //  DAILY PULL ENGINE
