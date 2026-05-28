@@ -467,11 +467,11 @@ select option{background:#11111c}
 
 /* ══ CITY AUTOCOMPLETE ══ */
 .city-wrap{position:relative}
-.city-wrap input{width:100%;background:transparent;border:1px solid rgba(201,168,76,0.25);border-radius:var(--r);padding:13px 15px;color:var(--text);font-family:var(--font-sans);font-size:14px;outline:none;transition:border-color .3s,box-shadow .3s;backdrop-filter:blur(4px)}
-.city-wrap input:focus{border-color:rgba(201,168,76,0.7);box-shadow:0 0 12px rgba(201,168,76,0.15)}
+.city-wrap input{width:100%;background:#000000;border:1px solid var(--gold);border-radius:var(--r);padding:13px 15px;color:var(--text);font-family:var(--font-sans);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.city-wrap input:focus{border-color:var(--gold2);box-shadow:0 0 16px rgba(201,168,76,.22)}
 .city-wrap input.confirmed{border-color:rgba(90,158,120,.6)!important;box-shadow:0 0 10px rgba(90,158,120,.1)!important}
 .city-wrap input.error{border-color:rgba(196,96,74,.6)!important}
-.city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#000000;border:1px solid var(--gold);border-radius:var(--r);z-index:400;display:none;max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#000000;border:1px solid var(--gold);z-index:600;max-height:280px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,.3) transparent;border-radius:var(--r);z-index:400;display:none;max-height:220px;overflow-y:auto;scrollbar-width:thin}
 .city-dropdown.show{display:block;animation:fadeIn .15s ease}
 .city-opt{padding:12px 15px;font-family:var(--font-sans);font-size:13px;color:var(--dim);cursor:pointer;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;transition:background .15s}
 .city-opt:last-child{border-bottom:none}
@@ -512,7 +512,7 @@ select option{background:#11111c}
 .cs-val.placeholder{color:var(--muted)}
 .cs-arrow{font-size:11px;color:var(--gold);opacity:.7;transition:transform .2s}
 .custom-select.open .cs-arrow{transform:rotate(180deg)}
-.cs-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#000000;border:1px solid var(--gold);border-radius:var(--r);z-index:400;overflow:hidden;display:none;animation:fadeIn .15s ease}
+.cs-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#000000;border:1px solid var(--gold);border-radius:var(--r);z-index:500;overflow:hidden;display:none;animation:fadeIn .15s ease;max-height:220px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,.3) transparent}
 .custom-select.open .cs-dropdown{display:block}
 /* Year dropdown needs scroll */
 #yearSelDropdown{max-height:200px;overflow-y:auto;overflow-x:hidden}
@@ -5981,6 +5981,14 @@ function setupDrumDrag(drumId, innerId, count, onChange) {
   drum.addEventListener('mousedown', e=>{ onStart(e.clientY); });
   document.addEventListener('mousemove', e=>{ if(dragging) onMove(e.clientY); });
   document.addEventListener('mouseup', ()=>{ if(dragging) onEnd(); });
+  // Mouse wheel support for desktop
+  drum.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const newVal = (((inner._current||0) + dir) % count + count) % count;
+    setDrumPos(inner, newVal, true);
+    onChange(newVal);
+  }, {passive: false});
   // Click items for quick select
   drum.addEventListener('click', e=>{
     const item = e.target.closest('.tw-item');
@@ -6482,6 +6490,9 @@ function initSysDatePicker(sysId) {
       yHtml += `<div class="cs-opt" onclick="setSysYear('${sysId}',${y})">${y}</div>`;
     }
     yDrop.innerHTML = yHtml;
+    // Ensure scrollable
+    yDrop.style.maxHeight = '200px';
+    yDrop.style.overflowY = 'auto';
   }
   renderSysCdGrid(sysId);
 }
@@ -6547,45 +6558,73 @@ function selectSysDay(sysId, d) {
   if(dp) dp.classList.remove('open');
 }
 
+
+// ── Close ALL open pickers (called before opening any new one) ──
+function closeAllSysPickers(exceptId) {
+  document.querySelectorAll('.custom-select.open').forEach(el=>{
+    if(!exceptId || el.id !== exceptId) el.classList.remove('open');
+  });
+  document.querySelectorAll('.custom-date.open').forEach(el=>{
+    if(!exceptId || el.id !== exceptId) el.classList.remove('open');
+  });
+  document.querySelectorAll('.tw-wrap.open').forEach(el=>{
+    if(!exceptId || el.id !== exceptId) el.classList.remove('open');
+  });
+}
 function toggleDatePickerSys(sysId) {
   const dp = document.getElementById('datePicker-'+sysId);
-  if(dp) dp.classList.toggle('open');
+  if(!dp) return;
+  const isOpen = dp.classList.contains('open');
+  closeAllSysPickers('datePicker-'+sysId);
+  if(!isOpen) dp.classList.add('open');
 }
+
+// Track which sys drums have been initialized
+const _sysDrumInit = {};
 
 function initSysTimePicker(sysId) {
   const hourInner = document.getElementById('twHourInner-'+sysId);
   const minInner  = document.getElementById('twMinInner-'+sysId);
   if(!hourInner||!minInner) return;
-  let hHtml='',mHtml='';
-  for(let i=0;i<24;i++) hHtml+=`<div class="tw-item">${String(i).padStart(2,'0')}</div>`;
-  for(let i=0;i<60;i++) mHtml+=`<div class="tw-item">${String(i).padStart(2,'0')}</div>`;
-  hourInner.innerHTML=hHtml; minInner.innerHTML=mHtml;
-  // Scroll to 7:30
-  setTimeout(()=>{
-    const itemH=44;
-    hourInner.style.transform=`translateY(${-(7*itemH-68)}px)`;
-    minInner.style.transform=`translateY(${-(30*itemH-68)}px)`;
-  },50);
+  if(_sysDrumInit[sysId]) return;
+  _sysDrumInit[sysId] = true;
+
+  // Use buildDrum so _current, _count are set correctly (same as legacy drums)
+  buildDrum('twHourInner-'+sysId, 24, v=>String(v).padStart(2,'0'), 7);
+  buildDrum('twMinInner-'+sysId,  60, v=>String(v).padStart(2,'0'), 30);
+
+  // Setup drag + wheel AFTER DOM is ready
+  requestAnimationFrame(()=>{
+    setupDrumDrag('twHourDrum-'+sysId, 'twHourInner-'+sysId, 24, ()=>{});
+    setupDrumDrag('twMinDrum-'+sysId,  'twMinInner-'+sysId,  60, ()=>{});
+  });
 }
 
 function toggleTWSys(sysId) {
-  document.getElementById('twWrap-'+sysId).classList.toggle('open');
+  const tw = document.getElementById('twWrap-'+sysId);
+  if(!tw) return;
+  const isOpen = tw.classList.contains('open');
+  closeAllSysPickers('twWrap-'+sysId);
+  if(!isOpen) {
+    tw.classList.add('open');
+    initSysTimePicker(sysId);
+  }
 }
 
 function confirmTWSys(sysId) {
   const hi=document.getElementById('twHourInner-'+sysId);
   const mi=document.getElementById('twMinInner-'+sysId);
   if(!hi||!mi) return;
-  const itemH=44, offset=68;
-  const getIdx=(el)=>Math.round((-parseInt(el.style.transform.replace(/[^-0-9]/g,''))+offset)/itemH);
-  const h=Math.max(0,Math.min(23,getIdx(hi)));
-  const m=Math.max(0,Math.min(59,getIdx(mi)));
-  const ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const h = Math.min(23, hi._current||0);
+  const m = Math.min(59, mi._current||0);
+  const hStr=String(h).padStart(2,'0');
+  const mStr=String(m).padStart(2,'0');
   const disp=document.getElementById('twDisplay-'+sysId);
   const inp=document.getElementById('iTime-'+sysId);
-  if(disp) disp.textContent=`${String(h).padStart(2,'0')} : ${String(m).padStart(2,'0')}`;
-  if(inp) inp.value=ts;
-  document.getElementById('twWrap-'+sysId).classList.remove('open');
+  if(disp) disp.textContent=`${hStr} : ${mStr}`;
+  if(inp) inp.value=`${hStr}:${mStr}`;
+  const tw=document.getElementById('twWrap-'+sysId);
+  if(tw) tw.classList.remove('open');
 }
 
 // City autocomplete for system forms
@@ -6604,19 +6643,24 @@ function onCityInput_Generic(val, sysId) {
   const dd = document.getElementById('cityDropdown-'+sysId);
   const st = document.getElementById('cityStatus-'+sysId);
   if(!dd) return;
-  if(val.length<2){ dd.classList.remove('show'); return; }
+  const v = val.trim().toLowerCase();
+  if(v.length < 1){ dd.classList.remove('show'); return; }
   
-  // Use CITY_DB from original engine
-  const results = (typeof CITY_DB!=='undefined' ? CITY_DB : [])
-    .filter(c=>c[0].toLowerCase().includes(val.toLowerCase()))
-    .slice(0,8);
+  // CITY_DB uses {n, lat, lon, tz} object format
+  const db = typeof CITY_DB !== 'undefined' ? CITY_DB : [];
+  const results = db.filter(c => c.n.toLowerCase().includes(v)).slice(0, 8);
   
   if(!results.length){ dd.classList.remove('show'); return; }
-  dd.innerHTML = results.map(c=>
-    `<div class="city-opt" onclick="selectCitySys('${sysId}','${c[0]}','${c[1]}','${c[2]}','${c[3]}')">
-      <span>${c[0]}</span>
-      <span class="city-opt-meta">${c[1].toFixed(1)},${c[2].toFixed(1)}</span>
-    </div>`).join('');
+
+  dd.innerHTML = results.map(c => {
+    const tzStr = c.tz >= 0 ? 'UTC+'+c.tz : 'UTC'+c.tz;
+    const latStr = (c.lat >= 0 ? '+' : '') + c.lat.toFixed(4);
+    const lonStr = (c.lon >= 0 ? '+' : '') + c.lon.toFixed(4);
+    return `<div class="city-opt" onclick="selectCitySys('${sysId}','${c.n.replace(/'/g,"\'")}','${c.lat}','${c.lon}','${c.tz}')">
+      <span class="city-opt-name">${c.n}</span>
+      <span class="city-opt-meta">${latStr} ${lonStr} · ${tzStr}</span>
+    </div>`;
+  }).join('');
   dd.classList.add('show');
 }
 
