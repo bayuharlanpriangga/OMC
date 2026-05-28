@@ -469,7 +469,7 @@ select option{background:#11111c}
 .city-wrap{position:relative}
 .city-wrap input{width:100%;background:#000000;border:1px solid var(--gold);border-radius:var(--r);padding:13px 15px;color:var(--text);font-family:var(--font-sans);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
 .city-wrap input:focus{border-color:var(--gold2);box-shadow:0 0 16px rgba(201,168,76,.22)}
-.city-wrap input.confirmed{border-color:rgba(90,158,120,.6)!important;box-shadow:0 0 10px rgba(90,158,120,.1)!important}
+.city-wrap input.confirmed{border-color:var(--gold)!important;box-shadow:none!important}
 .city-wrap input.error{border-color:rgba(196,96,74,.6)!important}
 .city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#000000;border:1px solid var(--gold);z-index:600;max-height:280px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,.3) transparent;border-radius:var(--r);z-index:400;display:none;max-height:220px;overflow-y:auto;scrollbar-width:thin}
 .city-dropdown.show{display:block;animation:fadeIn .15s ease}
@@ -5342,7 +5342,7 @@ function selectCity2(idx,e){
   drop.classList.remove('show');
   inp.classList.add('confirmed');
   const status=document.getElementById('cityStatus2');
-  status.className='city-status ok';
+  status.className='city-status';
   status.textContent='✓ '+c.lat.toFixed(4)+'°, '+c.lon.toFixed(4)+'° · UTC'+(c.tz>=0?'+':'')+c.tz;
 }
 function onCityBlur2(){
@@ -5698,7 +5698,7 @@ function selectCity(idx, e) {
   inp.classList.remove('error');
 
   const status = document.getElementById('cityStatus');
-  status.className = 'city-status ok';
+  status.className='city-status';
   status.textContent = '✓ Koordinat tersimpan: '+c.lat.toFixed(4)+'°, '+c.lon.toFixed(4)+'° · UTC'+(c.tz>=0?'+':'')+c.tz;
   updateConf();
 }
@@ -6633,10 +6633,16 @@ function onCityInputSys(sysId) {
   if(!inp) return;
   onCityInput_Generic(inp.value, sysId);
 }
-function onCityBlurSys(sysId) { setTimeout(()=>{
-  const dd=document.getElementById('cityDropdown-'+sysId);
-  if(dd) dd.classList.remove('show');
-},200); }
+function onCityBlurSys(sysId) {
+  // Only hide if user didn't click on a dropdown item
+  setTimeout(()=>{
+    const dd=document.getElementById('cityDropdown-'+sysId);
+    if(dd && !dd._selecting) dd.classList.remove('show');
+  }, 300);
+}
+
+// Store city results per sysId to avoid inline string issues
+const _cityResults = {};
 
 // Reuse the city database from original
 function onCityInput_Generic(val, sysId) {
@@ -6645,23 +6651,37 @@ function onCityInput_Generic(val, sysId) {
   if(!dd) return;
   const v = val.trim().toLowerCase();
   if(v.length < 1){ dd.classList.remove('show'); return; }
-  
+
   // CITY_DB uses {n, lat, lon, tz} object format
   const db = typeof CITY_DB !== 'undefined' ? CITY_DB : [];
   const results = db.filter(c => c.n.toLowerCase().includes(v)).slice(0, 8);
-  
+
   if(!results.length){ dd.classList.remove('show'); return; }
 
-  dd.innerHTML = results.map(c => {
+  // Store results by index to avoid special char issues in HTML attrs
+  _cityResults[sysId] = results;
+
+  dd.innerHTML = results.map((c, idx) => {
     const tzStr = c.tz >= 0 ? 'UTC+'+c.tz : 'UTC'+c.tz;
     const latStr = (c.lat >= 0 ? '+' : '') + c.lat.toFixed(4);
     const lonStr = (c.lon >= 0 ? '+' : '') + c.lon.toFixed(4);
-    return `<div class="city-opt" onclick="selectCitySys('${sysId}','${c.n.replace(/'/g,"\'")}','${c.lat}','${c.lon}','${c.tz}')">
+    return `<div class="city-opt" data-idx="${idx}" data-sysid="${sysId}"
+      onmousedown="cityOptMouseDown(event,this)">
       <span class="city-opt-name">${c.n}</span>
       <span class="city-opt-meta">${latStr} ${lonStr} · ${tzStr}</span>
     </div>`;
   }).join('');
   dd.classList.add('show');
+}
+
+function cityOptMouseDown(e, el) {
+  // Prevent blur from firing before we can process the selection
+  e.preventDefault();
+  const sysId = el.dataset.sysid;
+  const idx   = parseInt(el.dataset.idx);
+  const city  = (_cityResults[sysId] || [])[idx];
+  if(!city) return;
+  selectCitySys(sysId, city.n, city.lat, city.lon, city.tz);
 }
 
 function selectCitySys(sysId, name, lat, lon, tz) {
@@ -6674,7 +6694,7 @@ function selectCitySys(sysId, name, lat, lon, tz) {
   document.getElementById('iCityLon-'+sysId).value=lon;
   document.getElementById('iCityTz-'+sysId).value=tz;
   document.getElementById('iCityConfirmed-'+sysId).value='1';
-  if(st){ st.className='city-status ok'; st.textContent='✓ Kota ditemukan'; }
+  if(st){ st.className='city-status'; st.textContent=''; }
   // Close chint update
   updateConfSys(sysId);
 }
