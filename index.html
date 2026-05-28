@@ -3999,6 +3999,7 @@ let _D={}, _raw={};
 const LP_MEANING={1:'Pemimpin & Pioneer',2:'Diplomat & Intuisi',3:'Kreator & Ekspresi',4:'Builder & Disiplin',5:'Kebebasan & Perubahan',6:'Pemelihara & Harmoni',7:'Analis & Pencarian',8:'Kekuatan & Ambisi',9:'Humanis & Bijaksana',11:'Master Intuitif',22:'Master Builder',33:'Master Teacher'};
 
 function render(name,dateStr,timeStr,city,D) {
+  try {
   _D=D; _raw={name,dateStr,timeStr,city};
   const dd=new Date(dateStr);
   const dateFmt=dd.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
@@ -4105,7 +4106,6 @@ function render(name,dateStr,timeStr,city,D) {
 
   const aspCls={Conjunction:'ac',Trine:'at',Square:'as2',Opposition:'ao',Sextile:'ax'};
   document.getElementById('as-asps').innerHTML=D.aspects.map(a=>{
-    a = {...a, p1:a.a||a.p1, p2:a.b||a.p2, type:a.t||a.type, orb:a.orb||a.exactness};
     const orbLabel = a.tight ? '★' : a.exactness+'°';
     const appSep = a.applying === true ? '↑' : a.applying === false ? '↓' : '';
     const title = a.a+' '+a.t+' '+a.b+' | orb '+a.exactness+'° | strength '+a.strength+'% | '+(a.applying===true?'applying':a.applying===false?'separating':'');
@@ -5176,6 +5176,8 @@ function render(name,dateStr,timeStr,city,D) {
   }
   setTimeout(()=>drawRadar(document.getElementById('transRadarC'), D.traits), 200);
   document.getElementById('trans-insight').textContent=`Hari ini, dengan Moon transit di ${lonToSign(D.transMoon).sign} dan Sun transit di ${lonToSign(D.transSun).sign} — energi dominan adalah ${lonToSign(D.transMoon).sign==='Scorpio'||lonToSign(D.transMoon).sign==='Pisces'||lonToSign(D.transMoon).sign==='Cancer'?'emosional dan intuitif':lonToSign(D.transMoon).sign==='Aries'||lonToSign(D.transMoon).sign==='Leo'||lonToSign(D.transMoon).sign==='Sagittarius'?'aktif dan berani':'stabil dan analitis'}. ${D.bazi.dayMaster.includes('Fire')||D.bazi.dayMaster.includes('Wood')?'Energi kamu secara natural cocok dengan kondisi hari ini.':'Butuh sedikit usaha ekstra untuk memanfaatkan energi hari ini.'}`;
+
+  } catch(_renderErr) { console.warn("render() element missing:", _renderErr.message); }
 }
 
 // Aspect detail click
@@ -7007,27 +7009,199 @@ function renderAstroContent(container, D, name, dateStr) {
   },200);
 }
 
+function renderHDFull(D) {
+  // Guard: only run if key elements exist in DOM
+  if(!document.getElementById('hd-type-hero')) return;
+  const {type:hdt,auth,prof,strategy,notSelf,definedCenters,undefinedCenters,
+         sunGate:sg,moonGate:mg,ascGate:ag,earthGate:eg,designGate:dg,
+         pPlanetData,dPlanetData,definedChannels} = D.hd;
+  // Call the main HD section renderer (defined earlier in the file)
+  // It already has all the gate data, profile data, authority data etc.
+  renderHDSection(D);
+}
+
+// Safe wrapper — calls renderHDSection if it exists, else renderHDSectionFull
+function renderHDSection(D) {
+  try {
+    // The main HD renderer is the big block that sets hd-type-hero, hd-cards etc.
+    // We call it here after the DOM elements are injected by renderHDContent
+    const hd = D.hd;
+    renderHDSectionFull(D);
+  } catch(e) {
+    console.warn('renderHDSection error:', e.message);
+  }
+}
+
 function renderHDContent(container, D, name) {
-  // Inject the t-hd panel content directly
-  container.innerHTML = document.getElementById('t-hd')?.innerHTML || '<div class="tpcont" id="hd-inner-wrap"></div>';
-  // Re-run HD renderer
-  const {type:hdt,auth,prof,strategy,notSelf,definedCenters,undefinedCenters,sunGate:sg,moonGate:mg,ascGate:ag,earthGate:eg,designGate:dg,pPlanetData,dPlanetData,definedChannels} = D.hd;
-  setTimeout(()=>renderHDSectionFull(D),100);
+  const tabsEl = document.getElementById('hd-tabs');
+  if(tabsEl) {
+    tabsEl.innerHTML = `
+      <button class="sit on" onclick="ssit('hd','overview',this)">Type & Profile</button>
+      <button class="sit" onclick="ssit('hd','bodygraph',this)">Bodygraph</button>
+      <button class="sit" onclick="ssit('hd','gates',this)">Gates</button>
+      <button class="sit" onclick="ssit('hd','planets',this)">Planets</button>`;
+  }
+
+  container.innerHTML = `
+    <!-- Tab: Type & Profile -->
+    <div class="sitp on" id="sitp-hd-overview">
+      <div class="g2" style="margin-bottom:20px">
+        <div class="panel" style="padding:0;overflow:hidden">
+          <div id="hd-type-hero"></div>
+          <div style="padding:20px 24px">
+            <div class="plabel" style="margin-bottom:12px">Core Numbers</div>
+            <div class="hdcards" id="hd-cards"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Profile</div>
+          <div id="hd-profile-detail"></div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="panel">
+          <div class="plabel">Authority — Cara Membuat Keputusan</div>
+          <div id="hd-authority-detail"></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Not-Self Theme & Shadow</div>
+          <div id="hd-notself-detail"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Tab: Bodygraph -->
+    <div class="sitp" id="sitp-hd-bodygraph">
+      <div class="g2">
+        <div class="panel">
+          <div class="plabel">Human Design Bodygraph</div>
+          <div id="hdBodgraphSVG" style="display:flex;justify-content:center;padding:8px 0"></div>
+          <div style="margin-top:12px">
+            <div class="plabel" style="margin-bottom:10px">Centers</div>
+            <div class="hd-center-grid" id="hd-center-grid"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Active Channels</div>
+          <div id="hd-channels" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px"></div>
+          <div style="margin-top:14px">
+            <div class="plabel" style="margin-bottom:8px">Definition Type</div>
+            <div id="hd-definition"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tab: Gates -->
+    <div class="sitp" id="sitp-hd-gates">
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+        Gerbang Aktif <span style="flex:1;height:1px;background:var(--b1);display:block"></span>
+        <span style="color:var(--muted);letter-spacing:.1em">klik untuk expand</span>
+      </div>
+      <div id="hd-gate-detail-cards"></div>
+    </div>
+    <!-- Tab: Planets -->
+    <div class="sitp" id="sitp-hd-planets">
+      <div class="g2">
+        <div class="panel">
+          <div class="plabel">Planetary Gates — Conscious ☉</div>
+          <div style="font-family:var(--font-mono);font-size:8px;color:rgba(107,127,212,.6);letter-spacing:.15em;margin-bottom:10px">WARNA HITAM — YANG KAMU SADARI</div>
+          <div id="hd-pgates"></div>
+        </div>
+        <div class="panel">
+          <div class="plabel">Planetary Gates — Unconscious ◗</div>
+          <div style="font-family:var(--font-mono);font-size:8px;color:rgba(107,127,212,.35);letter-spacing:.15em;margin-bottom:10px">WARNA MERAH — TIDAK DISADARI</div>
+          <div id="hd-dgates"></div>
+        </div>
+      </div>
+    </div>`;
+
+  setTimeout(()=>{
+    // Trigger HD section full renderer which sets all the innerHTML above
+    const hdRenderer = window._renderHD || renderHDFull;
+    if(typeof renderHDFull === 'function') renderHDFull(D);
+    // Draw bodygraph after layout settles
+    setTimeout(()=>{
+      const allGates=[...new Set([...D.hd.pPlanetData.map(p=>p.gate),...D.hd.dPlanetData.map(p=>p.gate)])];
+      renderHDBodygraph(document.getElementById('hdBodgraphSVG'),D.hd.definedCenters,allGates,D.hd.type);
+    },300);
+  }, 100);
 }
 
 function renderBaziContent(container, D, name) {
-  container.innerHTML = document.getElementById('t-bazi')?.innerHTML || '';
-  setTimeout(()=>renderBaziSectionFull(D),100);
+  const tabsEl = document.getElementById('bazi-tabs');
+  if(tabsEl) {
+    tabsEl.innerHTML = `
+      <button class="sit on" onclick="ssit('bazi','pillars',this)">Four Pillars</button>
+      <button class="sit" onclick="ssit('bazi','elements',this)">Elements</button>
+      <button class="sit" onclick="ssit('bazi','luck',this)">Luck Pillars</button>
+      <button class="sit" onclick="ssit('bazi','stars',this)">Stars & Kua</button>`;
+  }
+  container.innerHTML = `
+    <div class="sitp on" id="sitp-bazi-pillars">
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.38em;color:var(--gold);text-transform:uppercase;margin-bottom:16px">Four Pillars · 四柱命理</div>
+      <div class="bpillars" id="bz-pillars"></div>
+      <div class="g2" style="margin-top:20px">
+        <div class="panel"><div class="plabel">Day Master · 日主</div><div id="bz-dm-hero"></div><div id="bz-10gods"></div></div>
+        <div class="panel"><div class="plabel">Pembacaan</div><div class="iq" id="bz-insight">—</div><div class="sbox" style="margin-top:12px"><div class="slabel">Element Challenge</div><div class="stext" id="bz-shadow">—</div></div></div>
+      </div>
+    </div>
+    <div class="sitp" id="sitp-bazi-elements">
+      <div class="g2">
+        <div class="panel"><div class="plabel">Five Elements · 五行 Balance</div><div id="bz-el-bars" style="margin-bottom:14px"></div><div style="display:flex;justify-content:center"><canvas id="baziElemC" width="200" height="200"></canvas></div><div class="epills" id="bz-epills"></div></div>
+        <div class="panel"><div class="plabel">Kua Number · 卦數 & Arah</div><div id="bz-kua"></div></div>
+      </div>
+    </div>
+    <div class="sitp" id="sitp-bazi-luck">
+      <div class="panel"><div class="plabel">Luck Pillars · 大運 (Da Yun)</div><div id="bz-luck"></div></div>
+    </div>
+    <div class="sitp" id="sitp-bazi-stars">
+      <div class="panel"><div class="plabel">Symbolic Stars · 神煞</div><div id="bz-stars"></div></div>
+    </div>`;
+  setTimeout(()=>{ try { renderBaziSectionFull(D); setTimeout(()=>drawBaziElem(document.getElementById('baziElemC'),D.bazi.baziEls,D.bazi.favEl),300); } catch(e){console.warn('bazi render:',e.message);} }, 100);
 }
 
 function renderZiweiContent(container, D, name) {
-  container.innerHTML = document.getElementById('t-ziwei')?.innerHTML || '';
-  setTimeout(()=>renderZiweiSectionFull(D),100);
+  const tabsEl = document.getElementById('ziwei-tabs');
+  if(tabsEl) tabsEl.innerHTML = `<button class="sit on" onclick="ssit('ziwei','main',this)">Palace Map</button><button class="sit" onclick="ssit('ziwei','stars',this)">Stars</button>`;
+  container.innerHTML = `
+    <div class="sitp on" id="sitp-ziwei-main">
+      <div class="g2">
+        <div class="panel"><div class="plabel">紫微斗數 Palace Map</div><canvas id="zwC" width="400" height="400" style="display:block;margin:0 auto"></canvas></div>
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="panel"><div class="plabel">Main Star</div><div class="ptitle" id="zw-title">—</div><div class="psub" id="zw-sub">—</div></div>
+          <div class="panel"><div class="plabel">Palace Grid</div><div id="zw-palaces" class="zw-grid"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sitp" id="sitp-ziwei-stars">
+      <div class="panel"><div class="plabel">Star Reading</div><div class="iq" id="zw-insight">—</div><div class="iq" id="zw-desc" style="margin-top:8px">—</div></div>
+    </div>`;
+  setTimeout(()=>{ try { renderZiweiSectionFull(D); } catch(e){console.warn('ziwei render:',e.message);} }, 100);
 }
 
 function renderNumContent(container, D, name, dateStr) {
-  container.innerHTML = document.getElementById('t-num')?.innerHTML || '';
-  setTimeout(()=>renderNumSectionFull(D),100);
+  // No tabs for numerology - uses its own internal layout
+  container.innerHTML = `
+    <div style="margin-bottom:28px">
+      <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.38em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px">Core Numbers <span style="flex:1;height:1px;background:var(--b1);display:block"></span></div>
+      <div class="nxgrid" id="num-cards"></div>
+    </div>
+    <div id="num-detail-panel" class="num-detail-panel" style="margin-bottom:28px;display:none"></div>
+    <div class="g2" style="margin-bottom:28px">
+      <div class="panel"><div class="plabel">Cara Kalkulasi</div><div id="num-calc-breakdown"><div style="font-size:13px;color:var(--muted)">Klik angka di atas untuk detail.</div></div></div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="panel"><div class="plabel">Personal Year Number</div><div id="num-personal-year"></div></div>
+        <div class="panel"><div class="plabel">Karmic Debt & Birthday</div><div id="num-karmic-birthday"></div></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom:28px">
+      <div class="plabel">Pinnacle Cycles — Empat Babak Kehidupan</div>
+      <div id="num-pinnacles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:4px"></div>
+    </div>
+    <div class="g2">
+      <div class="panel"><div class="plabel">Challenge Numbers</div><div id="num-challenges"></div></div>
+      <div class="panel"><div class="plabel">Keselarasan Antar Angka</div><div id="num-harmony"></div></div>
+    </div>`;
+  setTimeout(()=>{ try { renderNumSectionFull(D); } catch(e){console.warn('num render:',e.message);} }, 100);
 }
 
 // ── ANALYSIS PAGE RENDERER ──
