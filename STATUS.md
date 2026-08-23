@@ -57,6 +57,22 @@ the next phase to pick up.**
    to **this file** and flip your row to ✅ DONE with a link to that doc.
    Never mark a phase DONE here without a completion doc backing it up.
 
+## Note (2026-08-23)
+
+Two undocumented commits ("Add files via upload") landed on `main` outside
+this tracking file — origin unknown, likely a stray agent/experiment run
+that skipped the Handoff Protocol's "Record" step. They split the legacy
+monolith into `src/ui/*` / `src/engines/*` / `styles/*` and shrank root
+`index.html` to a shell, but did **not** follow the Design Specification
+(still five disconnected system pages, no design tokens, no Living Self
+Model/Pattern Graph/Explorer, a second untracked calculation engine
+diverging from `src/core/engine.js`). Reverted manually via GitHub web UI:
+those files were removed and `index.html` restored to the Phase 01
+baseline (byte-identical to `src/legacy/index.html`). **Lesson for future
+agents: always update this file (step 7 of the Handoff Protocol) before
+stopping — an unrecorded commit is indistinguishable from an unauthorized
+one.**
+
 ## Repo state (as of Phase 01)
 
 - `src/core/engine.js` — calculation engine, extracted and regression-tested.
