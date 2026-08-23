@@ -1,0 +1,196 @@
+/* ═══ HOME PAGE ═══ */
+#page-home {
+  background: transparent;
+  overflow: hidden;
+}
+
+/* ── HERO — two columns: text left, astrolabe graphic right ── */
+.home-hero {
+  min-height: 82vh;
+  display: flex;
+  align-items: center;
+  padding: 40px 56px 60px;
+  position: relative;
+  overflow: visible;
+}
+.home-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+.home-orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(107,127,212,.08) 0%, transparent 70%); top: -200px; left: -200px; animation: od1 22s ease-in-out infinite; }
+.home-orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(201,168,76,.06) 0%, transparent 70%); bottom: -100px; right: -100px; animation: od2 28s ease-in-out infinite; }
+
+.home-grid {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.home-content { text-align: left; }
+
+.home-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: .5em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-title {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 5vw, 68px);
+  font-weight: 300;
+  line-height: 1.08;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+.home-title em { color: var(--gold); font-style: normal; }
+
+.home-subtitle {
+  font-family: var(--font-serif);
+  font-size: clamp(14px, 1.6vw, 17px);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--dim);
+  max-width: 460px;
+  margin: 0 0 32px;
+  line-height: 1.75;
+}
+
+.home-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.home-cta-row .btn, .home-cta-row .btn-solid { min-width: 168px; }
+
+/* Astrolabe graphic, right column */
+.home-graphic { display: flex; align-items: center; justify-content: center; }
+.astrolabe-svg { width: min(100%, 420px); animation: slowspin 140s linear infinite; }
+
+/* ── EXPLORE DIVINE SYSTEMS ── */
+.systems-section { padding: 20px 56px 64px; position: relative; z-index: 1; }
+.section-heading { text-align: center; margin-bottom: 32px; }
+.section-eyebrow {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 300;
+  letter-spacing: .06em;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.section-subeyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .3em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.sys-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  padding: 26px 16px 22px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
+  box-shadow: var(--shadow-card);
+}
+.sys-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card), var(--shadow-gold); }
+.sys-card-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px;
+  margin: 0 auto 14px;
+  color: var(--gold);
+}
+.sys-card-icon svg { width: 100%; height: 100%; }
+.sys-card-name {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.sys-card-cn { font-weight: 400; text-transform: none; opacity: .6; font-size: 10px; }
+.sys-card-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Per-system accent color (astro=gold, hd=indigo, bazi=terracotta, ziwei=violet, num=teal) */
+.sc-astro:hover { border-color: rgba(201,168,76,.4); }
+.sc-astro .sys-card-icon { color: var(--gold2); }
+
+.sc-hd:hover { border-color: rgba(107,127,212,.4); }
+.sc-hd .sys-card-icon { color: var(--blue2); }
+
+.sc-bazi:hover { border-color: rgba(196,96,74,.4); }
+.sc-bazi .sys-card-icon { color: #da8070; }
+
+.sc-ziwei:hover { border-color: rgba(139,111,181,.4); }
+.sc-ziwei .sys-card-icon { color: #b89cd6; }
+
+.sc-num:hover { border-color: rgba(74,158,158,.4); }
+.sc-num .sys-card-icon { color: #7ecece; }
+
+/* ── EVERY CHART IS A MIRROR — CTA banner ── */
+.mirror-banner {
+  position: relative;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-top: 1px solid var(--b1);
+}
+.mirror-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 500px 300px at 50% 105%, rgba(201,168,76,.16), transparent 70%),
+    radial-gradient(circle at 50% 100%, rgba(232,201,106,.5), transparent 40%),
+    linear-gradient(180deg, #05060a 0%, #0a0c16 55%, #050408 100%);
+}
+.mirror-moon {
+  position: absolute;
+  left: 50%; bottom: 30%;
+  transform: translateX(-50%);
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,244,214,.9) 0%, rgba(232,201,106,.5) 45%, transparent 75%);
+  filter: blur(1px);
+}
+.mirror-horizon { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 40%; }
+.mirror-content { position: relative; z-index: 1; text-align: center; max-width: 520px; padding: 0 24px; }
+.mirror-desc {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(14px, 1.8vw, 17px);
+  color: var(--dim);
+  line-height: 1.8;
+  margin: 14px 0 28px;
+}
