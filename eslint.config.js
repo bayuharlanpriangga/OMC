@@ -10,7 +10,12 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
-      globals: { console: 'readonly', process: 'readonly' },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+      },
     },
     rules: {
       'no-unused-vars': 'warn',
@@ -21,6 +26,26 @@ export default [
       // "Lint findings inherited from legacy" — fixing these is deferred to
       // the lens phase that owns the affected system, not Phase 01.
       'no-useless-assignment': 'warn',
+    },
+  },
+  {
+    // Phase 02: first browser-side (DOM) JS in the repo. Scoped narrowly
+    // to src/shell so engine.js and tests keep their minimal global set.
+    files: ['src/shell/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        location: 'readonly',
+        localStorage: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-undef': 'error',
     },
   },
   {

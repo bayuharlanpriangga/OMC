@@ -14,8 +14,8 @@ the roadmap document, not here — this file only tracks status + pointers.
 | Phase | Mission | Status | Notes / doc |
 |---|---|---|---|
 | 01 | Baseline & Extraction | ✅ DONE | `docs/PHASE_01_COMPLETION.md` |
-| 02 | Design Language & App Shell | ⬜ NOT STARTED | — |
-| 03 | Core Contracts & State | ⬜ NOT STARTED | — |
+| 02 | Design Language & App Shell | ✅ DONE | `docs/PHASE_02_COMPLETION.md` |
+| 03 | Core Contracts & State | ✅ DONE | `docs/PHASE_03_COMPLETION.md` |
 | 04 | Astrology Lens | ⬜ NOT STARTED | — |
 | 05 | Human Design Lens | ⬜ NOT STARTED | — |
 | 06 | BaZi Lens | ⬜ NOT STARTED | — |
@@ -29,8 +29,8 @@ the roadmap document, not here — this file only tracks status + pointers.
 | 14 | Hardening | ⬜ NOT STARTED | — |
 | 15 | Release | ⬜ NOT STARTED | — |
 
-**Current phase: 01 is complete. Phase 02 has not been started — that is
-the next phase to pick up.**
+**Current phase: 03 is complete. Phase 04 (Astrology Lens) has not been
+started — that is the next phase to pick up.**
 
 ---
 
@@ -73,12 +73,13 @@ agents: always update this file (step 7 of the Handoff Protocol) before
 stopping — an unrecorded commit is indistinguishable from an unauthorized
 one.**
 
-## Repo state (as of Phase 01)
+## Repo state (as of Phase 03)
 
-- `src/core/engine.js` — calculation engine, extracted and regression-tested.
-- `src/legacy/index.html` — frozen reference copy of the original monolith.
-- Everything else (shell, pages, rendering, input widgets) still only
-  exists inside `src/legacy/index.html`, waiting on Phase 02+.
-- Test/lint baseline exists (`npm test`, `npm run lint`) — extend it,
-  don't replace it, unless a phase's own Definition of Done requires
-  otherwise.
+- `src/core/engine.js` — calculation engine, extracted and regression-tested (Phase 01). Untouched since.
+- `src/legacy/index.html` — frozen reference copy of the original monolith. Still untouched.
+- `index.html` (root), `src/styles/`, `src/shell/` — Phase 02 app shell. Untouched in Phase 03; every route besides Home still renders its "not yet migrated, lands in Phase NN" placeholder.
+- `src/core/contracts/` — Phase 03: `SystemSignal`, `Evidence`, `Pattern`, `TimelineEvent`, `RelationshipSignal`, `CalculationMetadata` contract factories + shared enums. `RelationshipSignal` is a Phase 03 extrapolation (not verbatim in the Design Spec) — see `docs/PHASE_03_COMPLETION.md`.
+- `src/core/state/` — Phase 03: normalized store (`store.js`), pure-projection `selectors.js`, and `fixture-provider.js` with static example data for all five systems. `fixture-provider.js` never imports `engine.js` — enforced by a test, not just documented.
+- The five metaphysical systems, Pattern Intelligence, Timeline, Relationships, Explorer, and Personal OS still do not exist as real features — Phase 03 only defined the data shapes and a fixture-backed state layer for them to eventually use. The Phase 02 shell placeholders are not yet wired to any of this; that's an open first step for Phase 04+ (see `docs/PHASE_03_COMPLETION.md` "Next phase dependency").
+- Test/lint baseline: `npm test` now also runs `tests/contracts.test.js` and `tests/state.test.js` (26 new tests, all passing) alongside Phase 01's `tests/regression.test.js` and Phase 02's `tests/shell.test.js`. `npm run lint` — extend, don't replace.
+- Known pre-existing issue (still not fixed, not this phase's job): `tests/regression.test.js` has 8 failing transit-longitude assertions due to live "now" vs fixed-fixture drift. Unchanged since Phase 01/02.

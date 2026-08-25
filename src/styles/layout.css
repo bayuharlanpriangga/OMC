@@ -1,0 +1,138 @@
+/*
+ * OMC 2.0 — Layout grid & responsive primitives (Phase 02)
+ *
+ * Breakpoints per Design Spec §20:
+ *   Desktop  >=1440  multi-panel workspace, persistent context rail
+ *   Laptop   1024-1439  two-column where possible, collapsible context
+ *   Tablet   768-1023   stacked intelligence + floating detail panel
+ *   Mobile   <768       single-flow narrative + bottom nav
+ *
+ * These are shell-level regions only (sidebar / topbar / content /
+ * bottom nav). Individual feature layouts (Living Self Model, Pattern
+ * Map, etc.) belong to the phases that build those features.
+ */
+
+#omc-app {
+  display: grid;
+  grid-template-columns: var(--omc-sidebar-width) 1fr;
+  grid-template-rows: var(--omc-topbar-height) 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  min-height: 100vh;
+  background: var(--omc-bg-0);
+}
+
+#omc-app[data-sidebar="collapsed"] {
+  grid-template-columns: var(--omc-sidebar-width-collapsed) 1fr;
+}
+
+.omc-sidebar {
+  grid-area: sidebar;
+}
+
+.omc-topbar {
+  grid-area: topbar;
+}
+
+.omc-main {
+  grid-area: main;
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.omc-main-inner {
+  max-width: var(--omc-content-max-width);
+  margin: 0 auto;
+  padding: var(--omc-space-8) var(--omc-space-8) var(--omc-space-16);
+}
+
+.omc-bottomnav {
+  display: none;
+}
+
+/* ---------- Laptop: 1024–1439 ---------- */
+@media (max-width: 1439px) {
+  #omc-app {
+    grid-template-columns: var(--omc-sidebar-width-collapsed) 1fr;
+  }
+
+  #omc-app[data-sidebar="expanded"] {
+    grid-template-columns: var(--omc-sidebar-width) 1fr;
+  }
+}
+
+/* ---------- Tablet: 768–1023 ---------- */
+@media (max-width: 1023px) {
+  .omc-main-inner {
+    padding: var(--omc-space-6) var(--omc-space-5) var(--omc-space-12);
+  }
+}
+
+/* ---------- Mobile: <768 ---------- */
+@media (max-width: 767px) {
+  #omc-app,
+  #omc-app[data-sidebar="collapsed"],
+  #omc-app[data-sidebar="expanded"] {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--omc-topbar-height) 1fr var(--omc-bottomnav-height);
+    grid-template-areas:
+      "topbar"
+      "main"
+      "bottomnav";
+  }
+
+  .omc-sidebar {
+    display: none;
+  }
+
+  .omc-bottomnav {
+    display: flex;
+    grid-area: bottomnav;
+  }
+
+  .omc-main-inner {
+    padding: var(--omc-space-4) var(--omc-space-4) var(--omc-space-10);
+  }
+}
+
+/* Low-power mode: same layout, heavier visual effects disabled at the
+   component level (see components.css .omc-ambient). */
+[data-power="low"] .omc-ambient {
+  display: none !important;
+}
+
+/* Generic responsive column helpers available to every phase so no
+   feature needs to invent its own grid. */
+.omc-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--omc-space-6);
+}
+
+.omc-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--omc-space-6);
+}
+
+@media (max-width: 1023px) {
+  .omc-grid-2,
+  .omc-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.omc-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omc-space-4);
+}
+
+.omc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--omc-space-3);
+}

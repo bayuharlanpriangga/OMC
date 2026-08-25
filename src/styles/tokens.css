@@ -1,0 +1,159 @@
+/*
+ * OMC 2.0 — Design Tokens (Phase 02: Design Language & App Shell)
+ *
+ * Source: OMC_2_0_10K10_Final_Design_Specification.docx §13 "Visual Design
+ * Direction" (editorial celestial intelligence — not neon cyberpunk, not
+ * a generic SaaS dashboard) and §20 "Responsive Experience".
+ *
+ * Rule (roadmap Phase 02 Definition of Done): no page may invent its own
+ * tokens. Every color/spacing/radius/motion value used anywhere in the
+ * app must resolve to one of these custom properties.
+ *
+ * Gold accent (#C9A84C) and the two secondary hues (#6B7FD4 indigo,
+ * #8B6FB5 violet) are carried forward from the existing legacy loading
+ * sigil colors (src/legacy/index.html, #loading svg strokes) so the new
+ * shell stays visually continuous with the current brand rather than
+ * inventing an unrelated palette.
+ */
+
+:root {
+  /* ---------- Background (layered near-black, #05050A family) ---------- */
+  --omc-bg-0: #05050a;   /* app root / deepest layer */
+  --omc-bg-1: #0a0a12;   /* sidebar, bottom nav, top context bar */
+  --omc-bg-2: #101018;   /* content surfaces, cards */
+  --omc-bg-3: #16161f;   /* elevated surfaces: modal, drawer, command palette */
+  --omc-bg-hover: rgba(255, 255, 255, 0.04);
+  --omc-bg-active: rgba(201, 168, 76, 0.08);
+
+  /* ---------- Text (warm off-white primary) ---------- */
+  --omc-text-primary: #efe9dd;
+  --omc-text-secondary: rgba(239, 233, 221, 0.64);
+  --omc-text-muted: rgba(239, 233, 221, 0.4);
+  --omc-text-on-accent: #05050a;
+
+  /* ---------- Accent (muted antique gold — primary OMC focus only) ---------- */
+  --omc-accent: #c9a84c;
+  --omc-accent-strong: #ddc276;
+  --omc-accent-dim: rgba(201, 168, 76, 0.35);
+
+  /* ---------- System colors (distinct, low-saturation semantic hues) ---------- */
+  /* Used only to identify which of the five systems a signal/evidence
+     item comes from — never as generic decoration. */
+  --omc-sys-astrology: #c9a84c;
+  --omc-sys-human-design: #6b7fd4;
+  --omc-sys-bazi: #b5654a;
+  --omc-sys-ziwei: #8b6fb5;
+  --omc-sys-numerology: #4fa3a3;
+
+  /* ---------- Semantic state colors (low saturation, not neon) ---------- */
+  --omc-positive: #6fae7a;
+  --omc-caution: #c98f4c;
+  --omc-negative: #b06060;
+  --omc-info: #6b8fd4;
+
+  /* Confidence scale (Evidence & Explainability, §5) */
+  --omc-confidence-high: #6fae7a;
+  --omc-confidence-medium: #c9a84c;
+  --omc-confidence-low: #b5764a;
+  --omc-confidence-contested: #b06060;
+
+  /* ---------- Borders (rare, semantic — hierarchy comes from spacing/light) ---------- */
+  --omc-border-hairline: rgba(239, 233, 221, 0.08);
+  --omc-border-subtle: rgba(239, 233, 221, 0.14);
+  --omc-border-accent: rgba(201, 168, 76, 0.4);
+  --omc-border-focus: #ddc276;
+
+  /* ---------- Radius (small, intentional, structural — no bubbly cards) ---------- */
+  --omc-radius-xs: 2px;
+  --omc-radius-sm: 4px;
+  --omc-radius-md: 6px;
+  --omc-radius-pill: 999px; /* reserved for badges/pills only, not cards */
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --omc-space-1: 4px;
+  --omc-space-2: 8px;
+  --omc-space-3: 12px;
+  --omc-space-4: 16px;
+  --omc-space-5: 20px;
+  --omc-space-6: 24px;
+  --omc-space-8: 32px;
+  --omc-space-10: 40px;
+  --omc-space-12: 48px;
+  --omc-space-16: 64px;
+
+  /* ---------- Typography families ----------
+     Display: editorial serif for identity statements / hero moments.
+     UI: geometric sans for interface text.
+     Technical: monospace for raw values, coordinates, engine metadata. */
+  --omc-font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --omc-font-ui: "Syne", "Inter", -apple-system, "Segoe UI", sans-serif;
+  --omc-font-technical: "DM Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* ---------- Typography scale ---------- */
+  --omc-text-xs: 11px;
+  --omc-text-sm: 13px;
+  --omc-text-base: 15px;
+  --omc-text-lg: 17px;
+  --omc-text-xl: 21px;
+  --omc-text-2xl: 28px;
+  --omc-text-3xl: 38px;
+  --omc-text-display: 52px; /* hero identity statement only */
+
+  --omc-line-tight: 1.2;
+  --omc-line-normal: 1.5;
+  --omc-line-relaxed: 1.7;
+
+  --omc-tracking-wide: 0.04em;
+  --omc-tracking-wider: 0.08em;
+
+  /* ---------- Motion (slow, precise, state-driven — §14 Visual Grammar) ---------- */
+  --omc-motion-fast: 120ms;
+  --omc-motion-base: 220ms;
+  --omc-motion-slow: 420ms;
+  --omc-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --omc-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---------- Layout ---------- */
+  --omc-sidebar-width: 264px;
+  --omc-sidebar-width-collapsed: 72px;
+  --omc-topbar-height: 56px;
+  --omc-bottomnav-height: 64px;
+  --omc-content-max-width: 1600px;
+
+  /* ---------- Breakpoints (informational — §20 Responsive Experience;
+     actual media queries live in layout.css since CSS custom properties
+     cannot be used inside @media conditions) ---------- */
+  --omc-bp-mobile: 767px;
+  --omc-bp-tablet: 1023px;
+  --omc-bp-laptop: 1439px;
+
+  /* ---------- Z-index scale ---------- */
+  --omc-z-sidebar: 100;
+  --omc-z-topbar: 110;
+  --omc-z-bottomnav: 110;
+  --omc-z-overlay-backdrop: 500;
+  --omc-z-drawer: 510;
+  --omc-z-modal: 520;
+  --omc-z-command-palette: 530;
+  --omc-z-tooltip: 600;
+}
+
+/* Reduced-motion tokens override the motion durations globally — every
+   component that animates must read the duration from these variables
+   rather than hardcoding a value, so this one override is sufficient. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --omc-motion-fast: 0ms;
+    --omc-motion-base: 0ms;
+    --omc-motion-slow: 0ms;
+  }
+}
+
+/* Manual reduced-motion toggle (Settings → Accessibility, wired up by
+   src/shell/app.js) mirrors the OS-level media query above for users who
+   want reduced motion without changing their system setting. */
+[data-motion="reduced"] {
+  --omc-motion-fast: 0ms;
+  --omc-motion-base: 0ms;
+  --omc-motion-slow: 0ms;
+}

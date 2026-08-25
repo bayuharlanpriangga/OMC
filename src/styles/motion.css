@@ -1,0 +1,66 @@
+/*
+ * OMC 2.0 — Motion rules (Phase 02)
+ *
+ * "Slow, precise, state-driven" (§14 Visual Grammar). No perpetual
+ * animation without semantic purpose (§14, §0 mandate). Every transition
+ * below reads its duration from tokens.css, so the global reduced-motion
+ * override (prefers-reduced-motion or [data-motion="reduced"]) silences
+ * all of it automatically by collapsing durations to 0ms.
+ */
+
+.omc-fade-in {
+  animation: omc-fade-in var(--omc-motion-base) var(--omc-ease-standard) both;
+}
+
+@keyframes omc-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.omc-rise-in {
+  animation: omc-rise-in var(--omc-motion-slow) var(--omc-ease-emphasized) both;
+}
+
+@keyframes omc-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.omc-transition-standard {
+  transition-duration: var(--omc-motion-base);
+  transition-timing-function: var(--omc-ease-standard);
+}
+
+.omc-transition-emphasized {
+  transition-duration: var(--omc-motion-slow);
+  transition-timing-function: var(--omc-ease-emphasized);
+}
+
+/* Sparse glow, only to indicate active state (§13 Texture/Glow row) —
+   never a permanent decorative effect. */
+.omc-glow-active {
+  box-shadow: 0 0 0 1px var(--omc-border-accent), 0 0 16px 0 var(--omc-accent-dim);
+  transition: box-shadow var(--omc-motion-base) var(--omc-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .omc-fade-in,
+  .omc-rise-in {
+    animation: none;
+  }
+}
+
+[data-motion="reduced"] .omc-fade-in,
+[data-motion="reduced"] .omc-rise-in {
+  animation: none;
+}
