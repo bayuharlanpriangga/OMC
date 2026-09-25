@@ -10,7 +10,7 @@ import {
   Button,
   InputAdornment,
 } from '@mui/material';
-import { BookOpen, Search } from 'lucide-react';
+import { ArrowLeft, BookOpen, Search } from 'lucide-react';
 import { LibraryArticle } from '../../types/library';
 import { LIBRARY_ARTICLES } from './data';
 import { SystemId } from '../../types/systems';
@@ -56,13 +56,17 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
     return matchesCategory && matchesLevel && matchesSearch;
   });
 
-  // Open the article inline, below the grid, instead of in a modal.
+  // Open the article inline, replacing the grid, instead of in a modal.
   const handleSelectArticle = (article: LibraryArticle) => {
     setReadingArticle(article);
     // Wait for the reader panel to mount/update before scrolling to it.
     requestAnimationFrame(() => {
       readerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+  };
+
+  const handleBackToGrid = () => {
+    setReadingArticle(null);
   };
 
   return (
@@ -82,6 +86,21 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
       <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <Box sx={{ mb: 5 }}>
+          {readingArticle && (
+            <Button
+              onClick={handleBackToGrid}
+              startIcon={<ArrowLeft size={16} />}
+              size="small"
+              sx={{
+                color: '#E0C99A',
+                mb: 2,
+                pl: 0,
+                '&:hover': { backgroundColor: 'transparent', opacity: 0.8 },
+              }}
+            >
+              Back to Library
+            </Button>
+          )}
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <Box
               sx={{
@@ -194,8 +213,15 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
           </Box>
         </Box>
 
-        {/* Articles Grid */}
-        {filteredArticles.length === 0 ? (
+        {/* Content area: either the article grid, or the full article reader in its place */}
+        {readingArticle ? (
+          <ArticleReader
+            ref={readerRef}
+            article={readingArticle}
+            onClose={handleBackToGrid}
+            onStartCalculationForSystem={onStartCalculationForSystem}
+          />
+        ) : filteredArticles.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography variant="h6" sx={{ color: '#94A3B8', fontFamily: '"Cinzel", serif' }}>
               No articles found matching criteria.
@@ -218,21 +244,11 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
               <ArticleCard
                 key={article.id}
                 article={article}
-                isActive={readingArticle?.id === article.id}
+                isActive={false}
                 onSelect={handleSelectArticle}
               />
             ))}
           </Box>
-        )}
-
-        {/* Inline Reader Panel — replaces the old modal; renders at the bottom of the page */}
-        {readingArticle && (
-          <ArticleReader
-            ref={readerRef}
-            article={readingArticle}
-            onClose={() => setReadingArticle(null)}
-            onStartCalculationForSystem={onStartCalculationForSystem}
-          />
         )}
       </Container>
     </Box>

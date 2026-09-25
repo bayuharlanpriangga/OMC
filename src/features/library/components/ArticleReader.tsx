@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography, Chip, IconButton, Button } from '@mui/material';
-import { X, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Box, Typography, Chip, Button } from '@mui/material';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { LibraryArticle } from '../../../types/library';
 import { SystemId } from '../../../types/systems';
 
@@ -11,53 +11,32 @@ interface ArticleReaderProps {
 }
 
 /**
- * Renders the full article body inline, in-page (instead of a modal Dialog).
- * The parent LibraryPage mounts this at the bottom of the page and scrolls
- * it into view whenever a new article is selected.
+ * Renders the full article body inline, taking the place of the article
+ * grid (instead of a modal Dialog or a card sitting below the grid).
+ * The parent LibraryPage swaps this in for the grid whenever an article
+ * is selected, and swaps it back out via the "Back to Library" control.
  */
 export const ArticleReader = React.forwardRef<HTMLDivElement, ArticleReaderProps>(
   ({ article, onClose, onStartCalculationForSystem }, ref) => {
     return (
-      <Box
-        ref={ref}
-        sx={{
-          mt: 5,
-          borderRadius: 3,
-          border: '1px solid #1E2638',
-          backgroundColor: 'rgba(8, 8, 8, 0.92)',
-          overflow: 'hidden',
-        }}
-      >
+      <Box ref={ref}>
         {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            borderBottom: '1px solid #1E2638',
-            p: { xs: 2.5, md: 3 },
-          }}
-        >
-          <Box>
-            <Chip
-              label={article.categoryName}
-              size="small"
-              sx={{ mb: 1, backgroundColor: 'rgba(224, 201, 154, 0.1)', color: '#E0C99A' }}
-            />
-            <Typography variant="h5" component="div" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', fontWeight: 700 }}>
-              {article.title}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ color: '#94A3B8', mt: 0.5 }}>
-              {article.subtitle} · {article.readTime} ({article.level})
-            </Typography>
-          </Box>
-          <IconButton onClick={onClose} size="small" sx={{ color: '#94A3B8' }} aria-label="Close article">
-            <X size={20} />
-          </IconButton>
+        <Box sx={{ mb: 3 }}>
+          <Chip
+            label={article.categoryName}
+            size="small"
+            sx={{ mb: 1, backgroundColor: 'rgba(224, 201, 154, 0.1)', color: '#E0C99A' }}
+          />
+          <Typography variant="h5" component="div" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', fontWeight: 700 }}>
+            {article.title}
+          </Typography>
+          <Typography variant="subtitle2" sx={{ color: '#94A3B8', mt: 0.5 }}>
+            {article.subtitle} · {article.readTime} ({article.level})
+          </Typography>
         </Box>
 
         {/* Body */}
-        <Box sx={{ p: { xs: 2.5, md: 3.5 } }}>
+        <Box>
           <Typography
             variant="body1"
             sx={{
@@ -105,16 +84,16 @@ export const ArticleReader = React.forwardRef<HTMLDivElement, ArticleReaderProps
         {/* Footer */}
         <Box
           sx={{
-            px: { xs: 2.5, md: 3 },
-            py: 2,
+            mt: 4,
+            pt: 3,
             borderTop: '1px solid #1E2638',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
-          <Button onClick={onClose} sx={{ color: '#94A3B8' }}>
-            Close Article
+          <Button onClick={onClose} sx={{ color: '#94A3B8', pl: 0 }}>
+            Back to Library
           </Button>
           {onStartCalculationForSystem && article.category !== 'fundamentals' && (
             <Button
