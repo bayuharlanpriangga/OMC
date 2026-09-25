@@ -10,7 +10,7 @@ import { BirthProfile, CreateBirthProfileDto } from './types/birth-data';
 import { AstrologyChartTypeId, BaseChartResult, GenerationConfig, SystemId } from './types/systems';
 import { BirthDataStorage } from './services/birth-data-storage';
 import { supabase } from './services/supabase';
-import { User as SupabaseUser } from '@supabase/supabase-js';
+import { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { GenerationOrchestrator } from './services/generation-orchestrator';
 import { METAPHYSICAL_SYSTEMS } from './systems/registry';
 
@@ -65,7 +65,7 @@ export default function App() {
   // Initialize Auth & Profiles on mount
   useEffect(() => {
     // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(session?.user ?? null);
       loadProfiles();
     });
@@ -73,7 +73,7 @@ export default function App() {
     // 2. Listen to Supabase auth events
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
       setUser(session?.user ?? null);
       loadProfiles();
     });
@@ -117,7 +117,7 @@ export default function App() {
 
   const handleDeleteProfile = (id: string) => {
     BirthDataStorage.delete(id);
-    setSelectedProfileIds((prev) => prev.filter((pId) => pId !== id));
+    setSelectedProfileIds((prev: string[]) => prev.filter((pId: string) => pId !== id));
     loadProfiles();
   };
 
