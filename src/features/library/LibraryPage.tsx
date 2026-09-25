@@ -68,8 +68,20 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
   });
 
   return (
-    <Box sx={{ py: 6, minHeight: '100vh', backgroundColor: '#0B0E17' }}>
-      <Container maxWidth="xl">
+    <Box
+      sx={{
+        py: 6,
+        minHeight: '100vh',
+        position: 'relative',
+        backgroundColor: '#000000',
+        backgroundImage: 'url(/backgrounds/library-bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: { xs: 'scroll', md: 'fixed' },
+      }}
+    >
+      <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <Box sx={{ mb: 5 }}>
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
@@ -118,7 +130,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
             gap: 2,
             mb: 4,
             pb: 2,
-            borderBottom: '1px solid #1E2638',
+            borderBottom: '1px solid #1A1A1A',
           }}
         >
           {/* Categories Tab Bar */}
@@ -172,10 +184,10 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                   size="small"
                   sx={{
                     cursor: 'pointer',
-                    backgroundColor: selectedLevel === lvl ? 'rgba(224, 201, 154, 0.15)' : '#121726',
+                    backgroundColor: selectedLevel === lvl ? 'rgba(224, 201, 154, 0.15)' : '#080808',
                     color: selectedLevel === lvl ? '#E0C99A' : '#94A3B8',
                     border: '1px solid',
-                    borderColor: selectedLevel === lvl ? '#E0C99A' : '#222B3D',
+                    borderColor: selectedLevel === lvl ? '#E0C99A' : '#1C1C1C',
                     fontSize: '0.72rem',
                   }}
                 />
@@ -209,8 +221,8 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                 key={article.id}
                 onClick={() => setReadingArticle(article)}
                 sx={{
-                  backgroundColor: '#111624',
-                  border: '1px solid #1E283D',
+                  backgroundColor: '#080808',
+                  border: '1px solid #1C1C1C',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -219,7 +231,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                   '&:hover': {
                     borderColor: '#E0C99A',
                     transform: 'translateY(-2px)',
-                    backgroundColor: '#131A2B',
+                    backgroundColor: '#0F0F0F',
                   },
                 }}
               >
@@ -255,12 +267,12 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
 
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8 }}>
                     {article.tags.map((t) => (
-                      <Chip key={t} label={t} size="small" sx={{ height: 18, fontSize: '0.65rem', backgroundColor: '#161F33', color: '#CBD5E1' }} />
+                      <Chip key={t} label={t} size="small" sx={{ height: 18, fontSize: '0.65rem', backgroundColor: '#121212', color: '#CBD5E1' }} />
                     ))}
                   </Box>
                 </CardContent>
 
-                <Box sx={{ px: 3, pb: 2.5, pt: 1, borderTop: '1px solid #1A2438', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ px: 3, pb: 2.5, pt: 1, borderTop: '1px solid #1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Chip label={article.level} size="small" sx={{ height: 18, fontSize: '0.65rem' }} />
                   <Button size="small" endIcon={<ArrowRight size={14} />} sx={{ color: '#E0C99A', p: 0, minWidth: 0 }}>
                     Read Guide
