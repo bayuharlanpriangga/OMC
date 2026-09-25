@@ -1,0 +1,6 @@
+{
+  "name": "Metaphysica",
+  "description": "Sophisticated metaphysical chart and educational platform spanning Astrology, Human Design, Numerology, BaZi, Zi Wei Dou Shu, and Tzolkin.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

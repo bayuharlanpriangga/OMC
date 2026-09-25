@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   METAPHYSICA GLOBAL COSMIC SCROLLBAR & THEME STYLES
+   Pure pitch-black (#000000) canvas with sophisticated starlight accents.
+   Strict adherence to Rule 26: No gradients.
+   ========================================================================== */
+
+/* Universal Scrollbar for modern browsers (Firefox, Chrome, Edge, Safari) */
+html {
+  background-color: #000000 !important;
+  color-scheme: dark;
+}
+
+body {
+  background-color: #000000 !important;
+  color: #EDF1F7;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #282828 #000000;
+}
+
+/* WebKit-based browsers (Chrome, Edge, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+  background-color: #000000;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #262626;
+  border-radius: 6px;
+  border: 2px solid #000000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #3E3E3E;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #E0C99A;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: #000000;
+}
+
+/* Dialog & Inner container scrollable elements */
+.MuiDialogContent-root,
+.MuiDialog-paper,
+.MuiMenu-paper {
+  scrollbar-width: thin;
+  scrollbar-color: #282828 #000000;
+}
+
+.MuiDialogContent-root::-webkit-scrollbar,
+.MuiDialog-paper::-webkit-scrollbar,
+.MuiMenu-paper::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.MuiDialogContent-root::-webkit-scrollbar-track,
+.MuiDialog-paper::-webkit-scrollbar-track,
+.MuiMenu-paper::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+.MuiDialogContent-root::-webkit-scrollbar-thumb,
+.MuiDialog-paper::-webkit-scrollbar-thumb,
+.MuiMenu-paper::-webkit-scrollbar-thumb {
+  background-color: #262626;
+  border-radius: 4px;
+  border: 1px solid #000000;
+}
+
+.MuiDialogContent-root::-webkit-scrollbar-thumb:hover,
+.MuiDialog-paper::-webkit-scrollbar-thumb:hover,
+.MuiMenu-paper::-webkit-scrollbar-thumb:hover {
+  background-color: #3E3E3E;
+}
+
+/* System Result Pages & Background Slots */
+.system-result-page {
+  position: relative;
+  min-height: 100vh;
+  background-color: #000000;
+  color: #EDF1F7;
+  overflow-x: hidden;
+}
+
+.system-backdrop-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* System-specific background artwork slots - ready for PNG / WebP */
+.system-bg-astrology {
+  background-color: #000000;
+}
+
+.system-bg-human-design {
+  background-color: #000000;
+}
+
+.system-bg-numerology {
+  background-color: #000000;
+}
+
+.system-bg-bazi {
+  background-color: #000000;
+}
+
+.system-bg-zi-wei-dou-shu {
+  background-color: #000000;
+}
+
+.system-bg-tzolkin {
+  background-color: #000000;
+}
+
+/* Print Styles for Chart Export */
+@media print {
+  nav, .no-print, button, .MuiButton-root {
+    display: none !important;
+  }
+  .system-result-page {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+}
