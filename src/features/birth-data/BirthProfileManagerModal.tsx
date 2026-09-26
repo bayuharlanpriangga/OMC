@@ -136,9 +136,6 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
               <Typography variant="h6" component="div" sx={{ fontFamily: '"Cinzel", serif', fontWeight: 600, color: '#EDF1F7', lineHeight: 1.1 }}>
                 Birth Data
               </Typography>
-              <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                Reusable user profiles across all metaphysical systems
-              </Typography>
             </Box>
           </Box>
 
@@ -164,7 +161,7 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
           </Box>
         </DialogTitle>
 
-        <DialogContent sx={{ py: 3, px: 3, minHeight: 340 }}>
+        <DialogContent sx={{ pt: '24px !important', pb: 3, px: 3, minHeight: 340 }}>
           {profiles.length === 0 ? (
             /* EMPTY STATE AS SPECIFIED IN SPEC */
             <Box

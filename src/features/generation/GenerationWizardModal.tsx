@@ -262,10 +262,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
             </Box>
             <Box>
               <Typography variant="h6" component="div" sx={{ fontFamily: '"Cinzel", serif', fontWeight: 600, color: '#EDF1F7', lineHeight: 1.1 }}>
-                Kalkulasi Matriks Metafisika
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                Alur Generasi Chart Kosmik &amp; Energetik
+                Generate Chart
               </Typography>
             </Box>
           </Box>
@@ -312,15 +309,10 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
           {/* ============================================================== */}
           {currentStep === 0 && (
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-              <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', fontWeight: 600, color: '#EDF1F7' }}>
-                    1. Pilih Profil Lahir
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#94A3B8' }}>
-                    Pilih profil yang tersimpan untuk digunakan pada kalkulasi chart sistem metafisika.
-                  </Typography>
-                </Box>
+              <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 1.5 }}>
+                <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', fontWeight: 600, color: '#EDF1F7' }}>
+                  1. Pilih Profil
+                </Typography>
                 <Button
                   variant="outlined"
                   size="small"
@@ -328,7 +320,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                   startIcon={<Users size={16} />}
                   sx={{ borderColor: '#2E3952', color: '#E0C99A', whiteSpace: 'nowrap' }}
                 >
-                  Kelola Profil
+                  Kelola
                 </Button>
               </Box>
 

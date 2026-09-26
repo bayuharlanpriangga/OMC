@@ -282,40 +282,25 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
             </Box>
 
             {/* Explicit unknown birth time checkbox */}
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                backgroundColor: isTimeUnknown ? 'rgba(224, 201, 154, 0.08)' : '#0E1322',
-                border: isTimeUnknown ? '1px solid #E0C99A' : '1px solid #1E283D',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isTimeUnknown}
-                    onChange={(e) => {
-                      setIsTimeUnknown(e.target.checked);
-                      if (e.target.checked) {
-                        // Keep time strictly null in domain state
-                      }
-                    }}
-                    sx={{ color: '#E0C99A', '&.Mui-checked': { color: '#E0C99A' } }}
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#EDF1F7' }}>
-                      I don't know my birth time
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block' }}>
-                      Never assumed as midnight (00:00). Planetary positions will be calculated without Ascendant cusps.
-                    </Typography>
-                  </Box>
-                }
-              />
-            </Box>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isTimeUnknown}
+                  onChange={(e) => {
+                    setIsTimeUnknown(e.target.checked);
+                    if (e.target.checked) {
+                      // Keep time strictly null in domain state
+                    }
+                  }}
+                  sx={{ color: '#E0C99A', '&.Mui-checked': { color: '#E0C99A' } }}
+                />
+              }
+              label={
+                <Typography variant="body2" sx={{ fontWeight: 600, color: isTimeUnknown ? '#E0C99A' : '#EDF1F7' }}>
+                  I don't know my birth time
+                </Typography>
+              }
+            />
           </Box>
         )}
 
