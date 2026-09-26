@@ -33,7 +33,6 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
   const readerRef = useRef<HTMLDivElement | null>(null);
 
   const categories = [
-    { id: 'all', label: 'All Systems' },
     { id: 'astrology', label: 'Astrology' },
     { id: 'human-design', label: 'Human Design' },
     { id: 'numerology', label: 'Numerology' },
@@ -76,9 +75,12 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
         minHeight: '100vh',
         position: 'relative',
         backgroundColor: '#000000',
-        backgroundImage: 'url(/backgrounds/library-bg.png)',
+        backgroundImage: {
+          xs: 'url(/backgrounds/library-bg-mobile.svg)',
+          md: 'url(/backgrounds/library-bg.png)',
+        },
         backgroundSize: 'cover',
-        backgroundPosition: 'center top',
+        backgroundPosition: { xs: 'top center', md: 'center top' },
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: { xs: 'scroll', md: 'fixed' },
       }}
@@ -137,7 +139,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
         >
           {/* Categories Tab Bar */}
           <Tabs
-            value={selectedCategory}
+            value={categories.some((c) => c.id === selectedCategory) ? selectedCategory : false}
             onChange={(_, val) => {
               setSelectedCategory(val);
               handleBackToGrid();
