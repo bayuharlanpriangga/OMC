@@ -90,14 +90,17 @@ export const SwipeCarousel: React.FC<SwipeCarouselProps> = ({
   }
 
   return (
-    <Box>
+    <Box sx={{ width: '100%' }}>
       <Box
         ref={containerRef}
         onScroll={handleScroll}
         sx={{
           display: 'flex',
+          width: '100%',
+          boxSizing: 'border-box',
           overflowX: 'auto',
           scrollSnapType: 'x mandatory',
+          scrollPaddingLeft: 0,
           WebkitOverflowScrolling: 'touch',
           gap: `${gap}px`,
           scrollbarWidth: 'none',
@@ -110,8 +113,11 @@ export const SwipeCarousel: React.FC<SwipeCarouselProps> = ({
             key={i}
             sx={{
               flex: `0 0 calc(${100 / perView}% - ${(gap * (perView - 1)) / perView}px)`,
+              minWidth: 0,
+              boxSizing: 'border-box',
               scrollSnapAlign: 'start',
               scrollSnapStop: 'always',
+              '& > *': { width: '100%' },
             }}
           >
             {renderItem(i)}

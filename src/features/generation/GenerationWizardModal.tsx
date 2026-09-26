@@ -21,6 +21,8 @@ import {
   MenuItem,
   TextField,
   Radio,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   X,
@@ -68,6 +70,9 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
   onOpenBirthDataManager,
   onExecuteGeneration,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   // Wizard Steps:
   // 0: Select Profile(s)
   // 1: Select System
@@ -224,7 +229,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
         slotProps={{
           paper: {
             sx: {
-              minHeight: '75vh',
+              minHeight: { xs: '65vh', md: '75vh' },
               display: 'flex',
               flexDirection: 'column',
               backgroundColor: '#000000',
@@ -447,9 +452,6 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                 <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', fontWeight: 600, color: '#EDF1F7' }}>
                   2. Pilih Sistem Metafisika
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#94A3B8' }}>
-                  Pilih salah satu dari 6 tradisi sistem perhitungan matriks energi kosmik.
-                </Typography>
               </Box>
 
               <Box
@@ -467,64 +469,38 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                       onClick={() => setSelectedSystemId(sys.id)}
                       sx={{
                         cursor: 'pointer',
-                        backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#111624',
-                        border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1E283D',
-                        transition: 'all 0.2s ease',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
+                        backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
+                        border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
+                        transition: 'all 0.18s ease-in-out',
                         '&:hover': {
-                          borderColor: '#E0C99A',
-                          backgroundColor: 'rgba(224, 201, 154, 0.05)',
+                          borderColor: isSelected ? '#E0C99A' : '#333333',
+                          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
                         },
                       }}
                     >
-                      <CardContent sx={{ p: 2.5 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                          <Box
-                            sx={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: '50%',
-                              backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.2)' : '#182033',
-                              color: isSelected ? '#E0C99A' : '#94A3B8',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <Compass size={18} />
-                          </Box>
-                          <Chip
-                            label={sys.origin}
-                            size="small"
-                            sx={{
-                              height: 18,
-                              fontSize: '0.65rem',
-                              backgroundColor: '#182033',
-                              color: '#94A3B8',
-                            }}
-                          />
+                      <CardContent sx={{ p: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Box
+                          sx={{
+                            flexShrink: 0,
+                            width: 36,
+                            height: 36,
+                            borderRadius: '50%',
+                            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.2)' : '#182033',
+                            color: isSelected ? '#E0C99A' : '#94A3B8',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Compass size={18} />
                         </Box>
 
-                        <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7', mb: 0.5 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7', flexGrow: 1 }}>
                           {sys.name}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#E0C99A', display: 'block', mb: 1, fontWeight: 500 }}>
-                          {sys.tagline}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.8rem', lineHeight: 1.4 }}>
-                          {sys.description}
-                        </Typography>
-                      </CardContent>
 
-                      {sys.requirements.requiresExactTime && (
-                        <Box sx={{ px: 2.5, pb: 2, pt: 0 }}>
-                          <Typography variant="caption" sx={{ color: '#F59E0B', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Clock size={12} /> Memerlukan waktu lahir pasti
-                          </Typography>
-                        </Box>
-                      )}
+                        {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
+                      </CardContent>
                     </Card>
                   );
                 })}
@@ -540,9 +516,6 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
               <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', fontWeight: 600, color: '#EDF1F7' }}>
                   3. Pilih Tipe Chart Astrologi
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#94A3B8' }}>
-                  Astrologi mendukung berbagai tipe chart independen. Pilih perspektif perhitungan yang diinginkan.
                 </Typography>
               </Box>
 
@@ -570,19 +543,11 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                         },
                       }}
                     >
-                      <CardContent sx={{ p: 2.5 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7' }}>
-                            {ct.name}
-                          </Typography>
-                          {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
-                        </Box>
-                        <Typography variant="caption" sx={{ color: '#E0C99A', display: 'block', mb: 1, fontWeight: 500 }}>
-                          {ct.tagline}
+                      <CardContent sx={{ p: 2.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7' }}>
+                          {ct.name}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.8125rem', lineHeight: 1.4 }}>
-                          {ct.description}
-                        </Typography>
+                        {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
                       </CardContent>
                     </Card>
                   );
@@ -829,10 +794,16 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
               <Button
                 onClick={handleBackStep}
                 variant="outlined"
-                startIcon={<ArrowLeft size={16} />}
-                sx={{ borderColor: '#2E3952', color: '#94A3B8' }}
+                startIcon={isMobile ? undefined : <ArrowLeft size={16} />}
+                sx={{
+                  borderColor: '#2E3952',
+                  color: '#94A3B8',
+                  minWidth: isMobile ? 0 : undefined,
+                  px: isMobile ? 1.25 : undefined,
+                }}
+                aria-label="Kembali"
               >
-                Kembali
+                {isMobile ? <ArrowLeft size={18} /> : 'Kembali'}
               </Button>
             )}
 

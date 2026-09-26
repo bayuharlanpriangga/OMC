@@ -286,7 +286,7 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
           </Box>
         </DialogTitle>
 
-        <DialogContent sx={{ pt: '24px !important', pb: 3, px: 3, minHeight: 340 }}>
+        <DialogContent sx={{ pt: '24px !important', pb: 3, px: 3, minHeight: isDesktop ? 340 : 'auto' }}>
           {profiles.length === 0 ? (
             /* EMPTY STATE AS SPECIFIED IN SPEC */
             <Box
