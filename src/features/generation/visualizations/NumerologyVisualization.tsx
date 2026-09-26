@@ -2,10 +2,7 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Chip,
-  Divider,
 } from '@mui/material';
 import { BaseChartResult } from '../../../types/systems';
 import { NumerologyCalculationResult } from '../../../systems/numerology/types';
@@ -30,7 +27,7 @@ export const NumerologyVisualization: React.FC<NumerologyVisualizationProps> = (
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
       {/* Primary Life Path Banner */}
-      <Card sx={{ backgroundColor: '#0E1322', border: '1.5px solid #E0C99A', p: 3 }}>
+      <Box sx={{ pb: 3, borderBottom: '1px solid #1E283D' }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: 3 }}>
           <Box
             sx={{
@@ -76,13 +73,25 @@ export const NumerologyVisualization: React.FC<NumerologyVisualizationProps> = (
             </Box>
           </Box>
         </Box>
-      </Card>
+      </Box>
 
       {/* Grid of Core Numbers */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' }, gap: 2 }}>
-        {coreCards.map((item) => (
-          <Card key={item.title} sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D' }}>
-            <CardContent sx={{ p: 2.5 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
+        {coreCards.map((item, i) => {
+          const row = Math.floor(i / 2);
+          const col = i % 2;
+          const isLastRow = row === Math.floor((coreCards.length - 1) / 2);
+          return (
+            <Box
+              key={item.title}
+              sx={{
+                py: 2.5,
+                pr: { xs: 0, sm: col === 0 ? 3 : 0 },
+                pl: { xs: 0, sm: col === 1 ? 3 : 0 },
+                borderBottom: { xs: i === coreCards.length - 1 ? 'none' : '1px solid #1E283D', sm: isLastRow ? 'none' : '1px solid #1E283D' },
+                borderRight: { xs: 'none', sm: col === 0 ? '1px solid #1E283D' : 'none' },
+              }}
+            >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                 <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   {item.title}
@@ -116,66 +125,77 @@ export const NumerologyVisualization: React.FC<NumerologyVisualizationProps> = (
                   <Chip key={kw} label={kw} size="small" sx={{ height: 18, fontSize: '0.65rem', backgroundColor: '#161F33', color: '#D4DCED' }} />
                 ))}
               </Box>
-            </CardContent>
-          </Card>
-        ))}
+            </Box>
+          );
+        })}
       </Box>
 
       {/* Calculation Derivation Proof */}
-      <Card sx={{ backgroundColor: '#0D111D', border: '1px solid #1E283D' }}>
-        <CardContent sx={{ p: 2.5 }}>
-          <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
-            Mathematical Derivation ({data.calculationMethod} Method)
-          </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-            <Box sx={{ p: 2, borderRadius: 2, backgroundColor: '#090D17', border: '1px solid #1A2438' }}>
-              <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', fontWeight: 600 }}>
-                Life Path Calculation
-              </Typography>
-              <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                {data.digitBreakdown.lifePathSteps.map((step, sIdx) => (
-                  <Typography key={sIdx} variant="caption" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
-                    {step}
-                  </Typography>
-                ))}
-              </Box>
-            </Box>
-
-            <Box sx={{ p: 2, borderRadius: 2, backgroundColor: '#090D17', border: '1px solid #1A2438' }}>
-              <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', fontWeight: 600 }}>
-                Expression Calculation
-              </Typography>
-              <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                {data.digitBreakdown.destinySteps.map((step, sIdx) => (
-                  <Typography key={sIdx} variant="caption" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
-                    {step}
-                  </Typography>
-                ))}
-              </Box>
+      <Box sx={{ pt: 3, borderTop: '1px solid #1E283D' }}>
+        <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
+          Mathematical Derivation ({data.calculationMethod} Method)
+        </Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+            '& > *:first-of-type': {
+              borderBottom: { xs: '1px solid #1E283D', md: 'none' },
+              borderRight: { xs: 'none', md: '1px solid #1E283D' },
+              pb: { xs: 2, md: 0 },
+              pr: { xs: 0, md: 3 },
+            },
+            '& > *:last-child': { pl: { xs: 0, md: 3 }, pt: { xs: 2, md: 0 } },
+          }}
+        >
+          <Box>
+            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', fontWeight: 600 }}>
+              Life Path Calculation
+            </Typography>
+            <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              {data.digitBreakdown.lifePathSteps.map((step, sIdx) => (
+                <Typography key={sIdx} variant="caption" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
+                  {step}
+                </Typography>
+              ))}
             </Box>
           </Box>
-        </CardContent>
-      </Card>
+
+          <Box>
+            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', fontWeight: 600 }}>
+              Expression Calculation
+            </Typography>
+            <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              {data.digitBreakdown.destinySteps.map((step, sIdx) => (
+                <Typography key={sIdx} variant="caption" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
+                  {step}
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Interpretations */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #1E283D' }}>
+        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', pt: 3 }}>
           Vibrational Interpretations
         </Typography>
         {result.interpretations.map((sec, idx) => (
-          <Card key={idx} sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
-                {sec.category}
-              </Typography>
-              <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
-                {sec.title}
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
-                {sec.content}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Box
+            key={idx}
+            sx={{ py: 3, borderBottom: idx === result.interpretations.length - 1 ? 'none' : '1px solid #1E283D' }}
+          >
+            <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
+              {sec.category}
+            </Typography>
+            <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
+              {sec.title}
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
+              {sec.content}
+            </Typography>
+          </Box>
         ))}
       </Box>
     </Box>

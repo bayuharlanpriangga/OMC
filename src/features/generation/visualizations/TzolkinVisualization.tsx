@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Chip,
 } from '@mui/material';
 import { BaseChartResult } from '../../../types/systems';
@@ -53,7 +51,7 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
       {/* Galactic Signature Banner */}
-      <Card sx={{ backgroundColor: '#0E1322', border: '1.5px solid #E0C99A', p: 3 }}>
+      <Box sx={{ pb: 3, borderBottom: '1px solid #1E283D' }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: 3 }}>
           <Box
             sx={{
@@ -95,12 +93,23 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             </Box>
           </Box>
         </Box>
-      </Card>
+      </Box>
 
       {/* Destiny Oracle Cross & Wavespell */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: 3,
+          alignItems: 'start',
+          '& > *:first-of-type': {
+            borderRight: { xs: 'none', md: '1px solid #1E283D' },
+            pr: { xs: 0, md: 3 },
+          },
+        }}
+      >
         {/* Five-Part Galactic Cross (Oracle) */}
-        <Card sx={{ backgroundColor: '#0D111D', border: '1px solid #1E283D', p: 3 }}>
+        <Box>
           <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 2.5, fontFamily: '"Cinzel", serif' }}>
             The 5-Part Destiny Oracle Cross
           </Typography>
@@ -119,11 +128,11 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             {/* Occult Kin (Bottom) */}
             {renderKinPill(oracle.occult, 'Occult (Hidden Magic)')}
           </Box>
-        </Card>
+        </Box>
 
         {/* Wavespell & Castle Cycles */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D', p: 2.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Wavespell Architecture
             </Typography>
@@ -133,9 +142,9 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>
               You were born on <strong>Day {wavespellDay}</strong> of this 13-day transformative wave.
             </Typography>
-          </Card>
+          </Box>
 
-          <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D', p: 2.5 }}>
+          <Box>
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Galactic Castle
             </Typography>
@@ -145,29 +154,30 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>
               A 52-day evolutionary quadrant in the 260-day sacred spin.
             </Typography>
-          </Card>
+          </Box>
         </Box>
       </Box>
 
       {/* Interpretations */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #1E283D' }}>
+        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', pt: 3 }}>
           Galactic Interpretations
         </Typography>
         {result.interpretations.map((sec, idx) => (
-          <Card key={idx} sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
-                {sec.category}
-              </Typography>
-              <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
-                {sec.title}
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
-                {sec.content}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Box
+            key={idx}
+            sx={{ py: 3, borderBottom: idx === result.interpretations.length - 1 ? 'none' : '1px solid #1E283D' }}
+          >
+            <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
+              {sec.category}
+            </Typography>
+            <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
+              {sec.title}
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
+              {sec.content}
+            </Typography>
+          </Box>
         ))}
       </Box>
     </Box>

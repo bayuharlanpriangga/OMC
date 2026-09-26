@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Chip,
   Table,
   TableBody,
@@ -43,53 +41,52 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
-          gap: 2,
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(4, 1fr)' },
+          '& > div': {
+            py: { xs: 1.5, sm: 0 },
+            px: { xs: 0, sm: 2.5 },
+            borderBottom: { xs: '1px solid #1E283D', sm: 'none' },
+            borderRight: { xs: 'none', sm: '1px solid #1E283D' },
+          },
+          '& > div:first-of-type': { pl: 0 },
+          '& > div:last-of-type': { borderBottom: 'none', borderRight: 'none', pr: 0 },
         }}
       >
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Energy Type
-            </Typography>
-            <Typography variant="h6" sx={{ color: '#E0C99A', mt: 0.5, fontWeight: 700 }}>
-              {data.type}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Energy Type
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#E0C99A', mt: 0.5, fontWeight: 700 }}>
+            {data.type}
+          </Typography>
+        </Box>
 
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Profile
-            </Typography>
-            <Typography variant="h6" sx={{ color: '#9BB8DE', mt: 0.5, fontWeight: 700 }}>
-              {data.profile} ({data.profileName.split('/')[0].trim()})
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Profile
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#9BB8DE', mt: 0.5, fontWeight: 700 }}>
+            {data.profile} ({data.profileName.split('/')[0].trim()})
+          </Typography>
+        </Box>
 
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Inner Authority
-            </Typography>
-            <Typography variant="h6" sx={{ color: '#34D399', mt: 0.5, fontWeight: 700 }}>
-              {data.authority}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Inner Authority
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#34D399', mt: 0.5, fontWeight: 700 }}>
+            {data.authority}
+          </Typography>
+        </Box>
 
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Strategy
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#EDF1F7', mt: 0.8, fontWeight: 600 }}>
-              {data.strategy}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Strategy
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#EDF1F7', mt: 0.8, fontWeight: 600 }}>
+            {data.strategy}
+          </Typography>
+        </Box>
       </Box>
 
       {/* Main Bodygraph & Center Details */}
@@ -99,10 +96,14 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
           gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
           gap: 3,
           alignItems: 'start',
+          '& > *:first-of-type': {
+            borderRight: { xs: 'none', lg: '1px solid #1E283D' },
+            pr: { xs: 0, lg: 3 },
+          },
         }}
       >
         {/* Interactive Bodygraph SVG (NO Gradients) */}
-        <Card sx={{ backgroundColor: '#0D111D', border: '1px solid #1E283D', p: 2.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography variant="subtitle2" sx={{ alignSelf: 'flex-start', mb: 1.5, color: '#E0C99A', fontFamily: '"Cinzel", serif' }}>
             The Nine-Center Bodygraph
           </Typography>
@@ -274,95 +275,92 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
           <Typography variant="caption" sx={{ color: '#94A3B8', mt: 1 }}>
             Click on any center to review its definition state and conditioning potential
           </Typography>
-        </Card>
+        </Box>
 
         {/* Selected Center or Summary Panel */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-          <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D' }}>
-            <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
-                {selectedCenter ? data.centers[selectedCenter].name : 'Bio-Energetic Mechanics'}
-              </Typography>
-              {selectedCenter ? (
-                <Box>
-                  <Chip
-                    label={data.centers[selectedCenter].isDefined ? 'Defined (Consistent Transmission)' : 'Undefined (Open / Receptor)'}
-                    color={data.centers[selectedCenter].isDefined ? 'primary' : 'default'}
-                    size="small"
-                    sx={{ mb: 1.5 }}
-                  />
-                  <Typography variant="body2" sx={{ color: '#D4DCED' }}>
-                    {data.centers[selectedCenter].isDefined
-                      ? `This center produces a steady, reliable internal frequency that remains fixed regardless of environment.`
-                      : `This center is open and porous, picking up and amplifying the emotional or mental frequencies of the people around you.`}
-                  </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
+            <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
+              {selectedCenter ? data.centers[selectedCenter].name : 'Bio-Energetic Mechanics'}
+            </Typography>
+            {selectedCenter ? (
+              <Box>
+                <Chip
+                  label={data.centers[selectedCenter].isDefined ? 'Defined (Consistent Transmission)' : 'Undefined (Open / Receptor)'}
+                  color={data.centers[selectedCenter].isDefined ? 'primary' : 'default'}
+                  size="small"
+                  sx={{ mb: 1.5 }}
+                />
+                <Typography variant="body2" sx={{ color: '#D4DCED' }}>
+                  {data.centers[selectedCenter].isDefined
+                    ? `This center produces a steady, reliable internal frequency that remains fixed regardless of environment.`
+                    : `This center is open and porous, picking up and amplifying the emotional or mental frequencies of the people around you.`}
+                </Typography>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#94A3B8' }}>Definition Architecture:</Typography>
+                  <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>{data.definition}</Typography>
                 </Box>
-              ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" sx={{ color: '#94A3B8' }}>Definition Architecture:</Typography>
-                    <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>{data.definition}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" sx={{ color: '#94A3B8' }}>Not-Self Theme:</Typography>
-                    <Typography variant="body2" sx={{ color: '#F87171', fontWeight: 600 }}>{data.notSelfTheme}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" sx={{ color: '#94A3B8' }}>Aura Signature:</Typography>
-                    <Typography variant="body2" sx={{ color: '#34D399', fontWeight: 600 }}>{data.signature}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 1, borderTop: '1px solid #1E283D' }}>
-                    <Typography variant="body2" sx={{ color: '#94A3B8' }}>Incarnation Cross:</Typography>
-                    <Typography variant="body2" sx={{ color: '#E0C99A', fontWeight: 600 }}>{data.incarnationCross}</Typography>
-                  </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#94A3B8' }}>Not-Self Theme:</Typography>
+                  <Typography variant="body2" sx={{ color: '#F87171', fontWeight: 600 }}>{data.notSelfTheme}</Typography>
                 </Box>
-              )}
-            </CardContent>
-          </Card>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#94A3B8' }}>Aura Signature:</Typography>
+                  <Typography variant="body2" sx={{ color: '#34D399', fontWeight: 600 }}>{data.signature}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 1, borderTop: '1px solid #1E283D' }}>
+                  <Typography variant="body2" sx={{ color: '#94A3B8' }}>Incarnation Cross:</Typography>
+                  <Typography variant="body2" sx={{ color: '#E0C99A', fontWeight: 600 }}>{data.incarnationCross}</Typography>
+                </Box>
+              </Box>
+            )}
+          </Box>
 
           {/* Active Channels List */}
-          <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D' }}>
-            <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="subtitle2" sx={{ color: '#9BB8DE', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
-                Defined Electromagnetic Channels
-              </Typography>
-              {data.activeChannels.map((ch) => (
-                <Box key={ch.id} sx={{ py: 1, borderBottom: '1px solid #172133', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box>
-                    <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>
-                      Channel {ch.id}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                      {ch.name}
-                    </Typography>
-                  </Box>
-                  <Chip label={`Gates ${ch.gates[0]} · ${ch.gates[1]}`} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+          <Box>
+            <Typography variant="subtitle2" sx={{ color: '#9BB8DE', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
+              Defined Electromagnetic Channels
+            </Typography>
+            {data.activeChannels.map((ch) => (
+              <Box key={ch.id} sx={{ py: 1, borderBottom: '1px solid #172133', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>
+                    Channel {ch.id}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                    {ch.name}
+                  </Typography>
                 </Box>
-              ))}
-            </CardContent>
-          </Card>
+                <Chip label={`Gates ${ch.gates[0]} · ${ch.gates[1]}`} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+              </Box>
+            ))}
+          </Box>
         </Box>
       </Box>
 
       {/* Structured Interpretations */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #1E283D' }}>
+        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', pt: 3 }}>
           Deconditioning &amp; Strategy Guidelines
         </Typography>
         {result.interpretations.map((sec, idx) => (
-          <Card key={idx} sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
-                {sec.category}
-              </Typography>
-              <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
-                {sec.title}
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
-                {sec.content}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Box
+            key={idx}
+            sx={{ py: 3, borderBottom: idx === result.interpretations.length - 1 ? 'none' : '1px solid #1E283D' }}
+          >
+            <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
+              {sec.category}
+            </Typography>
+            <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
+              {sec.title}
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
+              {sec.content}
+            </Typography>
+          </Box>
         ))}
       </Box>
     </Box>

@@ -72,10 +72,8 @@ export const TzolkinResultPage: React.FC<TzolkinResultPageProps> = ({
         <Box
           sx={{
             mt: 6,
-            p: 3,
-            borderRadius: 3,
-            backgroundColor: '#0E1320',
-            border: '1px solid #1E2638',
+            pt: 3,
+            borderTop: '1px solid #1E283D',
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'space-between',

@@ -2,9 +2,6 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
-  Chip,
   LinearProgress,
 } from '@mui/material';
 import { BaseChartResult } from '../../../types/systems';
@@ -29,7 +26,7 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
   const renderPillarCard = (pillar: BaZiPillar, isDayMasterPillar = false) => {
     if (pillar.isUnknown) {
       return (
-        <Card sx={{ backgroundColor: '#0B0F1B', border: '1px dashed #2A364F', textAlign: 'center', p: 2 }}>
+        <Box sx={{ textAlign: 'center', pt: 2 }}>
           <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase' }}>
             {pillar.title}
           </Typography>
@@ -41,7 +38,7 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
               Hour pillar requires precise time
             </Typography>
           </Box>
-        </Card>
+        </Box>
       );
     }
 
@@ -51,12 +48,11 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
     const branchStyle = elementTheme[branch.element];
 
     return (
-      <Card
+      <Box
         sx={{
-          backgroundColor: isDayMasterPillar ? 'rgba(224, 201, 154, 0.05)' : '#0E1322',
-          border: isDayMasterPillar ? '1.5px solid #E0C99A' : '1px solid #1E283D',
           textAlign: 'center',
-          p: 2,
+          pt: 2,
+          borderTop: isDayMasterPillar ? '2px solid #E0C99A' : '2px solid transparent',
         }}
       >
         <Typography variant="caption" sx={{ color: isDayMasterPillar ? '#E0C99A' : '#94A3B8', textTransform: 'uppercase', fontWeight: 600 }}>
@@ -88,14 +84,14 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
             {branch.element} Branch
           </Typography>
         </Box>
-      </Card>
+      </Box>
     );
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
       {/* Day Master Highlight Banner */}
-      <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D', p: 2.5 }}>
+      <Box sx={{ pb: 3, borderBottom: '1px solid #1E283D' }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
           <Box>
             <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
@@ -109,8 +105,8 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Box sx={{ p: 1.2, px: 2, borderRadius: 2, backgroundColor: '#131929', border: '1px solid #24304A' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+            <Box sx={{ pl: 0, pr: 2.5, borderRight: '1px solid #1E283D' }}>
               <Typography variant="caption" sx={{ color: '#34D399', display: 'block', fontWeight: 600 }}>
                 Favorable Elements
               </Typography>
@@ -118,7 +114,7 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
                 {favorableElements.join(', ')}
               </Typography>
             </Box>
-            <Box sx={{ p: 1.2, px: 2, borderRadius: 2, backgroundColor: '#131929', border: '1px solid #24304A' }}>
+            <Box sx={{ pl: 2.5, pr: 0 }}>
               <Typography variant="caption" sx={{ color: '#F87171', display: 'block', fontWeight: 600 }}>
                 Unfavorable Elements
               </Typography>
@@ -128,10 +124,23 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
             </Box>
           </Box>
         </Box>
-      </Card>
+      </Box>
 
       {/* The Four Pillars Row */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(4, 1fr)' },
+          '& > *': {
+            borderBottom: { xs: '1px solid #1E283D', sm: 'none' },
+            borderRight: { xs: 'none', sm: '1px solid #1E283D' },
+            pb: { xs: 2, sm: 0 },
+            px: { xs: 0, sm: 2 },
+          },
+          '& > *:first-of-type': { pl: 0 },
+          '& > *:last-child': { borderBottom: 'none', borderRight: 'none', pr: 0 },
+        }}
+      >
         {renderPillarCard(pillars.year)}
         {renderPillarCard(pillars.month)}
         {renderPillarCard(pillars.day, true)}
@@ -139,7 +148,7 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
       </Box>
 
       {/* Five Elements Distribution */}
-      <Card sx={{ backgroundColor: '#0D111D', border: '1px solid #1E283D', p: 3 }}>
+      <Box sx={{ pt: 3, borderTop: '1px solid #1E283D' }}>
         <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 2, fontFamily: '"Cinzel", serif' }}>
           Five Elements (Wu Xing) Balance
         </Typography>
@@ -175,27 +184,28 @@ export const BaZiVisualization: React.FC<BaZiVisualizationProps> = ({ result }) 
             );
           })}
         </Box>
-      </Card>
+      </Box>
 
       {/* Interpretations */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #1E283D' }}>
+        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', pt: 3 }}>
           Classical BaZi Readings
         </Typography>
         {result.interpretations.map((sec, idx) => (
-          <Card key={idx} sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
-                {sec.category}
-              </Typography>
-              <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
-                {sec.title}
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
-                {sec.content}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Box
+            key={idx}
+            sx={{ py: 3, borderBottom: idx === result.interpretations.length - 1 ? 'none' : '1px solid #1E283D' }}
+          >
+            <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', mb: 0.5 }}>
+              {sec.category}
+            </Typography>
+            <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
+              {sec.title}
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
+              {sec.content}
+            </Typography>
+          </Box>
         ))}
       </Box>
     </Box>
