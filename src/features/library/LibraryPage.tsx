@@ -151,6 +151,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                 key={c.id}
                 value={c.id}
                 label={c.label}
+                onClick={handleBackToGrid}
                 sx={{
                   color: selectedCategory === c.id ? '#E0C99A' : '#94A3B8',
                   minHeight: 44,
