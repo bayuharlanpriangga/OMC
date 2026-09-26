@@ -216,8 +216,11 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* ============================================================== */}
       {/* SECTION: THE SIX TOP-LEVEL SYSTEMS DISCOVERY MATRIX           */}
       {/* ============================================================== */}
-      <Box sx={{ py: { xs: 8, md: 10 }, backgroundColor: '#000000', borderBottom: '1px solid #1A1A1A' }}>
-        <Container maxWidth="xl">
+      <Box sx={{ position: 'relative', py: { xs: 8, md: 10 }, backgroundColor: '#000000', borderBottom: '1px solid #1A1A1A' }}>
+        {/* Flowing gold energy current, embedded behind the grid — desktop only */}
+        <EnergyFlowBand variant="embedded" sx={{ display: { xs: 'none', md: 'block' } }} />
+
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ mb: 6 }}>
             <Typography variant="overline" sx={{ color: '#E0C99A' }}>
               System Registry
@@ -236,7 +239,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Card
                   key={system.id}
                   sx={{
-                    backgroundColor: '#080808',
+                    backgroundColor: 'rgba(8, 8, 8, 0.55)',
+                    backdropFilter: 'blur(6px)',
                     border: '1px solid #1C1C1C',
                     display: 'flex',
                     flexDirection: 'column',
@@ -319,8 +323,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         </Container>
       </Box>
 
-      {/* Flowing gold energy current — divider between the systems grid and the next section */}
-      <EnergyFlowBand />
+      {/* Flowing gold energy current — mobile only; on desktop it's embedded behind the grid above */}
+      <EnergyFlowBand sx={{ display: { xs: 'block', md: 'none' } }} />
 
       {/* ============================================================== */}
       {/* SECTION: ARCHITECTURAL RIGOR & DATA INTEGRITY                 */}

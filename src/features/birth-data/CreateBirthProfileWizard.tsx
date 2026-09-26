@@ -212,7 +212,7 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
           <Stepper
             activeStep={activeStep}
             alternativeLabel
-            sx={{ '& .MuiStepLabel-labelContainer': { mt: 2 } }}
+            sx={{ '& .MuiStepLabel-labelContainer': { mt: 0.5 } }}
           >
             {STEPS.map((label, index) => (
               <Step key={label} completed={activeStep > index}>
