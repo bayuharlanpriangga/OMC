@@ -1,176 +1,165 @@
-import { AstrologyChartTypeDescriptor, AstrologyChartTypeId, BirthProfile, SystemValidationResult } from '../../types/systems';
+import {
+  BirthProfile,
+  SystemDescriptor,
+  SystemId,
+  SystemValidationResult,
+} from '../types/systems';
 
-export const ASTROLOGY_CHART_TYPES: Record<AstrologyChartTypeId, AstrologyChartTypeDescriptor> = {
-  natal: {
-    id: 'natal',
-    name: 'Natal Chart',
-    tagline: 'The foundational celestial blueprint of birth',
-    description: 'Calculates the exact positions of the Sun, Moon, planets, and astrological houses at the precise moment and geographic coordinates of birth.',
-    requirements: {
-      requiresExactTime: false, // Can calculate planet signs without time, but houses/Ascendant need time
-      requiresLocation: true,
-      minProfiles: 1,
-      maxProfiles: 1,
-      notes: 'Unknown birth time will calculate planetary signs without Ascendant and House cusps.',
-    },
-    configFields: [
-      {
-        id: 'houseSystem',
-        label: 'House System',
-        type: 'select',
-        options: [
-          { label: 'Placidus (Standard)', value: 'placidus' },
-          { label: 'Whole Sign (Traditional)', value: 'whole-sign' },
-          { label: 'Koch', value: 'koch' },
-          { label: 'Equal House', value: 'equal' },
-        ],
-        defaultValue: 'placidus',
-      },
-      {
-        id: 'zodiac',
-        label: 'Zodiac System',
-        type: 'select',
-        options: [
-          { label: 'Tropical (Western)', value: 'tropical' },
-          { label: 'Sidereal (Lahiri)', value: 'sidereal' },
-        ],
-        defaultValue: 'tropical',
-      },
-    ],
-  },
-  draconic: {
-    id: 'draconic',
-    name: 'Draconic Chart',
-    tagline: 'The soul orientation and higher spiritual destiny',
-    description: 'Calculates the chart with the Lunar True North Node adjusted to 0° Aries, revealing underlying soul purpose and karmic motivations.',
+export const METAPHYSICAL_SYSTEMS: Record<SystemId, SystemDescriptor> = {
+  astrology: {
+    id: 'astrology',
+    name: 'Western Astrology',
+    category: 'Celestial Systems',
+    tagline: 'The planetary blueprint of the moment you were born',
+    description:
+      'Maps the positions of the Sun, Moon, and planets against the zodiac and houses at the exact moment of birth, revealing personality, life themes, and cyclical timing.',
+    iconName: 'Compass',
+    origin: 'Western / Hellenistic',
     requirements: {
       requiresExactTime: false,
       requiresLocation: true,
       minProfiles: 1,
       maxProfiles: 1,
+      notes: 'Individual chart-type requirements (e.g. Solar Return, Progressed) are validated separately.',
     },
-    configFields: [
-      {
-        id: 'nodeType',
-        label: 'Lunar Node Calculation',
-        type: 'select',
-        options: [
-          { label: 'True Node', value: 'true' },
-          { label: 'Mean Node', value: 'mean' },
-        ],
-        defaultValue: 'true',
-      },
-    ],
+    isConfigurable: true,
   },
-  'solar-return': {
-    id: 'solar-return',
-    name: 'Solar Return',
-    tagline: 'Annual solar birthday revolution cycle',
-    description: 'Constructs the astrological chart for the exact annual moment the Sun returns to its exact natal zodiacal degree and minute.',
+  'human-design': {
+    id: 'human-design',
+    name: 'Human Design',
+    category: 'Bio-Energetic Systems',
+    tagline: 'Your energetic blueprint, decoded from two moments in time',
+    description:
+      'Synthesizes astrology, the I Ching, Kabbalah, and chakra systems into a Bodygraph built from your birth moment and the planetary positions 88 degrees of solar arc earlier.',
+    iconName: 'Fingerprint',
+    origin: 'Modern Synthesis (Ra Uru Hu, 1987)',
     requirements: {
-      requiresExactTime: true,
-      requiresLocation: true,
+      requiresExactTime: false,
+      requiresLocation: false,
       minProfiles: 1,
       maxProfiles: 1,
-      timeRequirementMessage: 'Solar Return charts calculate precise return minutes and Ascendant, requiring an accurate birth time.',
+      notes: 'An unknown birth time defaults the Design calculation to 12:00, which may shift Type/Authority accuracy.',
     },
-    configFields: [
-      {
-        id: 'returnYear',
-        label: 'Return Year',
-        type: 'number',
-        defaultValue: new Date().getFullYear(),
-        helperText: 'The target year for this solar revolution',
-      },
-      {
-        id: 'relocationCity',
-        label: 'Return Location',
-        type: 'select',
-        options: [
-          { label: 'Natal Birth Place', value: 'natal' },
-          { label: 'Current Residence', value: 'current' },
-        ],
-        defaultValue: 'natal',
-      },
-    ],
+    isConfigurable: false,
   },
-  'lunar-return': {
-    id: 'lunar-return',
-    name: 'Lunar Return',
-    tagline: 'Monthly 27.3-day emotional cycle blueprint',
-    description: 'Constructs a chart for the moment the transiting Moon returns to its exact natal position, charting emotional focus for the 28-day cycle.',
+  numerology: {
+    id: 'numerology',
+    name: 'Numerology',
+    category: 'Vibrational Systems',
+    tagline: 'The hidden arithmetic of a name and a birth date',
+    description:
+      'Reduces a birth date and name to core numbers — Life Path, Expression, Soul Urge — to reveal vibrational patterns of identity and destiny.',
+    iconName: 'Hash',
+    origin: 'Pythagorean / Western',
     requirements: {
-      requiresExactTime: true,
-      requiresLocation: true,
+      requiresExactTime: false,
+      requiresLocation: false,
       minProfiles: 1,
       maxProfiles: 1,
-      timeRequirementMessage: 'The Moon moves 13° per day. Lunar returns require exact birth time for precise alignment.',
     },
-    configFields: [
-      {
-        id: 'cycleMonth',
-        label: 'Target Month Cycle',
-        type: 'select',
-        options: [
-          { label: 'Current Lunar Cycle', value: 'current' },
-          { label: 'Next Lunar Cycle', value: 'next' },
-        ],
-        defaultValue: 'current',
-      },
-    ],
+    isConfigurable: false,
   },
-  progressed: {
-    id: 'progressed',
-    name: 'Secondary Progressions',
-    tagline: 'Internal soul maturation (A day for a year)',
-    description: 'Calculates symbolic psychological and life progression where each single day of planetary movement after birth represents one full year of lived life.',
+  bazi: {
+    id: 'bazi',
+    name: 'BaZi',
+    category: 'Chinese Metaphysics',
+    tagline: 'The Four Pillars of Destiny',
+    description:
+      'Charts the Heavenly Stems and Earthly Branches for the year, month, day, and hour of birth to map the Five Elements at play in a life.',
+    iconName: 'Columns3',
+    origin: 'Chinese / Taoist',
     requirements: {
-      requiresExactTime: true,
-      requiresLocation: true,
+      requiresExactTime: false,
+      requiresLocation: false,
       minProfiles: 1,
       maxProfiles: 1,
-      timeRequirementMessage: 'Progressed charts calculate subtle Ascendant shifts that require exact birth time.',
+      notes: 'Without a known birth time, the Hour Pillar is omitted from the reading.',
     },
-    configFields: [
-      {
-        id: 'targetDate',
-        label: 'Progression Target Date',
-        type: 'date',
-        defaultValue: new Date().toISOString().slice(0, 10),
-        helperText: 'Date to calculate current inner evolution stage',
-      },
-    ],
+    isConfigurable: false,
+  },
+  'zi-wei-dou-shu': {
+    id: 'zi-wei-dou-shu',
+    name: 'Zi Wei Dou Shu',
+    category: 'Chinese Metaphysics',
+    tagline: 'The Imperial Court of Stars',
+    description:
+      'Places 14 major stars and their attendants across 12 palaces to construct a comprehensive life map, considered one of the most detailed Chinese astrological systems.',
+    iconName: 'Crown',
+    origin: 'Chinese Imperial Court',
+    requirements: {
+      requiresExactTime: false,
+      requiresLocation: false,
+      minProfiles: 1,
+      maxProfiles: 1,
+      notes: 'Requires a birth time for accurate Life Palace placement; unknown time defaults to 12:00.',
+    },
+    isConfigurable: false,
+  },
+  tzolkin: {
+    id: 'tzolkin',
+    name: 'Tzolkin',
+    category: 'Mesoamerican Systems',
+    tagline: 'The 260-day sacred Mayan count',
+    description:
+      'Combines 20 Solar Seals with 13 Galactic Tones from the sacred Mayan calendar to reveal a harmonic signature for the day of birth.',
+    iconName: 'Sun',
+    origin: 'Maya / Mesoamerican',
+    requirements: {
+      requiresExactTime: false,
+      requiresLocation: false,
+      minProfiles: 1,
+      maxProfiles: 1,
+    },
+    isConfigurable: false,
   },
 };
 
-export function validateAstrologyChartRequirements(
-  chartTypeId: AstrologyChartTypeId,
-  profile: BirthProfile
+export const SYSTEMS_LIST: SystemDescriptor[] = Object.values(METAPHYSICAL_SYSTEMS);
+
+/**
+ * Top-level validation: profile count and location requirements for the
+ * selected system as a whole. System-specific / chart-type-specific rules
+ * (e.g. astrology's per-chart-type time requirements) are validated
+ * separately by their own registries.
+ */
+export function validateSystemRequirements(
+  systemId: SystemId,
+  profiles: BirthProfile[]
 ): SystemValidationResult {
-  const chartType = ASTROLOGY_CHART_TYPES[chartTypeId];
-  if (!chartType) {
-    return { isValid: false, message: `Unknown astrology chart type ${chartTypeId}` };
+  const system = METAPHYSICAL_SYSTEMS[systemId];
+
+  if (!system) {
+    return { isValid: false, message: `Unknown metaphysical system: ${systemId}` };
   }
 
-  if (chartType.requirements.requiresExactTime && (profile.isTimeUnknown || !profile.birthTime)) {
+  const { minProfiles, maxProfiles, requiresLocation } = system.requirements;
+
+  if (profiles.length < minProfiles || profiles.length > maxProfiles) {
     return {
       isValid: false,
-      code: 'MISSING_TIME',
-      title: 'Birth Time Required',
-      message: chartType.requirements.timeRequirementMessage || `${chartType.name} requires a known birth time to compute exact house cusps and rotational angles.`,
-      actionText: 'Update Birth Time',
+      code: 'PROFILE_COUNT',
+      title: 'Incorrect Number of Profiles',
+      message:
+        minProfiles === maxProfiles
+          ? `${system.name} requires exactly ${minProfiles} birth profile${minProfiles > 1 ? 's' : ''} to be selected.`
+          : `${system.name} requires between ${minProfiles} and ${maxProfiles} birth profiles to be selected.`,
+      actionText: 'Adjust Profile Selection',
     };
   }
 
-  // Natal warning if time is unknown (warns about Ascendant/houses, but allows planetary signs calculation)
-  if (chartTypeId === 'natal' && (profile.isTimeUnknown || !profile.birthTime)) {
-    return {
-      isValid: true,
-      warningOnly: true,
-      code: 'MISSING_TIME',
-      title: 'Approximate Natal Chart',
-      message: 'Birth time is unknown. Planetary sign placements will be calculated at solar noon, but Rising sign (Ascendant) and house positions will be omitted.',
-    };
+  if (requiresLocation) {
+    const missingLocation = profiles.some(
+      (p) => p.latitude === undefined || p.latitude === null || p.longitude === undefined || p.longitude === null
+    );
+    if (missingLocation) {
+      return {
+        isValid: false,
+        code: 'MISSING_LOCATION',
+        title: 'Birth Location Required',
+        message: `${system.name} requires an accurate birth location (latitude/longitude) to compute correctly.`,
+        actionText: 'Update Birth Location',
+      };
+    }
   }
 
   return { isValid: true };
