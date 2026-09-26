@@ -224,8 +224,15 @@ export const m3Theme = createTheme({
     MuiBackdrop: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(0, 0, 0, 0.88)',
-          backdropFilter: 'blur(6px)',
+          // Only darken/blur the page for TRUE modal backdrops (Dialog,
+          // Drawer, plain Modal). Menu/Select/Popover/Autocomplete render
+          // their Backdrop with `invisible` so they behave like ordinary
+          // dropdowns — this must stay fully transparent for those, or
+          // every dropdown ends up looking like a full-screen modal.
+          '&:not(.MuiBackdrop-invisible)': {
+            backgroundColor: 'rgba(0, 0, 0, 0.88)',
+            backdropFilter: 'blur(6px)',
+          },
         },
       },
     },
