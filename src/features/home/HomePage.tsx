@@ -157,10 +157,12 @@ export const HomePage: React.FC<HomePageProps> = ({
               <Box
                 sx={{
                   display: 'inline-flex',
+                  flexWrap: 'wrap',
                   alignItems: 'center',
                   gap: 1.5,
                   p: 1.2,
                   px: 2,
+                  maxWidth: '100%',
                   borderRadius: 3,
                   backgroundColor: '#080808',
                   border: '1px solid #1E1E1E',
@@ -172,6 +174,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     height: 8,
                     borderRadius: '50%',
                     backgroundColor: '#34D399',
+                    flexShrink: 0,
                   }}
                 />
                 <Typography variant="body2" sx={{ color: '#D4DCED', fontSize: '0.8125rem' }}>
@@ -181,7 +184,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Button
                   size="small"
                   onClick={onOpenBirthData}
-                  sx={{ color: '#E0C99A', fontSize: '0.75rem', minWidth: 0, p: 0, ml: 1, textDecoration: 'underline' }}
+                  sx={{ color: '#E0C99A', fontSize: '0.75rem', minWidth: 0, p: 0, ml: 1, flexShrink: 0, textDecoration: 'underline' }}
                 >
                   Kelola Profil
                 </Button>
@@ -190,10 +193,12 @@ export const HomePage: React.FC<HomePageProps> = ({
               <Box
                 sx={{
                   display: 'inline-flex',
+                  flexWrap: 'wrap',
                   alignItems: 'center',
                   gap: 1.5,
                   p: 1.2,
                   px: 2,
+                  maxWidth: '100%',
                   borderRadius: 3,
                   backgroundColor: '#080808',
                   border: '1px solid #1E1E1E',
@@ -205,6 +210,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     height: 8,
                     borderRadius: '50%',
                     backgroundColor: '#E0C99A',
+                    flexShrink: 0,
                   }}
                 />
                 <Typography variant="body2" sx={{ color: '#D4DCED', fontSize: '0.8125rem' }}>
@@ -213,7 +219,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Button
                   size="small"
                   onClick={onOpenBirthData}
-                  sx={{ color: '#E0C99A', fontSize: '0.75rem', minWidth: 0, p: 0, ml: 1, textDecoration: 'underline' }}
+                  sx={{ color: '#E0C99A', fontSize: '0.75rem', minWidth: 0, p: 0, ml: 1, flexShrink: 0, textDecoration: 'underline' }}
                 >
                   + Tambah Profil
                 </Button>

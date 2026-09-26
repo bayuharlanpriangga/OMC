@@ -216,6 +216,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenAuth}
                 startIcon={<LogIn size={15} />}
                 sx={{
+                  display: { xs: 'none', sm: 'inline-flex' },
                   borderColor: '#262626',
                   color: '#EDF1F7',
                   borderRadius: 20,

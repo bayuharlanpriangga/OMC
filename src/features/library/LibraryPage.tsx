@@ -173,7 +173,15 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
           </Tabs>
 
           {/* Search Field */}
-          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: 1.5,
+              alignItems: { xs: 'stretch', sm: 'center' },
+              width: { xs: '100%', md: 'auto' },
+            }}
+          >
             <TextField
               size="small"
               placeholder="Search concepts, tags, systems..."
@@ -188,11 +196,11 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
                   ),
                 },
               }}
-              sx={{ minWidth: 260 }}
+              sx={{ minWidth: { xs: '100%', sm: 260 } }}
             />
 
             {/* Level Selector */}
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
               {['All', 'Beginner', 'Intermediate', 'Advanced'].map((lvl) => (
                 <Chip
                   key={lvl}
