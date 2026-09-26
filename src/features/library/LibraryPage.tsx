@@ -10,7 +10,7 @@ import {
   Button,
   InputAdornment,
 } from '@mui/material';
-import { ArrowLeft, BookOpen, Search } from 'lucide-react';
+import { BookOpen, Search } from 'lucide-react';
 import { LibraryArticle } from '../../types/library';
 import { LIBRARY_ARTICLES } from './data';
 import { SystemId } from '../../types/systems';
@@ -86,21 +86,6 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
       <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <Box sx={{ mb: 5 }}>
-          {readingArticle && (
-            <Button
-              onClick={handleBackToGrid}
-              startIcon={<ArrowLeft size={16} />}
-              size="small"
-              sx={{
-                color: '#E0C99A',
-                mb: 2,
-                pl: 0,
-                '&:hover': { backgroundColor: 'transparent', opacity: 0.8 },
-              }}
-            >
-              Back to Library
-            </Button>
-          )}
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <Box
               sx={{
@@ -153,7 +138,10 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
           {/* Categories Tab Bar */}
           <Tabs
             value={selectedCategory}
-            onChange={(_, val) => setSelectedCategory(val)}
+            onChange={(_, val) => {
+              setSelectedCategory(val);
+              handleBackToGrid();
+            }}
             variant="scrollable"
             scrollButtons="auto"
             sx={{ minHeight: 44 }}
@@ -226,7 +214,6 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
           <ArticleReader
             ref={readerRef}
             article={readingArticle}
-            onClose={handleBackToGrid}
             onStartCalculationForSystem={onStartCalculationForSystem}
           />
         ) : filteredArticles.length === 0 ? (

@@ -6,7 +6,6 @@ import { SystemId } from '../../../types/systems';
 
 interface ArticleReaderProps {
   article: LibraryArticle;
-  onClose: () => void;
   onStartCalculationForSystem?: (systemId: SystemId) => void;
 }
 
@@ -14,10 +13,10 @@ interface ArticleReaderProps {
  * Renders the full article body inline, taking the place of the article
  * grid (instead of a modal Dialog or a card sitting below the grid).
  * The parent LibraryPage swaps this in for the grid whenever an article
- * is selected, and swaps it back out via the "Back to Library" control.
+ * is selected. Reading mode is exited by clicking any category filter tab.
  */
 export const ArticleReader = React.forwardRef<HTMLDivElement, ArticleReaderProps>(
-  ({ article, onClose, onStartCalculationForSystem }, ref) => {
+  ({ article, onStartCalculationForSystem }, ref) => {
     return (
       <Box ref={ref}>
         {/* Header */}
@@ -82,20 +81,17 @@ export const ArticleReader = React.forwardRef<HTMLDivElement, ArticleReaderProps
         </Box>
 
         {/* Footer */}
-        <Box
-          sx={{
-            mt: 4,
-            pt: 3,
-            borderTop: '1px solid #1E2638',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Button onClick={onClose} sx={{ color: '#94A3B8', pl: 0 }}>
-            Back to Library
-          </Button>
-          {onStartCalculationForSystem && article.category !== 'fundamentals' && (
+        {onStartCalculationForSystem && article.category !== 'fundamentals' && (
+          <Box
+            sx={{
+              mt: 4,
+              pt: 3,
+              borderTop: '1px solid #1E2638',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+            }}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -104,8 +100,8 @@ export const ArticleReader = React.forwardRef<HTMLDivElement, ArticleReaderProps
             >
               Calculate {article.categoryName} Chart
             </Button>
-          )}
-        </Box>
+          </Box>
+        )}
       </Box>
     );
   }
