@@ -208,8 +208,12 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
 
       <DialogContent sx={{ py: 3, px: 3 }}>
         {/* M3 Stepper Progress */}
-        <Box sx={{ mb: 3.5, mt: 1 }}>
-          <Stepper activeStep={activeStep} alternativeLabel>
+        <Box sx={{ mb: 3.5, mt: 2 }}>
+          <Stepper
+            activeStep={activeStep}
+            alternativeLabel
+            sx={{ '& .MuiStepLabel-labelContainer': { mt: 2 } }}
+          >
             {STEPS.map((label, index) => (
               <Step key={label} completed={activeStep > index}>
                 <StepLabel
@@ -338,6 +342,25 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
                     </li>
                   )}
                 />
+
+                {selectedLocation && (
+                  <Box
+                    sx={{
+                      mt: 1.5,
+                      p: 1.5,
+                      borderRadius: 2,
+                      border: '1px solid #34D399',
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#34D399' }}>
+                      {selectedLocation.placeName}, {selectedLocation.country}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                      Coordinates: {selectedLocation.latitude.toFixed(4)}° N, {selectedLocation.longitude.toFixed(4)}° E · {selectedLocation.timezone}
+                    </Typography>
+                  </Box>
+                )}
+
                 <Button
                   size="small"
                   onClick={() => setUseCustomLocation(true)}
@@ -371,27 +394,6 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
                 </Button>
               </Box>
             )}
-
-            {selectedLocation && !useCustomLocation && (
-              <Box
-                sx={{
-                  p: 2,
-                  borderRadius: 2,
-                  backgroundColor: '#0E1322',
-                  border: '1px solid #1E283D',
-                }}
-              >
-                <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  Confirmed Geographic Anchor
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: '#EDF1F7', mt: 0.5 }}>
-                  {selectedLocation.placeName}, {selectedLocation.country}
-                </Typography>
-                <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                  Coordinates: {selectedLocation.latitude.toFixed(4)}° N, {selectedLocation.longitude.toFixed(4)}° E · {selectedLocation.timezone}
-                </Typography>
-              </Box>
-            )}
           </Box>
         )}
 
@@ -420,27 +422,32 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
                 row
                 value={relationship}
                 onChange={(e) => setRelationship(e.target.value as ProfileRelationship)}
-                sx={{ gap: 1 }}
+                sx={{
+                  flexWrap: 'nowrap',
+                  overflowX: 'auto',
+                  gap: 2,
+                  pb: 0.5,
+                }}
               >
                 {(['Myself', 'Someone Else', 'Family', 'Partner', 'Friend', 'Other'] as ProfileRelationship[]).map((rel) => (
-                  <Box
+                  <FormControlLabel
                     key={rel}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: 2,
-                      backgroundColor: relationship === rel ? 'rgba(224, 201, 154, 0.1)' : '#0E1322',
-                      border: relationship === rel ? '1px solid #E0C99A' : '1px solid #1E283D',
-                    }}
-                  >
-                    <FormControlLabel
-                      value={rel}
-                      control={<Radio size="small" sx={{ color: '#E0C99A', '&.Mui-checked': { color: '#E0C99A' } }} />}
-                      label={<Typography variant="body2">{rel}</Typography>}
-                    />
-                  </Box>
+                    value={rel}
+                    control={<Radio size="small" sx={{ color: '#E0C99A', '&.Mui-checked': { color: '#E0C99A' } }} />}
+                    label={
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: relationship === rel ? '#E0C99A' : '#EDF1F7',
+                          fontWeight: relationship === rel ? 600 : 400,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {rel}
+                      </Typography>
+                    }
+                    sx={{ flexShrink: 0, mr: 0 }}
+                  />
                 ))}
               </RadioGroup>
             </FormControl>
@@ -450,8 +457,7 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
               sx={{
                 p: 2,
                 borderRadius: 2,
-                backgroundColor: '#0E1322',
-                border: '1px solid #1E283D',
+                border: '1px solid #E0C99A',
               }}
             >
               <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>

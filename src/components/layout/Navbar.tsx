@@ -117,35 +117,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Compass size={20} strokeWidth={1.8} />
             </Box>
-            <Box>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  fontFamily: '"Cinzel", serif',
-                  fontWeight: 700,
-                  fontSize: { xs: '1.1rem', md: '1.25rem' },
-                  letterSpacing: '0.12em',
-                  color: '#EDF1F7',
-                  lineHeight: 1,
-                }}
-              >
-                METAPHYSICA
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  color: '#9CA3AF',
-                  display: 'block',
-                  mt: 0.3,
-                }}
-              >
-                Celestial &amp; Energetic Matrix
-              </Typography>
-            </Box>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 700,
+                fontSize: { xs: '1.1rem', md: '1.25rem' },
+                letterSpacing: '0.12em',
+                color: '#EDF1F7',
+                lineHeight: 1,
+              }}
+            >
+              OMC
+            </Typography>
           </Box>
 
           {/* Desktop Navigation Links */}

@@ -21,6 +21,7 @@ import { BirthProfile } from '../../types/birth-data';
 import { SystemId } from '../../types/systems';
 import { SYSTEMS_LIST } from '../../systems/registry';
 import { CelestialMachineAnimation } from './CelestialMachineAnimation';
+import { EnergyFlowBand } from './EnergyFlowBand';
 
 interface HomePageProps {
   profiles: BirthProfile[];
@@ -62,23 +63,6 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Real HTML/React Hero Content (Strictly Left-Aligned) */}
         <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ maxWidth: { xs: '100%', md: 780 } }}>
-            {/* Overline Badge */}
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 2.5 }}>
-              <Chip
-                label="SACRED METROLOGY &amp; BIO-ENERGETIC ARCHITECTURE"
-                size="small"
-                sx={{
-                  backgroundColor: 'rgba(224, 201, 154, 0.08)',
-                  color: '#E0C99A',
-                  border: '1px solid rgba(224, 201, 154, 0.25)',
-                  fontWeight: 600,
-                  fontSize: '0.72rem',
-                  letterSpacing: '0.12em',
-                  px: 0.5,
-                }}
-              />
-            </Box>
-
             {/* Hero Heading */}
             <Typography
               variant="h1"
@@ -334,6 +318,9 @@ export const HomePage: React.FC<HomePageProps> = ({
           </Box>
         </Container>
       </Box>
+
+      {/* Flowing gold energy current — divider between the systems grid and the next section */}
+      <EnergyFlowBand />
 
       {/* ============================================================== */}
       {/* SECTION: ARCHITECTURAL RIGOR & DATA INTEGRITY                 */}

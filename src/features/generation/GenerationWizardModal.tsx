@@ -274,8 +274,12 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
         {/* Content Body */}
         <DialogContent sx={{ p: { xs: 2.5, md: 3.5 }, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           {/* Progress Stepper */}
-          <Box sx={{ mb: 3.5 }}>
-            <Stepper activeStep={activeStepperIndex()} alternativeLabel>
+          <Box sx={{ mb: 3.5, mt: 2 }}>
+            <Stepper
+              activeStep={activeStepperIndex()}
+              alternativeLabel
+              sx={{ '& .MuiStepLabel-labelContainer': { mt: 2 } }}
+            >
               {getStepLabels().map((label, idx) => (
                 <Step key={label} completed={activeStepperIndex() > idx}>
                   <StepLabel
