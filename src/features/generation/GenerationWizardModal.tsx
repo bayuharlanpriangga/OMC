@@ -41,6 +41,7 @@ import { METAPHYSICAL_SYSTEMS, SYSTEMS_LIST } from '../../systems/registry';
 import { ASTROLOGY_CHART_TYPES } from '../../systems/astrology/registry';
 import { GenerationOrchestrator } from '../../services/generation-orchestrator';
 import { CreateBirthProfileWizard } from '../birth-data/CreateBirthProfileWizard';
+import { SwipeCarousel } from '../../components/common/SwipeCarousel';
 
 interface GenerationWizardModalProps {
   open: boolean;
@@ -278,7 +279,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
             <Stepper
               activeStep={activeStepperIndex()}
               alternativeLabel
-              sx={{ '& .MuiStepLabel-labelContainer': { mt: 2 } }}
+              sx={{ '& .MuiStepLabel-labelContainer': { mt: 0.25 } }}
             >
               {getStepLabels().map((label, idx) => (
                 <Step key={label} completed={activeStepperIndex() > idx}>
@@ -357,74 +358,81 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                   </Button>
                 </Box>
               ) : (
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
-                    gap: 2,
-                    mb: 2,
-                  }}
-                >
-                  {profiles.map((p) => {
-                    const isSelected = selectedProfileIds.includes(p.id);
-                    return (
-                      <Card
-                        key={p.id}
-                        onClick={() => toggleSelectProfile(p.id)}
-                        sx={{
-                          cursor: 'pointer',
-                          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.07)' : '#111624',
-                          border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1E283D',
-                          transition: 'all 0.2s ease',
-                          '&:hover': {
-                            borderColor: '#E0C99A',
-                            backgroundColor: 'rgba(224, 201, 154, 0.04)',
-                          },
-                        }}
-                      >
-                        <CardContent sx={{ p: 2.5 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Radio checked={isSelected} sx={{ p: 0, color: '#4B5563', '&.Mui-checked': { color: '#E0C99A' } }} />
-                              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7' }}>
-                                {p.name}
-                              </Typography>
+                <Box sx={{ mb: 2 }}>
+                  <SwipeCarousel
+                    itemsCount={profiles.length}
+                    itemsPerView={{ xs: 1, md: 2 }}
+                    renderItem={(index) => {
+                      const p = profiles[index];
+                      const isSelected = selectedProfileIds.includes(p.id);
+                      return (
+                        <Card
+                          key={p.id}
+                          onClick={() => toggleSelectProfile(p.id)}
+                          sx={{
+                            cursor: 'pointer',
+                            height: '100%',
+                            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
+                            border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
+                            transition: 'all 0.18s ease-in-out',
+                            '&:hover': {
+                              borderColor: isSelected ? '#E0C99A' : '#333333',
+                              backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
+                            },
+                          }}
+                        >
+                          <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Radio checked={isSelected} sx={{ p: 0, color: '#4B5565', '&.Mui-checked': { color: '#E0C99A' } }} />
+                                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#EDF1F7' }}>
+                                  {p.name}
+                                </Typography>
+                              </Box>
+                              <Chip
+                                label={p.relationship}
+                                size="small"
+                                sx={{
+                                  height: 20,
+                                  fontSize: '0.7rem',
+                                  backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.15)' : '#1A2338',
+                                  color: isSelected ? '#E0C99A' : '#94A3B8',
+                                }}
+                              />
                             </Box>
-                            <Chip
-                              label={p.relationship}
-                              size="small"
-                              sx={{
-                                height: 20,
-                                fontSize: '0.7rem',
-                                backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.15)' : '#182033',
-                                color: isSelected ? '#E0C99A' : '#94A3B8',
-                              }}
-                            />
-                          </Box>
 
-                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8, fontSize: '0.8125rem', color: '#94A3B8', pl: 3.5 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Calendar size={14} className="text-amber-400" />
-                              <span>{p.birthDate}</span>
-                              <span className="text-slate-600">·</span>
-                              <Clock size={14} className="text-amber-400" />
-                              {p.isTimeUnknown ? (
-                                <span style={{ color: '#F59E0B', fontWeight: 600 }}>Waktu Tidak Diketahui</span>
-                              ) : (
-                                <span>{p.birthTime || '12:00'}</span>
-                              )}
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8, pl: 4.5 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, color: '#94A3B8' }}>
+                                <Calendar size={14} />
+                                <Typography variant="body2" sx={{ color: '#D4DCED' }}>
+                                  {p.birthDate}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#64748B' }}>
+                                  ·
+                                </Typography>
+                                <Clock size={14} />
+                                {p.isTimeUnknown ? (
+                                  <Typography variant="body2" sx={{ color: '#FBBF24', fontStyle: 'italic' }}>
+                                    Waktu Tidak Diketahui
+                                  </Typography>
+                                ) : (
+                                  <Typography variant="body2" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
+                                    {p.birthTime || '12:00'}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, color: '#94A3B8' }}>
+                                <MapPin size={14} />
+                                <Typography variant="body2" sx={{ color: '#94A3B8' }}>
+                                  {p.birthPlace}, {p.country} ({p.timezone})
+                                </Typography>
+                              </Box>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <MapPin size={14} className="text-emerald-400" />
-                              <span>
-                                {p.birthPlace}, {p.country} ({p.timezone})
-                              </span>
-                            </Box>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                          </CardContent>
+                        </Card>
+                      );
+                    }}
+                  />
                 </Box>
               )}
             </Box>

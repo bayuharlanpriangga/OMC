@@ -13,7 +13,10 @@ import {
   CardContent,
   Checkbox,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
+import { SwipeCarousel } from '../../components/common/SwipeCarousel';
 import {
   X,
   Plus,
@@ -54,6 +57,8 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
 }) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState<BirthProfile | null>(null);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const handleOpenCreateWizard = () => {
     setEditingProfile(null);
@@ -80,6 +85,126 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
       // Allow single or multiple selection
       onSelectProfiles([...selectedProfileIds, id]);
     }
+  };
+
+  const renderProfileCard = (profile: BirthProfile) => {
+    const isSelected = selectedProfileIds.includes(profile.id);
+
+    return (
+      <Card
+        key={profile.id}
+        onClick={() => toggleProfileSelection(profile.id)}
+        sx={{
+          cursor: 'pointer',
+          height: '100%',
+          border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
+          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
+          transition: 'all 0.18s ease-in-out',
+          '&:hover': {
+            borderColor: isSelected ? '#E0C99A' : '#333333',
+            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
+          },
+        }}
+      >
+        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+              {/* Selection Checkbox */}
+              <Checkbox
+                checked={isSelected}
+                onChange={() => toggleProfileSelection(profile.id)}
+                onClick={(e) => e.stopPropagation()}
+                sx={{
+                  p: 0,
+                  mt: 0.2,
+                  color: '#4B5565',
+                  '&.Mui-checked': { color: '#E0C99A' },
+                }}
+              />
+
+              <Box>
+                {/* Profile Name & Relationship Tag */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.6 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#EDF1F7' }}>
+                    {profile.name}
+                  </Typography>
+                  <Chip
+                    label={profile.relationship}
+                    size="small"
+                    sx={{
+                      height: 20,
+                      fontSize: '0.7rem',
+                      backgroundColor: profile.relationship === 'Myself' ? 'rgba(224, 201, 154, 0.15)' : '#1A2338',
+                      color: profile.relationship === 'Myself' ? '#E0C99A' : '#94A3B8',
+                      border: '1px solid',
+                      borderColor: profile.relationship === 'Myself' ? 'rgba(224, 201, 154, 0.3)' : '#283755',
+                    }}
+                  />
+                </Box>
+
+                {/* Date and Time (CRITICAL: displays Unknown explicitly, NEVER 00:00) */}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2, color: '#94A3B8' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                    <Calendar size={14} />
+                    <Typography variant="body2" sx={{ color: '#D4DCED' }}>
+                      {formatDateDisplay(profile.birthDate)}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748B' }}>
+                      ·
+                    </Typography>
+                    <Clock size={14} />
+                    {profile.isTimeUnknown || !profile.birthTime ? (
+                      <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: '#FBBF24', fontStyle: 'italic' }}>
+                          Unknown
+                        </Typography>
+                        <Tooltip title="Unknown birth time (null). Not assumed as midnight.">
+                          <HelpCircle size={12} className="text-amber-400" />
+                        </Tooltip>
+                      </Box>
+                    ) : (
+                      <Typography variant="body2" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
+                        {profile.birthTime}
+                      </Typography>
+                    )}
+                  </Box>
+
+                  {/* Place and Country */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                    <MapPin size={14} />
+                    <Typography variant="body2" sx={{ color: '#94A3B8' }}>
+                      {profile.birthPlace}, {profile.country}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+
+            {/* Card Actions: Edit, Delete */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Tooltip title="Edit Profile">
+                <IconButton
+                  size="small"
+                  onClick={(e) => handleOpenEditWizard(profile, e)}
+                  sx={{ color: '#94A3B8', '&:hover': { color: '#EDF1F7', backgroundColor: '#1A2338' } }}
+                >
+                  <Edit2 size={16} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Profile">
+                <IconButton
+                  size="small"
+                  onClick={(e) => handleDelete(profile.id, e)}
+                  sx={{ color: '#94A3B8', '&:hover': { color: '#F87171', backgroundColor: 'rgba(248, 113, 113, 0.1)' } }}
+                >
+                  <Trash2 size={16} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    );
   };
 
   const formatDateDisplay = (isoDate: string) => {
@@ -205,128 +330,18 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
                 Create New Profile
               </Button>
             </Box>
-          ) : (
-            /* PROFILES LIST */
+          ) : isDesktop ? (
+            /* PROFILES LIST — desktop: plain vertical list, scrolls with the dialog */
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              {profiles.map((profile) => {
-                const isSelected = selectedProfileIds.includes(profile.id);
-
-                return (
-                  <Card
-                    key={profile.id}
-                    onClick={() => toggleProfileSelection(profile.id)}
-                    sx={{
-                      cursor: 'pointer',
-                      border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
-                      backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
-                      transition: 'all 0.18s ease-in-out',
-                      '&:hover': {
-                        borderColor: isSelected ? '#E0C99A' : '#333333',
-                        backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                          {/* Selection Checkbox */}
-                          <Checkbox
-                            checked={isSelected}
-                            onChange={() => toggleProfileSelection(profile.id)}
-                            onClick={(e) => e.stopPropagation()}
-                            sx={{
-                              p: 0,
-                              mt: 0.2,
-                              color: '#4B5565',
-                              '&.Mui-checked': { color: '#E0C99A' },
-                            }}
-                          />
-
-                          <Box>
-                            {/* Profile Name & Relationship Tag */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.6 }}>
-                              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#EDF1F7' }}>
-                                {profile.name}
-                              </Typography>
-                              <Chip
-                                label={profile.relationship}
-                                size="small"
-                                sx={{
-                                  height: 20,
-                                  fontSize: '0.7rem',
-                                  backgroundColor: profile.relationship === 'Myself' ? 'rgba(224, 201, 154, 0.15)' : '#1A2338',
-                                  color: profile.relationship === 'Myself' ? '#E0C99A' : '#94A3B8',
-                                  border: '1px solid',
-                                  borderColor: profile.relationship === 'Myself' ? 'rgba(224, 201, 154, 0.3)' : '#283755',
-                                }}
-                              />
-                            </Box>
-
-                            {/* Date and Time (CRITICAL: displays Unknown explicitly, NEVER 00:00) */}
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2, color: '#94A3B8' }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
-                                <Calendar size={14} />
-                                <Typography variant="body2" sx={{ color: '#D4DCED' }}>
-                                  {formatDateDisplay(profile.birthDate)}
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: '#64748B' }}>
-                                  ·
-                                </Typography>
-                                <Clock size={14} />
-                                {profile.isTimeUnknown || !profile.birthTime ? (
-                                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-                                    <Typography variant="body2" sx={{ color: '#FBBF24', fontStyle: 'italic' }}>
-                                      Unknown
-                                    </Typography>
-                                    <Tooltip title="Unknown birth time (null). Not assumed as midnight.">
-                                      <HelpCircle size={12} className="text-amber-400" />
-                                    </Tooltip>
-                                  </Box>
-                                ) : (
-                                  <Typography variant="body2" sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
-                                    {profile.birthTime}
-                                  </Typography>
-                                )}
-                              </Box>
-
-                              {/* Place and Country */}
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
-                                <MapPin size={14} />
-                                <Typography variant="body2" sx={{ color: '#94A3B8' }}>
-                                  {profile.birthPlace}, {profile.country}
-                                </Typography>
-                              </Box>
-                            </Box>
-                          </Box>
-                        </Box>
-
-                        {/* Card Actions: Edit, Delete */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <Tooltip title="Edit Profile">
-                            <IconButton
-                              size="small"
-                              onClick={(e) => handleOpenEditWizard(profile, e)}
-                              sx={{ color: '#94A3B8', '&:hover': { color: '#EDF1F7', backgroundColor: '#1A2338' } }}
-                            >
-                              <Edit2 size={16} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete Profile">
-                            <IconButton
-                              size="small"
-                              onClick={(e) => handleDelete(profile.id, e)}
-                              sx={{ color: '#94A3B8', '&:hover': { color: '#F87171', backgroundColor: 'rgba(248, 113, 113, 0.1)' } }}
-                            >
-                              <Trash2 size={16} />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {profiles.map((profile) => renderProfileCard(profile))}
             </Box>
+          ) : (
+            /* PROFILES LIST — mobile: one card at a time, swipe + dot pagination */
+            <SwipeCarousel
+              itemsCount={profiles.length}
+              itemsPerView={{ xs: 1, md: 1 }}
+              renderItem={(index) => renderProfileCard(profiles[index])}
+            />
           )}
         </DialogContent>
 

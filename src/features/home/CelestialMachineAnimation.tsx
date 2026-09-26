@@ -80,9 +80,10 @@ export const CelestialMachineAnimation: React.FC = () => {
     <Box
       sx={{
         position: 'absolute',
-        right: { xs: '-32%', md: '-8%' },
+        left: { xs: '50%', md: 'auto' },
+        right: { xs: 'auto', md: '-8%' },
         top: '50%',
-        transform: 'translateY(-50%)',
+        transform: { xs: 'translate(-50%, -50%)', md: 'translateY(-50%)' },
         width: { xs: 520, md: 760 },
         height: { xs: 520, md: 760 },
         pointerEvents: 'none',
