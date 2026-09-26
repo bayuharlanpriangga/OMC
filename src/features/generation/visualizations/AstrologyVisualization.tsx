@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Tabs,
   Tab,
   Table,
@@ -44,53 +42,52 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
-          gap: 2,
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(4, 1fr)' },
+          '& > div': {
+            py: { xs: 1.5, sm: 0 },
+            px: { xs: 0, sm: 2.5 },
+            borderBottom: { xs: '1px solid #1E283D', sm: 'none' },
+            borderRight: { xs: 'none', sm: '1px solid #1E283D' },
+          },
+          '& > div:first-of-type': { pl: 0 },
+          '& > div:last-of-type': { borderBottom: 'none', borderRight: 'none', pr: 0 },
         }}
       >
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Sun Sign
-            </Typography>
-            <Typography variant="h6" sx={{ color: '#E0C99A', mt: 0.5, fontWeight: 700 }}>
-              {planets.find((p) => p.name === 'Sun')?.sign} {planets.find((p) => p.name === 'Sun')?.degree}°
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Sun Sign
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#E0C99A', mt: 0.5, fontWeight: 700 }}>
+            {planets.find((p) => p.name === 'Sun')?.sign} {planets.find((p) => p.name === 'Sun')?.degree}°
+          </Typography>
+        </Box>
 
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Moon Sign
-            </Typography>
-            <Typography variant="h6" sx={{ color: '#9BB8DE', mt: 0.5, fontWeight: 700 }}>
-              {planets.find((p) => p.name === 'Moon')?.sign} {planets.find((p) => p.name === 'Moon')?.degree}°
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Moon Sign
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#9BB8DE', mt: 0.5, fontWeight: 700 }}>
+            {planets.find((p) => p.name === 'Moon')?.sign} {planets.find((p) => p.name === 'Moon')?.degree}°
+          </Typography>
+        </Box>
 
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Ascendant (Rising)
-            </Typography>
-            <Typography variant="h6" sx={{ color: data.ascendant ? '#34D399' : '#FBBF24', mt: 0.5, fontWeight: 700 }}>
-              {data.ascendant ? `${data.ascendant.sign} ${data.ascendant.degree}°` : 'Time Unknown'}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Ascendant (Rising)
+          </Typography>
+          <Typography variant="h6" sx={{ color: data.ascendant ? '#34D399' : '#FBBF24', mt: 0.5, fontWeight: 700 }}>
+            {data.ascendant ? `${data.ascendant.sign} ${data.ascendant.degree}°` : 'Time Unknown'}
+          </Typography>
+        </Box>
 
-        <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-          <CardContent sx={{ p: 2 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              House System
-            </Typography>
-            <Typography variant="h6" sx={{ color: '#EDF1F7', mt: 0.5, fontWeight: 600, textTransform: 'capitalize' }}>
-              {data.houseSystem}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            House System
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#EDF1F7', mt: 0.5, fontWeight: 600, textTransform: 'capitalize' }}>
+            {data.houseSystem}
+          </Typography>
+        </Box>
       </Box>
 
       {/* Main Wheel & Elements Container */}
@@ -100,10 +97,14 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
           gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
           gap: 3,
           alignItems: 'start',
+          '& > *:first-of-type': {
+            borderRight: { xs: 'none', lg: '1px solid #1E283D' },
+            pr: { xs: 0, lg: 3 },
+          },
         }}
       >
         {/* Interactive Astrological Chart Wheel (Pure SVG, NO Gradients) */}
-        <Card sx={{ backgroundColor: '#0D111D', border: '1px solid #1E283D', p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography variant="subtitle2" sx={{ alignSelf: 'flex-start', mb: 1, color: '#E0C99A', fontFamily: '"Cinzel", serif' }}>
             Celestial Wheel Projection
           </Typography>
@@ -263,80 +264,75 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
               </Typography>
             )}
           </Box>
-        </Card>
+        </Box>
 
         {/* Elemental & Modality Breakdown */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-          <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D' }}>
-            <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="subtitle2" sx={{ mb: 2, color: '#E0C99A', fontFamily: '"Cinzel", serif' }}>
-                Elemental Composition
-              </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5, textAlign: 'center' }}>
-                {Object.entries(elementBalance).map(([element, count]) => {
-                  const colors: Record<string, { bg: string; text: string; border: string }> = {
-                    Fire: { bg: 'rgba(239, 68, 68, 0.12)', text: '#FCA5A5', border: 'rgba(239, 68, 68, 0.3)' },
-                    Earth: { bg: 'rgba(34, 197, 94, 0.12)', text: '#86EFAC', border: 'rgba(34, 197, 94, 0.3)' },
-                    Air: { bg: 'rgba(59, 130, 246, 0.12)', text: '#93C5FD', border: 'rgba(59, 130, 246, 0.3)' },
-                    Water: { bg: 'rgba(168, 85, 247, 0.12)', text: '#D8B4FE', border: 'rgba(168, 85, 247, 0.3)' },
-                  };
-                  const c = colors[element] || colors.Fire;
-                  return (
-                    <Box
-                      key={element}
-                      sx={{
-                        p: 1.5,
-                        borderRadius: 2,
-                        backgroundColor: c.bg,
-                        border: `1px solid ${c.border}`,
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: c.text, fontWeight: 600, display: 'block' }}>
-                        {element}
-                      </Typography>
-                      <Typography variant="h5" sx={{ color: '#EDF1F7', mt: 0.5, fontWeight: 700 }}>
-                        {count}
-                      </Typography>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ backgroundColor: '#0E1322', border: '1px solid #1E283D' }}>
-            <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="subtitle2" sx={{ mb: 2, color: '#9BB8DE', fontFamily: '"Cinzel", serif' }}>
-                Modality Distribution
-              </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.5, textAlign: 'center' }}>
-                {Object.entries(modalityBalance).map(([mod, count]) => (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
+            <Typography variant="subtitle2" sx={{ mb: 2, color: '#E0C99A', fontFamily: '"Cinzel", serif' }}>
+              Elemental Composition
+            </Typography>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5, textAlign: 'center' }}>
+              {Object.entries(elementBalance).map(([element, count]) => {
+                const colors: Record<string, { bg: string; text: string; border: string }> = {
+                  Fire: { bg: 'rgba(239, 68, 68, 0.12)', text: '#FCA5A5', border: 'rgba(239, 68, 68, 0.3)' },
+                  Earth: { bg: 'rgba(34, 197, 94, 0.12)', text: '#86EFAC', border: 'rgba(34, 197, 94, 0.3)' },
+                  Air: { bg: 'rgba(59, 130, 246, 0.12)', text: '#93C5FD', border: 'rgba(59, 130, 246, 0.3)' },
+                  Water: { bg: 'rgba(168, 85, 247, 0.12)', text: '#D8B4FE', border: 'rgba(168, 85, 247, 0.3)' },
+                };
+                const c = colors[element] || colors.Fire;
+                return (
                   <Box
-                    key={mod}
+                    key={element}
                     sx={{
                       p: 1.5,
                       borderRadius: 2,
-                      backgroundColor: '#131929',
-                      border: '1px solid #24304A',
+                      backgroundColor: c.bg,
+                      border: `1px solid ${c.border}`,
                     }}
                   >
-                    <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block' }}>
-                      {mod}
+                    <Typography variant="caption" sx={{ color: c.text, fontWeight: 600, display: 'block' }}>
+                      {element}
                     </Typography>
                     <Typography variant="h5" sx={{ color: '#EDF1F7', mt: 0.5, fontWeight: 700 }}>
                       {count}
                     </Typography>
                   </Box>
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
+                );
+              })}
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 2, color: '#9BB8DE', fontFamily: '"Cinzel", serif' }}>
+              Modality Distribution
+            </Typography>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', textAlign: 'center' }}>
+              {Object.entries(modalityBalance).map(([mod, count], i, arr) => (
+                <Box
+                  key={mod}
+                  sx={{
+                    py: 1,
+                    px: 1.5,
+                    borderRight: i < arr.length - 1 ? '1px solid #1E283D' : 'none',
+                  }}
+                >
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block' }}>
+                    {mod}
+                  </Typography>
+                  <Typography variant="h5" sx={{ color: '#EDF1F7', mt: 0.5, fontWeight: 700 }}>
+                    {count}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
         </Box>
       </Box>
 
       {/* Tabs for Planetary Positions, Houses, and Aspects Tables */}
-      <Card sx={{ backgroundColor: '#0D111D', border: '1px solid #1E283D' }}>
-        <Box sx={{ borderBottom: '1px solid #1E283D', px: 2 }}>
+      <Box sx={{ borderTop: '1px solid #1E283D', pt: 3 }}>
+        <Box sx={{ borderBottom: '1px solid #1E283D' }}>
           <Tabs value={tabIndex} onChange={(_, val) => setTabIndex(val)}>
             <Tab label="Planetary Bodies" />
             <Tab label="House Cusps (1-12)" disabled={!data.hasExactTime} />
@@ -483,46 +479,50 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
             </Table>
           </TableContainer>
         )}
-      </Card>
+      </Box>
 
       {/* Structured Archetypal Interpretations */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #1E283D' }}>
+        <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', pt: 3 }}>
           Archetypal Interpretations
         </Typography>
         {result.interpretations.map((sec, idx) => (
-          <Card key={idx} sx={{ backgroundColor: '#0E1322', border: '1px solid #1F283D' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
-                  {sec.category}
-                </Typography>
-                {sec.keywords && (
-                  <Box sx={{ display: 'flex', gap: 0.8 }}>
-                    {sec.keywords.map((kw) => (
-                      <Chip key={kw} label={kw} size="small" sx={{ height: 20, fontSize: '0.68rem', backgroundColor: '#1A2338', color: '#94A3B8' }} />
-                    ))}
-                  </Box>
-                )}
-              </Box>
-              <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
-                {sec.title}
+          <Box
+            key={idx}
+            sx={{
+              py: 3,
+              borderBottom: idx === result.interpretations.length - 1 ? 'none' : '1px solid #1E283D',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
+                {sec.category}
               </Typography>
-              <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
-                {sec.content}
-              </Typography>
-              {sec.highlights && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 1.5, pt: 1.5, borderTop: '1px solid #1B2438' }}>
-                  {sec.highlights.map((hl) => (
-                    <Box key={hl.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
-                      <Typography variant="caption" sx={{ color: '#94A3B8' }}>{hl.label}:</Typography>
-                      <Typography variant="caption" sx={{ color: '#E0C99A', fontWeight: 600 }}>{hl.value}</Typography>
-                    </Box>
+              {sec.keywords && (
+                <Box sx={{ display: 'flex', gap: 0.8 }}>
+                  {sec.keywords.map((kw) => (
+                    <Chip key={kw} label={kw} size="small" sx={{ height: 20, fontSize: '0.68rem', backgroundColor: '#1A2338', color: '#94A3B8' }} />
                   ))}
                 </Box>
               )}
-            </CardContent>
-          </Card>
+            </Box>
+            <Typography variant="h6" sx={{ color: '#EDF1F7', mb: 1, fontFamily: '"Cinzel", serif' }}>
+              {sec.title}
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#D4DCED', mb: 1.5 }}>
+              {sec.content}
+            </Typography>
+            {sec.highlights && (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 1.5, pt: 1.5, borderTop: '1px solid #1B2438' }}>
+                {sec.highlights.map((hl) => (
+                  <Box key={hl.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                    <Typography variant="caption" sx={{ color: '#94A3B8' }}>{hl.label}:</Typography>
+                    <Typography variant="caption" sx={{ color: '#E0C99A', fontWeight: 600 }}>{hl.value}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
         ))}
       </Box>
     </Box>
