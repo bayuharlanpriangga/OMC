@@ -218,6 +218,79 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
     return currentStep;
   };
 
+  const renderSystemCard = (sys: (typeof SYSTEMS_LIST)[number]) => {
+    const isSelected = selectedSystemId === sys.id;
+    return (
+      <Card
+        key={sys.id}
+        onClick={() => setSelectedSystemId(sys.id)}
+        sx={{
+          cursor: 'pointer',
+          height: '100%',
+          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
+          border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
+          transition: 'all 0.18s ease-in-out',
+          '&:hover': {
+            borderColor: isSelected ? '#E0C99A' : '#333333',
+            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
+          },
+        }}
+      >
+        <CardContent sx={{ p: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            sx={{
+              flexShrink: 0,
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.2)' : '#182033',
+              color: isSelected ? '#E0C99A' : '#94A3B8',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Compass size={18} />
+          </Box>
+
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7', flexGrow: 1 }}>
+            {sys.name}
+          </Typography>
+
+          {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderChartTypeCard = (ct: (typeof ASTROLOGY_CHART_TYPES)[keyof typeof ASTROLOGY_CHART_TYPES]) => {
+    const isSelected = selectedAstrologyChartType === ct.id;
+    return (
+      <Card
+        key={ct.id}
+        onClick={() => setSelectedAstrologyChartType(ct.id)}
+        sx={{
+          cursor: 'pointer',
+          height: '100%',
+          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
+          border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
+          transition: 'all 0.18s ease-in-out',
+          '&:hover': {
+            borderColor: isSelected ? '#E0C99A' : '#333333',
+            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
+          },
+        }}
+      >
+        <CardContent sx={{ p: 2.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7' }}>
+            {ct.name}
+          </Typography>
+          {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <>
       <Dialog
@@ -454,57 +527,23 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                 </Typography>
               </Box>
 
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                  gap: 2,
-                }}
-              >
-                {SYSTEMS_LIST.map((sys) => {
-                  const isSelected = selectedSystemId === sys.id;
-                  return (
-                    <Card
-                      key={sys.id}
-                      onClick={() => setSelectedSystemId(sys.id)}
-                      sx={{
-                        cursor: 'pointer',
-                        backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
-                        border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
-                        transition: 'all 0.18s ease-in-out',
-                        '&:hover': {
-                          borderColor: isSelected ? '#E0C99A' : '#333333',
-                          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
-                        },
-                      }}
-                    >
-                      <CardContent sx={{ p: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Box
-                          sx={{
-                            flexShrink: 0,
-                            width: 36,
-                            height: 36,
-                            borderRadius: '50%',
-                            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.2)' : '#182033',
-                            color: isSelected ? '#E0C99A' : '#94A3B8',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <Compass size={18} />
-                        </Box>
-
-                        <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7', flexGrow: 1 }}>
-                          {sys.name}
-                        </Typography>
-
-                        {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </Box>
+              {isMobile ? (
+                <SwipeCarousel
+                  itemsCount={SYSTEMS_LIST.length}
+                  itemsPerView={{ xs: 1, md: 1 }}
+                  renderItem={(index) => renderSystemCard(SYSTEMS_LIST[index])}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                    gap: 2,
+                  }}
+                >
+                  {SYSTEMS_LIST.map((sys) => renderSystemCard(sys))}
+                </Box>
+              )}
             </Box>
           )}
 
@@ -519,40 +558,23 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                 </Typography>
               </Box>
 
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
-                  gap: 2,
-                }}
-              >
-                {Object.values(ASTROLOGY_CHART_TYPES).map((ct) => {
-                  const isSelected = selectedAstrologyChartType === ct.id;
-                  return (
-                    <Card
-                      key={ct.id}
-                      onClick={() => setSelectedAstrologyChartType(ct.id)}
-                      sx={{
-                        cursor: 'pointer',
-                        backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#111624',
-                        border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1E283D',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          borderColor: '#E0C99A',
-                          backgroundColor: 'rgba(224, 201, 154, 0.05)',
-                        },
-                      }}
-                    >
-                      <CardContent sx={{ p: 2.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7' }}>
-                          {ct.name}
-                        </Typography>
-                        {isSelected && <CheckCircle2 size={18} className="text-amber-300" />}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </Box>
+              {isMobile ? (
+                <SwipeCarousel
+                  itemsCount={Object.values(ASTROLOGY_CHART_TYPES).length}
+                  itemsPerView={{ xs: 1, md: 1 }}
+                  renderItem={(index) => renderChartTypeCard(Object.values(ASTROLOGY_CHART_TYPES)[index])}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { md: 'repeat(2, 1fr)' },
+                    gap: 2,
+                  }}
+                >
+                  {Object.values(ASTROLOGY_CHART_TYPES).map((ct) => renderChartTypeCard(ct))}
+                </Box>
+              )}
             </Box>
           )}
 
@@ -630,8 +652,8 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                   sx={{
                     p: 2.5,
                     borderRadius: 2.5,
-                    backgroundColor: '#0F1320',
-                    border: '1px solid #1E283D',
+                    backgroundColor: 'rgba(224, 201, 154, 0.08)',
+                    border: '1px solid #E0C99A',
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'center',
@@ -640,7 +662,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                   }}
                 >
                   <Box>
-                    <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <Typography variant="caption" sx={{ color: '#E0C99A', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Profil Terpilih
                     </Typography>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EDF1F7' }}>
@@ -656,7 +678,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                     size="small"
                     variant="outlined"
                     onClick={handleEditPrimaryProfile}
-                    sx={{ borderColor: '#2E3952', color: '#94A3B8' }}
+                    sx={{ borderColor: '#E0C99A', color: '#E0C99A' }}
                   >
                     Ubah Data Profil
                   </Button>
@@ -666,10 +688,6 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
               {/* System-Specific Form Fields */}
               <Box
                 sx={{
-                  p: 3,
-                  borderRadius: 2.5,
-                  backgroundColor: '#0F1420',
-                  border: '1px solid #1F283D',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 2.5,
@@ -826,7 +844,7 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
                 startIcon={<Sparkles size={16} />}
                 sx={{ px: 3, fontWeight: 700 }}
               >
-                Generate Chart
+                {isMobile ? 'Generate' : 'Generate Chart'}
               </Button>
             )}
           </Box>
