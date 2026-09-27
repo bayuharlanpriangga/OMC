@@ -76,7 +76,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
         position: 'relative',
         backgroundColor: '#000000',
         backgroundImage: {
-          xs: 'url(/backgrounds/library-bg-mobile.svg)',
+          xs: 'url(/backgrounds/library-bg-mobile.png)',
           md: 'url(/backgrounds/library-bg.png)',
         },
         backgroundSize: 'cover',

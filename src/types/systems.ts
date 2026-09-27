@@ -23,6 +23,15 @@ export interface SystemRequirements {
   maxProfiles: number;
   timeRequirementMessage?: string;
   notes?: string;
+  /**
+   * When true (and requiresExactTime is false), an unknown birth time does NOT
+   * block generation, but a warning is shown explaining what part of the
+   * reading will be approximated/omitted (e.g. BaZi's Hour Pillar, Astrology's
+   * Ascendant/Houses). Mirrors the astrology natal-chart warning pattern.
+   */
+  warnsIfTimeUnknown?: boolean;
+  timeWarningTitle?: string;
+  timeWarningMessage?: string;
 }
 
 export interface SystemDescriptor {
