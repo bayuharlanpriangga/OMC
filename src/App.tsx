@@ -32,7 +32,7 @@ import { AuthModal } from './features/auth/AuthModal';
 export default function App() {
   // Navigation State
   const [currentTab, setCurrentTab] = useState<'home' | 'library' | 'result'>('home');
-  const [libraryInitialCategory, setLibraryInitialCategory] = useState<SystemId | 'all'>('all');
+  const [libraryInitialCategory, setLibraryInitialCategory] = useState<SystemId>('astrology');
 
   // Supabase Auth State
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -203,7 +203,7 @@ export default function App() {
   };
 
   const handleNavigateToLibrary = (category?: SystemId) => {
-    setLibraryInitialCategory(category || 'all');
+    setLibraryInitialCategory(category || 'astrology');
     setCurrentTab('library');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

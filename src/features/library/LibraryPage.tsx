@@ -18,15 +18,15 @@ import { ArticleCard } from './components/ArticleCard';
 import { ArticleReader } from './components/ArticleReader';
 
 interface LibraryPageProps {
-  initialCategory?: SystemId | 'all';
+  initialCategory?: SystemId;
   onStartCalculationForSystem?: (systemId: SystemId) => void;
 }
 
 export const LibraryPage: React.FC<LibraryPageProps> = ({
-  initialCategory = 'all',
+  initialCategory = 'astrology',
   onStartCalculationForSystem,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'astrology');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [readingArticle, setReadingArticle] = useState<LibraryArticle | null>(null);
@@ -75,16 +75,35 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
         minHeight: '100vh',
         position: 'relative',
         backgroundColor: '#000000',
-        backgroundImage: {
-          xs: 'url(/backgrounds/library-bg-mobile.png)',
-          md: 'url(/backgrounds/library-bg.png)',
-        },
-        backgroundSize: 'cover',
-        backgroundPosition: { xs: 'top center', md: 'center top' },
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: { xs: 'scroll', md: 'fixed' },
+        // Isolate the background image on its own layer, sized to the
+        // viewport instead of this Box's content height. If the image were
+        // set directly on this Box (whose height grows/shrinks with the
+        // number of articles as tabs/filters change), `background-size: cover`
+        // would recompute against a different height on every render,
+        // making the image appear to jump/zoom between tab switches
+        // (most visible on mobile, where `background-attachment: fixed`
+        // is unreliable, so it can't be masked by pinning to the viewport
+        // the way the desktop background is).
+        overflow: 'hidden',
       }}
     >
+      <Box
+        aria-hidden
+        sx={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: 'none',
+          backgroundColor: '#000000',
+          backgroundImage: {
+            xs: 'url(/backgrounds/library-bg-mobile.png)',
+            md: 'url(/backgrounds/library-bg.png)',
+          },
+          backgroundSize: 'cover',
+          backgroundPosition: { xs: 'top center', md: 'center top' },
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
       <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <Box sx={{ mb: 5 }}>
@@ -227,7 +246,7 @@ export const LibraryPage: React.FC<LibraryPageProps> = ({
             <Button
               size="small"
               onClick={() => {
-                setSelectedCategory('all');
+                setSelectedCategory('astrology');
                 setSearchQuery('');
                 setSelectedLevel('All');
               }}
