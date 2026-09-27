@@ -56,12 +56,8 @@ async function geocodeCities(query: string, signal: AbortSignal): Promise<BirthL
     `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json` +
     `?access_token=${MAPBOX_TOKEN}&autocomplete=true&limit=8&types=place,locality,region`;
 
-  console.log('[citysearch] GET', url);
   const response = await fetch(url, { signal });
-  console.log('[citysearch] response status:', response.status);
   if (!response.ok) {
-    const bodyText = await response.text().catch(() => '(could not read body)');
-    console.error('[citysearch] error body:', bodyText);
     throw new Error(`Mapbox geocoding failed: ${response.status}`);
   }
   const data = await response.json();
@@ -175,16 +171,13 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     const query = cityInput.trim();
-    console.log('[citysearch] effect fired. cityInput=', JSON.stringify(cityInput), 'selectedLocation=', selectedLocation);
 
     // Don't re-search right after picking an option (input mirrors the pick)
     if (selectedLocation && query === `${selectedLocation.placeName}, ${selectedLocation.country}`) {
-      console.log('[citysearch] skip: input matches the currently selected location');
       return;
     }
 
     if (query.length < 2) {
-      console.log('[citysearch] skip: query shorter than 2 chars');
       setCityOptions([]);
       setIsSearchingCity(false);
       setCitySearchError(null);
@@ -192,29 +185,23 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
     }
 
     if (!MAPBOX_TOKEN) {
-      console.error('[citysearch] MAPBOX_TOKEN is falsy at runtime! value =', JSON.stringify(MAPBOX_TOKEN));
       setCitySearchError('Mapbox token is not configured (VITE_MAPBOX_TOKEN).');
       return;
     }
-
-    console.log('[citysearch] scheduling geocode fetch for query =', query);
 
     debounceRef.current = setTimeout(() => {
       if (abortRef.current) abortRef.current.abort();
       const controller = new AbortController();
       abortRef.current = controller;
 
-      console.log('[citysearch] firing fetch now for query =', query);
       setIsSearchingCity(true);
       setCitySearchError(null);
 
       geocodeCities(query, controller.signal)
         .then((results) => {
-          console.log('[citysearch] got', results.length, 'result(s):', results);
           setCityOptions(results);
         })
         .catch((err) => {
-          console.error('[citysearch] fetch failed:', err);
           if (err?.name === 'AbortError') return;
           setCitySearchError('Could not reach city search. You can enter a custom location instead.');
         })
