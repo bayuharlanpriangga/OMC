@@ -164,10 +164,12 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Kin
             </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 800, color: colorMap[destinyKin.seal.color].text, lineHeight: 1, mb: 1.5 }}>
+            <Typography variant="h3" sx={{ fontWeight: 800, color: colorMap[destinyKin.seal.color].text, lineHeight: 1 }}>
               {destinyKin.kinNumber}
             </Typography>
+          </Box>
 
+          <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Wavespell Architecture
             </Typography>
