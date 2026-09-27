@@ -26,7 +26,7 @@ import { GenerationLoadingScreen } from './features/generation/GenerationLoading
 // Modals
 import { BirthProfileManagerModal } from './features/birth-data/BirthProfileManagerModal';
 import { GenerationWizardModal } from './features/generation/GenerationWizardModal';
-import { SettingsModal } from './features/settings/SettingsModal';
+import { AccountModal } from './features/account/AccountModal';
 import { AuthModal } from './features/auth/AuthModal';
 
 export default function App() {
@@ -41,7 +41,7 @@ export default function App() {
   // Modals Visibility
   const [birthDataModalOpen, setBirthDataModalOpen] = useState(false);
   const [generationWizardOpen, setGenerationWizardOpen] = useState(false);
-  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
 
   // Generation Wizard State & Prefill
   const [initialGenerationSystemId, setInitialGenerationSystemId] = useState<SystemId | undefined>(undefined);
@@ -232,7 +232,7 @@ export default function App() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           onOpenBirthData={() => setBirthDataModalOpen(true)}
-          onOpenSettings={() => setSettingsModalOpen(true)}
+          onOpenAccount={() => setAccountModalOpen(true)}
           onStartCalculation={() => handleStartCalculation()}
           onOpenAuth={() => setAuthModalOpen(true)}
           onLogout={handleLogout}
@@ -281,6 +281,7 @@ export default function App() {
           onSelectProfiles={setSelectedProfileIds}
           onSaveProfile={handleSaveProfile}
           onDeleteProfile={handleDeleteProfile}
+          onResetProfiles={handleResetProfiles}
         />
 
         {/* Core Multi-System Generation Wizard Modal */}
@@ -300,11 +301,11 @@ export default function App() {
           onExecuteGeneration={handleExecuteGeneration}
         />
 
-        {/* Settings Modal */}
-        <SettingsModal
-          open={settingsModalOpen}
-          onClose={() => setSettingsModalOpen(false)}
-          onResetProfiles={handleResetProfiles}
+        {/* Account Management Modal */}
+        <AccountModal
+          open={accountModalOpen}
+          onClose={() => setAccountModalOpen(false)}
+          user={user}
         />
 
         {/* Supabase Authentication Modal */}

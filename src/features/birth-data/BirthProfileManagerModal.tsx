@@ -11,7 +11,6 @@ import {
   Chip,
   Card,
   CardContent,
-  Checkbox,
   Tooltip,
   useMediaQuery,
   useTheme,
@@ -28,6 +27,7 @@ import {
   HelpCircle,
   CheckCircle2,
   Users,
+  RotateCcw,
 } from 'lucide-react';
 import { BirthProfile, CreateBirthProfileDto } from '../../types/birth-data';
 import { CreateBirthProfileWizard } from './CreateBirthProfileWizard';
@@ -40,6 +40,7 @@ interface BirthProfileManagerModalProps {
   onSelectProfiles: (ids: string[]) => void;
   onSaveProfile: (dto: CreateBirthProfileDto, editingId?: string) => void;
   onDeleteProfile: (id: string) => void;
+  onResetProfiles: () => void;
   isSelectionMode?: boolean; // When triggered as part of the chart generation flow
   onConfirmSelection?: () => void;
 }
@@ -52,6 +53,7 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
   onSelectProfiles,
   onSaveProfile,
   onDeleteProfile,
+  onResetProfiles,
   isSelectionMode = false,
   onConfirmSelection,
 }) => {
@@ -78,50 +80,30 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
     }
   };
 
-  const toggleProfileSelection = (id: string) => {
-    if (selectedProfileIds.includes(id)) {
-      onSelectProfiles(selectedProfileIds.filter((pId) => pId !== id));
-    } else {
-      // Allow single or multiple selection
-      onSelectProfiles([...selectedProfileIds, id]);
+  const handleResetAll = () => {
+    if (window.confirm('Reset semua data profil lahir lokal ke keadaan awal? Profil yang sudah dikustomisasi akan hilang.')) {
+      onResetProfiles();
     }
   };
 
   const renderProfileCard = (profile: BirthProfile) => {
-    const isSelected = selectedProfileIds.includes(profile.id);
-
     return (
       <Card
         key={profile.id}
-        onClick={() => toggleProfileSelection(profile.id)}
         sx={{
-          cursor: 'pointer',
           height: '100%',
-          border: isSelected ? '1.5px solid #E0C99A' : '1px solid #1C1C1C',
-          backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.05)' : '#080808',
+          border: '1px solid #1C1C1C',
+          backgroundColor: '#080808',
           transition: 'all 0.18s ease-in-out',
           '&:hover': {
-            borderColor: isSelected ? '#E0C99A' : '#333333',
-            backgroundColor: isSelected ? 'rgba(224, 201, 154, 0.08)' : '#0F0F0F',
+            borderColor: '#333333',
+            backgroundColor: '#0F0F0F',
           },
         }}
       >
         <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-              {/* Selection Checkbox */}
-              <Checkbox
-                checked={isSelected}
-                onChange={() => toggleProfileSelection(profile.id)}
-                onClick={(e) => e.stopPropagation()}
-                sx={{
-                  p: 0,
-                  mt: 0.2,
-                  color: '#4B5565',
-                  '&.Mui-checked': { color: '#E0C99A' },
-                }}
-              />
-
               <Box>
                 {/* Profile Name & Relationship Tag */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.6 }}>
@@ -328,11 +310,20 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
         </DialogContent>
 
         <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid #1A1A1A', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-              {selectedProfileIds.length} of {profiles.length} profile(s) selected
-            </Typography>
-          </Box>
+          {profiles.length > 0 ? (
+            <Button
+              variant="text"
+              color="error"
+              size="small"
+              onClick={handleResetAll}
+              startIcon={<RotateCcw size={14} />}
+              sx={{ color: '#FCA5A5', fontSize: '0.75rem' }}
+            >
+              Hapus Semua Data Lokal
+            </Button>
+          ) : (
+            <Box />
+          )}
 
           <Box sx={{ display: 'flex', gap: 1.5 }}>
             <Button onClick={onClose} sx={{ color: '#94A3B8' }}>

@@ -26,7 +26,6 @@ import {
   X,
   LogOut,
   LogIn,
-  Cloud,
   Plus,
   Calendar,
 } from 'lucide-react';
@@ -41,7 +40,7 @@ interface NavbarProps {
   onSelectProfile?: (id: string) => void;
   onNavigate: (tab: 'home' | 'library') => void;
   onOpenBirthData: () => void;
-  onOpenSettings: () => void;
+  onOpenAccount: () => void;
   onStartCalculation: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
@@ -55,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectProfile,
   onNavigate,
   onOpenBirthData,
-  onOpenSettings,
+  onOpenAccount,
   onStartCalculation,
   onOpenAuth,
   onLogout,
@@ -406,20 +405,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Typography variant="caption" sx={{ color: '#9CA3AF', wordBreak: 'break-all', display: 'block', mt: 0.2 }}>
               {user.email}
             </Typography>
-            <Box sx={{ mt: 1 }}>
-              <Chip
-                icon={<Cloud size={12} className="text-emerald-400" />}
-                label="Supabase Cloud Synced"
-                size="small"
-                sx={{
-                  height: 20,
-                  fontSize: '0.65rem',
-                  backgroundColor: 'rgba(52, 211, 153, 0.12)',
-                  color: '#6EE7B7',
-                  border: '1px solid rgba(52, 211, 153, 0.25)',
-                }}
-              />
-            </Box>
           </Box>
         ) : (
           <Box sx={{ px: 2, py: 1.5 }}>
@@ -546,7 +531,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <MenuItem
           onClick={() => {
             handleCloseProfileMenu();
-            onOpenSettings();
+            onOpenAccount();
           }}
           sx={{
             py: 1,
@@ -559,8 +544,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <SettingsIcon size={16} />
           </ListItemIcon>
           <ListItemText
-            primary={<Typography sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#EDF1F7' }}>Pengaturan (Settings)</Typography>}
-            secondary={<Typography sx={{ fontSize: '0.7rem', color: '#71717A' }}>Ephemeris &amp; preferensi</Typography>}
+            primary={<Typography sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#EDF1F7' }}>Kelola Akun</Typography>}
+            secondary={<Typography sx={{ fontSize: '0.7rem', color: '#71717A' }}>Info akun &amp; keamanan</Typography>}
           />
         </MenuItem>
 
