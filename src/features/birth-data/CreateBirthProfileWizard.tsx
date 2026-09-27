@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -20,8 +20,10 @@ import {
   Autocomplete,
   Alert,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import { X, Calendar, MapPin, User, Clock, AlertTriangle } from 'lucide-react';
+import tzlookup from 'tz-lookup';
 import { BirthLocation, BirthProfile, CreateBirthProfileDto, ProfileRelationship } from '../../types/birth-data';
 
 interface CreateBirthProfileWizardProps {
@@ -31,22 +33,58 @@ interface CreateBirthProfileWizardProps {
   initialProfile?: BirthProfile | null;
 }
 
-// Curated geographic coordinate database for instant, frictionless selection
-const POPULAR_LOCATIONS: BirthLocation[] = [
-  { placeName: 'Kuningan', country: 'Indonesia', latitude: -6.9757, longitude: 108.4839, timezone: 'Asia/Jakarta' },
-  { placeName: 'Jakarta', country: 'Indonesia', latitude: -6.2088, longitude: 106.8456, timezone: 'Asia/Jakarta' },
-  { placeName: 'Bali / Denpasar', country: 'Indonesia', latitude: -8.6705, longitude: 115.2126, timezone: 'Asia/Makassar' },
-  { placeName: 'London', country: 'United Kingdom', latitude: 51.5074, longitude: -0.1278, timezone: 'Europe/London' },
-  { placeName: 'New York City, NY', country: 'United States', latitude: 40.7128, longitude: -74.006, timezone: 'America/New_York' },
-  { placeName: 'Los Angeles, CA', country: 'United States', latitude: 34.0522, longitude: -118.2437, timezone: 'America/Los_Angeles' },
-  { placeName: 'Paris', country: 'France', latitude: 48.8566, longitude: 2.3522, timezone: 'Europe/Paris' },
-  { placeName: 'Tokyo', country: 'Japan', latitude: 35.6762, longitude: 139.6503, timezone: 'Asia/Tokyo' },
-  { placeName: 'Singapore', country: 'Singapore', latitude: 1.3521, longitude: 103.8198, timezone: 'Asia/Singapore' },
-  { placeName: 'Sydney', country: 'Australia', latitude: -33.8688, longitude: 151.2093, timezone: 'Australia/Sydney' },
-  { placeName: 'Florence', country: 'Italy', latitude: 43.7696, longitude: 11.2558, timezone: 'Europe/Rome' },
-  { placeName: 'Berlin', country: 'Germany', latitude: 52.52, longitude: 13.405, timezone: 'Europe/Berlin' },
-  { placeName: 'Toronto', country: 'Canada', latitude: 43.6532, longitude: -79.3832, timezone: 'America/Toronto' },
-];
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string | undefined;
+
+// Fallback used only if a save is somehow attempted with no location resolved.
+const DEFAULT_LOCATION: BirthLocation = {
+  placeName: 'Jakarta',
+  country: 'Indonesia',
+  latitude: -6.2088,
+  longitude: 106.8456,
+  timezone: 'Asia/Jakarta',
+};
+
+/**
+ * Queries the Mapbox Geocoding API for cities/towns matching the given
+ * text and resolves each result's IANA timezone offline via tz-lookup
+ * (Mapbox does not return timezone directly).
+ */
+async function geocodeCities(query: string, signal: AbortSignal): Promise<BirthLocation[]> {
+  if (!MAPBOX_TOKEN) return [];
+
+  const url =
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json` +
+    `?access_token=${MAPBOX_TOKEN}&autocomplete=true&limit=8&types=place,locality,region`;
+
+  const response = await fetch(url, { signal });
+  if (!response.ok) {
+    throw new Error(`Mapbox geocoding failed: ${response.status}`);
+  }
+  const data = await response.json();
+
+  const features: any[] = Array.isArray(data.features) ? data.features : [];
+
+  return features.map((feature) => {
+    const [longitude, latitude] = feature.center as [number, number];
+    const countryContext = (feature.context || []).find((c: any) => typeof c.id === 'string' && c.id.startsWith('country'));
+    const country = countryContext?.text || feature.place_name?.split(',').pop()?.trim() || '';
+
+    let timezone = 'UTC';
+    try {
+      timezone = tzlookup(latitude, longitude);
+    } catch {
+      // Point falls outside all known timezone polygons (rare, e.g. open ocean) — keep UTC.
+    }
+
+    return {
+      placeName: feature.text as string,
+      country,
+      latitude,
+      longitude,
+      timezone,
+    } satisfies BirthLocation;
+  });
+}
 
 const STEPS = ['Birth Date & Time', 'Birth Place', 'Profile & Relationship'];
 
@@ -69,6 +107,14 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
   const [customCountry, setCustomCountry] = useState('');
   const [useCustomLocation, setUseCustomLocation] = useState(false);
 
+  // Live city search (Mapbox Geocoding), replaces the old static shortlist
+  const [cityInput, setCityInput] = useState('');
+  const [cityOptions, setCityOptions] = useState<BirthLocation[]>([]);
+  const [isSearchingCity, setIsSearchingCity] = useState(false);
+  const [citySearchError, setCitySearchError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Step 3: Identity & Relationship
   const [profileName, setProfileName] = useState('');
   const [relationship, setRelationship] = useState<ProfileRelationship>('Myself');
@@ -86,17 +132,21 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
       setProfileName(initialProfile.name);
       setRelationship(initialProfile.relationship);
 
-      const found = POPULAR_LOCATIONS.find(
-        (loc) => loc.placeName.toLowerCase() === initialProfile.birthPlace.toLowerCase()
-      );
-      if (found) {
-        setSelectedLocation(found);
-        setUseCustomLocation(false);
-      } else {
-        setUseCustomLocation(true);
-        setCustomPlace(initialProfile.birthPlace);
-        setCustomCountry(initialProfile.country);
-      }
+      // Trust the profile's own stored coordinates/timezone directly —
+      // no need to re-match against any curated list.
+      const existingLocation: BirthLocation = {
+        placeName: initialProfile.birthPlace,
+        country: initialProfile.country,
+        latitude: initialProfile.latitude,
+        longitude: initialProfile.longitude,
+        timezone: initialProfile.timezone,
+      };
+      setSelectedLocation(existingLocation);
+      setCityOptions([existingLocation]);
+      setCityInput(`${existingLocation.placeName}, ${existingLocation.country}`);
+      setUseCustomLocation(false);
+      setCustomPlace('');
+      setCustomCountry('');
     } else {
       // Default reset to empty clean fields
       setBirthDate('');
@@ -108,10 +158,63 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
       setUseCustomLocation(false);
       setProfileName('');
       setRelationship('Myself');
+      setCityInput('');
+      setCityOptions([]);
+      setCitySearchError(null);
     }
     setActiveStep(0);
     setValidationError(null);
   }, [initialProfile, open]);
+
+  // Debounced live city search against Mapbox Geocoding as the user types
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    const query = cityInput.trim();
+
+    // Don't re-search right after picking an option (input mirrors the pick)
+    if (selectedLocation && query === `${selectedLocation.placeName}, ${selectedLocation.country}`) {
+      return;
+    }
+
+    if (query.length < 2) {
+      setCityOptions([]);
+      setIsSearchingCity(false);
+      setCitySearchError(null);
+      return;
+    }
+
+    if (!MAPBOX_TOKEN) {
+      setCitySearchError('Mapbox token is not configured (VITE_MAPBOX_TOKEN).');
+      return;
+    }
+
+    debounceRef.current = setTimeout(() => {
+      if (abortRef.current) abortRef.current.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      setIsSearchingCity(true);
+      setCitySearchError(null);
+
+      geocodeCities(query, controller.signal)
+        .then((results) => {
+          setCityOptions(results);
+        })
+        .catch((err) => {
+          if (err?.name === 'AbortError') return;
+          setCitySearchError('Could not reach city search. You can enter a custom location instead.');
+        })
+        .finally(() => {
+          setIsSearchingCity(false);
+        });
+    }, 350);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cityInput]);
 
   const handleNext = () => {
     setValidationError(null);
@@ -158,7 +261,7 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
           longitude: 0,
           timezone: 'UTC',
         }
-      : selectedLocation || POPULAR_LOCATIONS[0];
+      : selectedLocation || DEFAULT_LOCATION;
 
     const dto: CreateBirthProfileDto = {
       name: profileName.trim(),
@@ -318,19 +421,49 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
             {!useCustomLocation ? (
               <Box>
                 <Autocomplete
-                  options={POPULAR_LOCATIONS}
+                  options={cityOptions}
+                  filterOptions={(opts) => opts}
                   getOptionLabel={(option) => `${option.placeName}, ${option.country}`}
+                  isOptionEqualToValue={(opt, val) =>
+                    opt.placeName === val.placeName &&
+                    opt.country === val.country &&
+                    opt.latitude === val.latitude &&
+                    opt.longitude === val.longitude
+                  }
                   value={selectedLocation}
-                  onChange={(_, val) => setSelectedLocation(val)}
+                  inputValue={cityInput}
+                  onInputChange={(_, val) => setCityInput(val)}
+                  onChange={(_, val) => {
+                    setSelectedLocation(val);
+                    setCityInput(val ? `${val.placeName}, ${val.country}` : '');
+                  }}
+                  loading={isSearchingCity}
+                  noOptionsText={
+                    cityInput.trim().length < 2
+                      ? 'Type at least 2 characters to search…'
+                      : 'No cities found. Try a different spelling, or enter a custom location.'
+                  }
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       label="Search or select birth city"
                       placeholder="Type city name..."
+                      slotProps={{
+                        ...params.slotProps,
+                        input: {
+                          ...params.slotProps.input,
+                          endAdornment: (
+                            <>
+                              {isSearchingCity ? <CircularProgress color="inherit" size={16} /> : null}
+                              {params.slotProps.input.endAdornment}
+                            </>
+                          ),
+                        },
+                      }}
                     />
                   )}
                   renderOption={(props, option) => (
-                    <li {...props} key={option.placeName}>
+                    <li {...props} key={`${option.placeName}-${option.latitude}-${option.longitude}`}>
                       <Box>
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
                           {option.placeName}, {option.country}
@@ -342,6 +475,12 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
                     </li>
                   )}
                 />
+
+                {citySearchError && (
+                  <Alert severity="warning" sx={{ mt: 1.5 }}>
+                    {citySearchError}
+                  </Alert>
+                )}
 
                 {selectedLocation && (
                   <Box
@@ -390,7 +529,7 @@ export const CreateBirthProfileWizard: React.FC<CreateBirthProfileWizardProps> =
                   onClick={() => setUseCustomLocation(false)}
                   sx={{ alignSelf: 'flex-start', color: '#E0C99A', fontSize: '0.75rem' }}
                 >
-                  ← Back to curated location list
+                  ← Back to city search
                 </Button>
               </Box>
             )}
