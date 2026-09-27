@@ -295,31 +295,13 @@ export const BirthProfileManagerModal: React.FC<BirthProfileManagerModalProps> =
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                py: 8,
+                py: { xs: 3, md: 8 },
                 textAlign: 'center',
               }}
             >
-              <Box
-                sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: '50%',
-                  backgroundColor: '#131A2A',
-                  border: '1px dashed #2A364F',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#94A3B8',
-                  mb: 2.5,
-                }}
-              >
-                <Users size={28} />
-              </Box>
-              <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', mb: 1 }}>
-                No birth data yet.
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#94A3B8', maxWidth: 400, mb: 3 }}>
-                Create a birth profile to use it for your metaphysical charts. Birth data is saved securely and reusable across all systems.
+              <Users size={40} color="#E0C99A" style={{ marginBottom: 16 }} />
+              <Typography variant="h6" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', mb: 3 }}>
+                Belum Ada Data Profil
               </Typography>
               <Button
                 variant="contained"

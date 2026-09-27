@@ -410,19 +410,17 @@ export const GenerationWizardModal: React.FC<GenerationWizardModalProps> = ({
               {profiles.length === 0 ? (
                 <Box
                   sx={{
-                    p: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    py: { xs: 3, md: 8 },
                     textAlign: 'center',
-                    border: '1px dashed #2A364F',
-                    borderRadius: 3,
-                    backgroundColor: '#0F1320',
                     my: 'auto',
                   }}
                 >
-                  <Typography variant="subtitle1" sx={{ color: '#EDF1F7', mb: 1, fontWeight: 600 }}>
-                    Belum Ada Profil Lahir
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#94A3B8', mb: 2.5 }}>
-                    Anda perlu menambahkan setidaknya satu data lahir sebelum dapat mengkalkulasi chart.
+                  <Users size={40} color="#E0C99A" style={{ marginBottom: 16 }} />
+                  <Typography variant="subtitle1" sx={{ color: '#EDF1F7', mb: 3, fontWeight: 600 }}>
+                    Belum Ada Data Profil
                   </Typography>
                   <Button
                     variant="contained"
