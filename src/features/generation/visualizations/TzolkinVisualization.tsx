@@ -5,7 +5,8 @@ import {
   Chip,
 } from '@mui/material';
 import { BaseChartResult } from '../../../types/systems';
-import { TzolkinCalculationResult, TzolkinKin } from '../../../systems/tzolkin/types';
+import { TzolkinCalculationResult, TzolkinKin, SolarSeal } from '../../../systems/tzolkin/types';
+import { getSealIconPath } from '../../../systems/tzolkin/icons';
 
 interface TzolkinVisualizationProps {
   result: BaseChartResult<TzolkinCalculationResult>;
@@ -21,6 +22,18 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
     Blue: { bg: 'rgba(59, 130, 246, 0.12)', text: '#93C5FD', border: 'rgba(59, 130, 246, 0.35)' },
     Yellow: { bg: 'rgba(234, 179, 8, 0.12)', text: '#FDE68A', border: 'rgba(234, 179, 8, 0.35)' },
   };
+
+  const SealIcon: React.FC<{ seal: SolarSeal; size?: number }> = ({ seal, size = 28 }) => (
+    <Box
+      component="img"
+      src={getSealIconPath(seal)}
+      alt={seal.name}
+      onError={(e: any) => {
+        e.currentTarget.style.display = 'none';
+      }}
+      sx={{ width: size, height: size, objectFit: 'contain', flexShrink: 0 }}
+    />
+  );
 
   const renderKinPill = (kin: TzolkinKin, role: string) => {
     const c = colorMap[kin.seal.color];
@@ -38,9 +51,12 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
         <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
           {role}
         </Typography>
-        <Typography variant="h6" sx={{ color: c.text, fontWeight: 700, my: 0.2 }}>
-          {kin.seal.symbol} Kin {kin.kinNumber}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, my: 0.2 }}>
+          <SealIcon seal={kin.seal} size={24} />
+          <Typography variant="h6" sx={{ color: c.text, fontWeight: 700 }}>
+            Kin {kin.kinNumber}
+          </Typography>
+        </Box>
         <Typography variant="caption" sx={{ color: '#EDF1F7', fontWeight: 600, display: 'block' }}>
           {kin.tone.name} {kin.seal.name}
         </Typography>
@@ -66,9 +82,19 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
               justifyContent: 'center',
               color: '#E0C99A',
               flexShrink: 0,
+              position: 'relative',
             }}
           >
-            <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
+            <Box
+              component="img"
+              src={getSealIconPath(destinyKin.seal)}
+              alt={destinyKin.seal.name}
+              onError={(e: any) => {
+                e.currentTarget.style.display = 'none';
+              }}
+              sx={{ position: 'absolute', top: 6, width: 30, height: 30, objectFit: 'contain', opacity: 0.9 }}
+            />
+            <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1, mt: 2.5 }}>
               {destinyKin.kinNumber}
             </Typography>
             <Typography variant="caption" sx={{ fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9BB8DE' }}>
@@ -78,8 +104,9 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
 
           <Box sx={{ flexGrow: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+              <SealIcon seal={destinyKin.seal} size={32} />
               <Typography variant="h5" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', fontWeight: 700 }}>
-                {destinyKin.seal.symbol} {destinyKin.seal.color} {destinyKin.tone.name} {destinyKin.seal.name} ({destinyKin.seal.mayaName})
+                {destinyKin.seal.color} {destinyKin.tone.name} {destinyKin.seal.name} ({destinyKin.seal.mayaName})
               </Typography>
               <Chip label={colorDirection} size="small" sx={{ backgroundColor: '#161F33', color: '#E0C99A' }} />
             </Box>
@@ -136,9 +163,12 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Wavespell Architecture
             </Typography>
-            <Typography variant="h6" sx={{ color: '#EDF1F7', fontFamily: '"Cinzel", serif', mt: 0.5 }}>
-              {wavespellSeal.symbol} {wavespellSeal.name} Wavespell
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+              <SealIcon seal={wavespellSeal} size={22} />
+              <Typography variant="h6" sx={{ color: '#EDF1F7', fontFamily: '"Cinzel", serif' }}>
+                {wavespellSeal.name} Wavespell
+              </Typography>
+            </Box>
             <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>
               You were born on <strong>Day {wavespellDay}</strong> of this 13-day transformative wave.
             </Typography>
