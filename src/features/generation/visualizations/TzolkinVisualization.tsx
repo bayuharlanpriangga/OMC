@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { BaseChartResult } from '../../../types/systems';
 import { TzolkinCalculationResult, TzolkinKin, SolarSeal } from '../../../systems/tzolkin/types';
-import { getSealIconPath } from '../../../systems/tzolkin/icons';
+import { getSealIconPath, getCastleIconPath } from '../../../systems/tzolkin/icons';
 
 interface TzolkinVisualizationProps {
   result: BaseChartResult<TzolkinCalculationResult>;
@@ -35,7 +35,8 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
     />
   );
 
-  // Destiny Core: the only position with an actual Kin number.
+  // Destiny Core: the position tied to the actual Kin number (shown separately
+  // above Wavespell Architecture, not inside this pill).
   const renderKinPill = (kin: TzolkinKin, role: string) => {
     const c = colorMap[kin.seal.color];
     return (
@@ -52,13 +53,10 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
         <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
           {role}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, my: 0.2 }}>
-          <SealIcon seal={kin.seal} size={24} />
-          <Typography variant="h6" sx={{ color: c.text, fontWeight: 700 }}>
-            Kin {kin.kinNumber}
-          </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 0.5 }}>
+          <SealIcon seal={kin.seal} size={32} />
         </Box>
-        <Typography variant="caption" sx={{ color: '#EDF1F7', fontWeight: 600, display: 'block' }}>
+        <Typography variant="body2" sx={{ color: c.text, fontWeight: 700, display: 'block' }}>
           {kin.tone.name} {kin.seal.name}
         </Typography>
       </Box>
@@ -105,9 +103,6 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
 
           <Box sx={{ flexGrow: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-              <Typography variant="h3" sx={{ fontWeight: 800, color: '#E0C99A', lineHeight: 1 }}>
-                {destinyKin.kinNumber}
-              </Typography>
               <Typography variant="h5" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', fontWeight: 700 }}>
                 {destinyKin.seal.color} {destinyKin.tone.name} {destinyKin.seal.name} ({destinyKin.seal.mayaName})
               </Typography>
@@ -167,6 +162,13 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Kin
+            </Typography>
+            <Typography variant="h3" sx={{ fontWeight: 800, color: colorMap[destinyKin.seal.color].text, lineHeight: 1, mb: 1.5 }}>
+              {destinyKin.kinNumber}
+            </Typography>
+
+            <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Wavespell Architecture
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
@@ -184,9 +186,20 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
             <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Galactic Castle
             </Typography>
-            <Typography variant="h6" sx={{ color: '#9BB8DE', fontFamily: '"Cinzel", serif', mt: 0.5 }}>
-              {castle}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+              <Box
+                component="img"
+                src={getCastleIconPath(castle)}
+                alt={castle}
+                onError={(e: any) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+                sx={{ width: 26, height: 26, objectFit: 'contain', flexShrink: 0 }}
+              />
+              <Typography variant="h6" sx={{ color: '#9BB8DE', fontFamily: '"Cinzel", serif' }}>
+                {castle}
+              </Typography>
+            </Box>
             <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>
               A 52-day evolutionary quadrant in the 260-day sacred spin.
             </Typography>

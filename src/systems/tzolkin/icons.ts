@@ -32,3 +32,14 @@ export function getSealIconPath(seal: Pick<SolarSeal, 'number'>): string {
   const filename = SEAL_ICON_FILENAMES[seal.number];
   return filename ? `/tzolkin/nawal/${filename}` : '';
 }
+
+/**
+ * Returns the public path to the Galactic Castle icon, based on the castle's
+ * color (the first word of its name, e.g. "Blue Castle of Burning" -> blue).
+ */
+export function getCastleIconPath(castleName: string): string {
+  const color = castleName.trim().split(/\s+/)[0]?.toLowerCase();
+  const validColors = ['red', 'white', 'blue', 'yellow', 'green'];
+  if (!color || !validColors.includes(color)) return '';
+  return `/tzolkin/castle/tzolkin-${color}-castle.png`;
+}
