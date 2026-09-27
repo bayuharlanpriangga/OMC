@@ -35,6 +35,7 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
     />
   );
 
+  // Destiny Core: the only position with an actual Kin number.
   const renderKinPill = (kin: TzolkinKin, role: string) => {
     const c = colorMap[kin.seal.color];
     return (
@@ -64,47 +65,49 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
     );
   };
 
+  // Guide / Antipode / Analog / Occult: companion Solar Seals, not full Kins —
+  // they don't carry their own Kin number, only the destiny Kin does.
+  const renderSealPill = (seal: SolarSeal, role: string) => {
+    const c = colorMap[seal.color];
+    return (
+      <Box
+        sx={{
+          p: 1.5,
+          borderRadius: 2,
+          backgroundColor: c.bg,
+          border: `1px solid ${c.border}`,
+          textAlign: 'center',
+          minWidth: 120,
+        }}
+      >
+        <Typography variant="caption" sx={{ color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
+          {role}
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 0.5 }}>
+          <SealIcon seal={seal} size={32} />
+        </Box>
+        <Typography variant="body2" sx={{ color: c.text, fontWeight: 700, display: 'block' }}>
+          {seal.name}
+        </Typography>
+        <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block' }}>
+          {seal.color} Seal
+        </Typography>
+      </Box>
+    );
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
       {/* Galactic Signature Banner */}
       <Box sx={{ pb: 3, borderBottom: '1px solid #1E283D' }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: 3 }}>
-          <Box
-            sx={{
-              width: 90,
-              height: 90,
-              borderRadius: '50%',
-              backgroundColor: '#131929',
-              border: '2px solid #E0C99A',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#E0C99A',
-              flexShrink: 0,
-              position: 'relative',
-            }}
-          >
-            <Box
-              component="img"
-              src={getSealIconPath(destinyKin.seal)}
-              alt={destinyKin.seal.name}
-              onError={(e: any) => {
-                e.currentTarget.style.display = 'none';
-              }}
-              sx={{ position: 'absolute', top: 6, width: 30, height: 30, objectFit: 'contain', opacity: 0.9 }}
-            />
-            <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1, mt: 2.5 }}>
-              {destinyKin.kinNumber}
-            </Typography>
-            <Typography variant="caption" sx={{ fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9BB8DE' }}>
-              KIN
-            </Typography>
-          </Box>
+          <SealIcon seal={destinyKin.seal} size={90} />
 
           <Box sx={{ flexGrow: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-              <SealIcon seal={destinyKin.seal} size={32} />
+              <Typography variant="h3" sx={{ fontWeight: 800, color: '#E0C99A', lineHeight: 1 }}>
+                {destinyKin.kinNumber}
+              </Typography>
               <Typography variant="h5" sx={{ fontFamily: '"Cinzel", serif', color: '#EDF1F7', fontWeight: 700 }}>
                 {destinyKin.seal.color} {destinyKin.tone.name} {destinyKin.seal.name} ({destinyKin.seal.mayaName})
               </Typography>
@@ -137,23 +140,26 @@ export const TzolkinVisualization: React.FC<TzolkinVisualizationProps> = ({ resu
       >
         {/* Five-Part Galactic Cross (Oracle) */}
         <Box>
-          <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 2.5, fontFamily: '"Cinzel", serif' }}>
+          <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 0.5, fontFamily: '"Cinzel", serif' }}>
             The 5-Part Destiny Oracle Cross
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mb: 2 }}>
+            Only the Destiny Core is your birth Kin — the other 4 are companion Solar Seals.
           </Typography>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
-            {/* Guide Kin (Top) */}
-            {renderKinPill(oracle.guide, 'Higher Guide')}
+            {/* Guide Seal (Top) */}
+            {renderSealPill(oracle.guide, 'Higher Guide')}
 
             {/* Middle Row: Antipode (Left), Destiny (Center), Analog (Right) */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
-              {renderKinPill(oracle.antipode, 'Antipode (Challenge)')}
+              {renderSealPill(oracle.antipode, 'Antipode (Challenge)')}
               {renderKinPill(destinyKin, 'Destiny Core')}
-              {renderKinPill(oracle.analog, 'Analog (Support)')}
+              {renderSealPill(oracle.analog, 'Analog (Support)')}
             </Box>
 
-            {/* Occult Kin (Bottom) */}
-            {renderKinPill(oracle.occult, 'Occult (Hidden Magic)')}
+            {/* Occult Seal (Bottom) */}
+            {renderSealPill(oracle.occult, 'Occult (Hidden Magic)')}
           </Box>
         </Box>
 

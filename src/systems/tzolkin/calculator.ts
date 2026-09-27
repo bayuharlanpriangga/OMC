@@ -40,6 +40,45 @@ const TONES: GalacticTone[] = [
   { number: 13, name: 'Cosmic', creativePower: 'Endure', action: 'Transcending Presence', ray: '13th Ray of Universal Cosmic Return' },
 ];
 
+const SEAL_BY_NUMBER: Record<number, SolarSeal> = Object.fromEntries(
+  SEALS.map((s) => [s.number, s])
+);
+
+function getSealByNumber(n: number): SolarSeal {
+  const normalized = ((n - 1) % 20 + 20) % 20 + 1;
+  return SEAL_BY_NUMBER[normalized];
+}
+
+// Antipode: seal directly opposite on the 20-seal wheel (+10).
+function antipodeSealNumber(n: number): number {
+  return ((n - 1 + 10) % 20) + 1;
+}
+
+// Occult (hidden power): seal pair sums to 21.
+function occultSealNumber(n: number): number {
+  return 21 - n;
+}
+
+// Analog (support): seal pair sums to 19; Storm (19) and Sun (20) are self-analog.
+function analogSealNumber(n: number): number {
+  return n <= 18 ? 19 - n : n;
+}
+
+// Hidden Guide: used only for tones 5 and 10, fixed +14 offset on the wheel.
+function hiddenGuideSealNumber(n: number): number {
+  return (((n - 1) + 14) % 20) + 1;
+}
+
+// Guide seal depends on which of the 5 tone-groups the destiny tone falls into.
+function guideSealNumber(sealNumber: number, toneNumber: number): number {
+  const group = toneNumber % 5;
+  if (group === 1) return sealNumber; // Tones 1, 6, 11: same as destiny seal
+  if (group === 2) return antipodeSealNumber(sealNumber); // Tones 2, 7, 12
+  if (group === 3) return occultSealNumber(sealNumber); // Tones 3, 8, 13
+  if (group === 4) return analogSealNumber(sealNumber); // Tones 4, 9
+  return hiddenGuideSealNumber(sealNumber); // Tones 5, 10
+}
+
 export function calculateTzolkin(
   profile: BirthProfile,
   _settings: Record<string, any> = {}
@@ -55,19 +94,13 @@ export function calculateTzolkin(
 
   const destinyKin = getKin(kinNumber);
 
-  // Oracle Kins:
-  // Analog: Seal index + Analog partner = 19 (in 0-19)
-  const analogSealNum = (19 - (destinyKin.seal.number % 20) + 20) % 20;
-  const analogKin = getKin(((destinyKin.kinNumber + 119) % 260) || 260);
-
-  // Antipode: + 10 seals away (or + 130 kins)
-  const antipodeKin = getKin(((destinyKin.kinNumber + 130) % 260) || 260);
-
-  // Occult: Tone sum = 14, Seal sum = 21
-  const occultKin = getKin(((261 - destinyKin.kinNumber) % 260) || 260);
-
-  // Guide Kin based on tone
-  const guideKin = getKin(((destinyKin.kinNumber + (destinyKin.tone.number * 12)) % 260) || 260);
+  // Oracle Cross: Guide / Antipode / Analog / Occult are Solar Seal companions
+  // of the destiny seal (no independent tone/Kin number of their own) —
+  // only the Destiny Kin itself carries a Kin number.
+  const antipodeSeal = getSealByNumber(antipodeSealNumber(destinyKin.seal.number));
+  const analogSeal = getSealByNumber(analogSealNumber(destinyKin.seal.number));
+  const occultSeal = getSealByNumber(occultSealNumber(destinyKin.seal.number));
+  const guideSeal = getSealByNumber(guideSealNumber(destinyKin.seal.number, destinyKin.tone.number));
 
   // Wavespell
   const wavespellDay = ((destinyKin.tone.number - 1) % 13) + 1;
@@ -83,10 +116,10 @@ export function calculateTzolkin(
     wavespellSeal: wavespellOrigin.seal,
     wavespellDay,
     oracle: {
-      guide: guideKin,
-      antipode: antipodeKin,
-      analog: analogKin,
-      occult: occultKin,
+      guide: guideSeal,
+      antipode: antipodeSeal,
+      analog: analogSeal,
+      occult: occultSeal,
     },
     castle,
     colorDirection: `${destinyKin.seal.color} Harmonic Quadrant`,

@@ -29,10 +29,10 @@ export interface TzolkinCalculationResult {
   wavespellSeal: SolarSeal;
   wavespellDay: number;
   oracle: {
-    guide: TzolkinKin;
-    antipode: TzolkinKin;
-    analog: TzolkinKin;
-    occult: TzolkinKin;
+    guide: SolarSeal;
+    antipode: SolarSeal;
+    analog: SolarSeal;
+    occult: SolarSeal;
   };
   castle: string;
   colorDirection: string;
