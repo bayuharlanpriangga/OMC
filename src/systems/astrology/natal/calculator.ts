@@ -1,4 +1,5 @@
 import * as Astronomy from 'astronomy-engine';
+import * as ephemeris from 'ephemeris';
 import { BirthProfile } from '../../../types/birth-data';
 import {
   AstrologyCalculationResult,
@@ -128,51 +129,13 @@ function meanLunarNode(jd: number): number {
 }
 
 // ---------------------------------------------------------------------------
-// Chiron: astronomy-engine does not model minor bodies, so Chiron is
-// propagated as an osculating two-body Keplerian orbit (elements near
-// epoch J2000). This is a reasonable approximation for the last/next few
-// decades; because Chiron's orbit crosses Saturn and Uranus, precision
-// degrades over centuries. Flagged here (and should be flagged in the UI)
-// as approximate.
+// Chiron: astronomy-engine does not model minor bodies, so Chiron comes from
+// the `ephemeris` package (Moshier-based, pure JS, no data files). Verified
+// against known ingress dates (Aquarius 2005, Pisces 2010, Aries 2018).
 // ---------------------------------------------------------------------------
 function chironEclipticLongitude(date: Date): number {
-  const jd = 2451545.0 + (date.getTime() - Date.UTC(2000, 0, 1, 12)) / 86400000;
-  const daysSinceEpoch = jd - 2451545.0; // epoch J2000.0
-
-  // Osculating elements near J2000 (JPL small-body database, epoch 2000-01-01)
-  const a = 13.6367;          // semi-major axis, AU
-  const e = 0.382655;         // eccentricity
-  const iDeg = 6.9308;        // inclination
-  const nodeDeg = 209.2966;   // longitude of ascending node
-  const argPeriDeg = 339.3502; // argument of perihelion
-  const m0Deg = 358.3577;     // mean anomaly at epoch
-  const periodDays = a ** 1.5 * 365.25636; // Kepler's third law
-  const meanMotion = 360 / periodDays;     // deg/day
-
-  const M = toRad(normalizeAngle(m0Deg + meanMotion * daysSinceEpoch));
-  // Solve Kepler's equation via Newton-Raphson
-  let E = M;
-  for (let i = 0; i < 8; i++) {
-    E = E - (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
-  }
-  const xOrb = a * (Math.cos(E) - e);
-  const yOrb = a * Math.sqrt(1 - e * e) * Math.sin(E);
-
-  const cosNode = cosD(nodeDeg), sinNode = sinD(nodeDeg);
-  const cosArg = Math.cos(toRad(argPeriDeg)), sinArg = Math.sin(toRad(argPeriDeg));
-  const cosI = cosD(iDeg), sinI = sinD(iDeg);
-
-  const xh = (cosNode * cosArg - sinNode * sinArg * cosI) * xOrb + (-cosNode * sinArg - sinNode * cosArg * cosI) * yOrb;
-  const yh = (sinNode * cosArg + cosNode * sinArg * cosI) * xOrb + (-sinNode * sinArg + cosNode * cosArg * cosI) * yOrb;
-  const zh = (sinArg * sinI) * xOrb + (cosArg * sinI) * yOrb;
-
-  const earth = Astronomy.HelioVector(Astronomy.Body.Earth, date);
-  const gx = xh - earth.x, gy = yh - earth.y, gz = zh - earth.z;
-
-  const eps = toRad(23.4392911);
-  const yEcl = gy * Math.cos(eps) + gz * Math.sin(eps);
-  const xEcl = gx;
-  return normalizeAngle(toDeg(Math.atan2(yEcl, xEcl)));
+  const r: any = ephemeris.getPlanet('chiron', date, 0, 0, 0);
+  return normalizeAngle(r.observed.chiron.apparentLongitudeDd);
 }
 
 // ---------------------------------------------------------------------------
