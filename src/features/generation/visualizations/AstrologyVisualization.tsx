@@ -15,7 +15,8 @@ import {
 } from '@mui/material';
 import { BaseChartResult } from '../../../types/systems';
 import { AstrologyCalculationResult, PlanetPosition } from '../../../systems/astrology/types';
-import { SIGN_GLYPHS, ZODIAC_SIGNS } from '../../../systems/astrology/natal/calculator';
+import { NatalChartWheel } from './NatalChartWheel';
+import { AstroGlyphInline } from './astroGlyphs';
 
 interface AstrologyVisualizationProps {
   result: BaseChartResult<AstrologyCalculationResult>;
@@ -27,14 +28,6 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
 
   const { data } = result;
   const { planets, houses, aspects, elementBalance, modalityBalance } = data;
-
-  // Chart Wheel geometry settings
-  const size = 460;
-  const center = size / 2;
-  const radius = size / 2 - 20;
-  const innerRadius = radius - 45;
-  const houseRadius = innerRadius - 40;
-  const aspectsRadius = houseRadius - 40;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
@@ -109,158 +102,32 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
             Celestial Wheel Projection
           </Typography>
 
-          <Box sx={{ width: '100%', maxWidth: size, position: 'relative', userSelect: 'none' }}>
-            <svg viewBox={`0 0 ${size} ${size}`} width="100%" height="100%">
-              {/* Outer Ecliptic Zodiac Ring */}
-              <circle cx={center} cy={center} r={radius} fill="#090D18" stroke="#25324D" strokeWidth="2" />
-              <circle cx={center} cy={center} r={innerRadius} fill="#0B0E1A" stroke="#25324D" strokeWidth="1.5" />
+          <Box sx={{ width: '100%', maxWidth: 620, aspectRatio: '1 / 1', position: 'relative', userSelect: 'none' }}>
+            <NatalChartWheel data={data} hoveredId={hoveredPlanet?.id ?? null} onHover={setHoveredPlanet} />
+          </Box>
 
-              {/* 12 Zodiac Segments */}
-              {ZODIAC_SIGNS.map((sign, i) => {
-                const angle = i * 30;
-                const rad = (angle * Math.PI) / 180;
-                const textAngle = angle + 15;
-                const textRad = (textAngle * Math.PI) / 180;
-                const glyphX = center + (radius - 22) * Math.cos(textRad);
-                const glyphY = center + (radius - 22) * Math.sin(textRad);
-
-                return (
-                  <g key={sign}>
-                    {/* Sign separator line */}
-                    <line
-                      x1={center + innerRadius * Math.cos(rad)}
-                      y1={center + innerRadius * Math.sin(rad)}
-                      x2={center + radius * Math.cos(rad)}
-                      y2={center + radius * Math.sin(rad)}
-                      stroke="#222C42"
-                      strokeWidth="1"
-                    />
-                    {/* Zodiac Glyph */}
-                    <text
-                      x={glyphX}
-                      y={glyphY}
-                      fill="#E0C99A"
-                      fontSize="14"
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      fontFamily="system-ui"
-                    >
-                      {SIGN_GLYPHS[sign]}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* House Cusps Lines (if time known) */}
-              {data.hasExactTime &&
-                houses.map((h) => {
-                  const rad = ((h.absoluteDegree - 90) * Math.PI) / 180;
-                  const isCardinal = h.house === 1 || h.house === 4 || h.house === 7 || h.house === 10;
-                  return (
-                    <line
-                      key={h.house}
-                      x1={center + aspectsRadius * Math.cos(rad)}
-                      y1={center + aspectsRadius * Math.sin(rad)}
-                      x2={center + innerRadius * Math.cos(rad)}
-                      y2={center + innerRadius * Math.sin(rad)}
-                      stroke={isCardinal ? '#E0C99A' : '#1C263A'}
-                      strokeWidth={isCardinal ? 1.5 : 0.8}
-                      strokeDasharray={isCardinal ? undefined : '2,2'}
-                    />
-                  );
-                })}
-
-              {/* Aspect Geometric Lines between bodies */}
-              {aspects.slice(0, 16).map((asp, idx) => {
-                const p1 = planets.find((p) => p.name === asp.planet1);
-                const p2 = planets.find((p) => p.name === asp.planet2);
-                if (!p1 || !p2) return null;
-
-                const rad1 = ((p1.absoluteDegree - 90) * Math.PI) / 180;
-                const rad2 = ((p2.absoluteDegree - 90) * Math.PI) / 180;
-                const x1 = center + aspectsRadius * Math.cos(rad1);
-                const y1 = center + aspectsRadius * Math.sin(rad1);
-                const x2 = center + aspectsRadius * Math.cos(rad2);
-                const y2 = center + aspectsRadius * Math.sin(rad2);
-
-                const aspectColor =
-                  asp.aspectType === 'Trine'
-                    ? '#60A5FA'
-                    : asp.aspectType === 'Square'
-                    ? '#F87171'
-                    : asp.aspectType === 'Opposition'
-                    ? '#FBBF24'
-                    : asp.aspectType === 'Sextile'
-                    ? '#34D399'
-                    : '#E0C99A';
-
-                return (
-                  <line
-                    key={idx}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke={aspectColor}
-                    strokeWidth="0.8"
-                    opacity="0.45"
-                  />
-                );
-              })}
-
-              {/* Planet Markers along the circle */}
-              {planets.map((planet) => {
-                const rad = ((planet.absoluteDegree - 90) * Math.PI) / 180;
-                const px = center + (innerRadius - 20) * Math.cos(rad);
-                const py = center + (innerRadius - 20) * Math.sin(rad);
-                const isHovered = hoveredPlanet?.id === planet.id;
-
-                return (
-                  <g
-                    key={planet.id}
-                    onMouseEnter={() => setHoveredPlanet(planet)}
-                    onMouseLeave={() => setHoveredPlanet(null)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <circle
-                      cx={px}
-                      cy={py}
-                      r={isHovered ? 13 : 9}
-                      fill={isHovered ? '#E0C99A' : '#141B2B'}
-                      stroke={isHovered ? '#EDF1F7' : '#3E4F73'}
-                      strokeWidth={isHovered ? 2 : 1}
-                    />
-                    <text
-                      x={px}
-                      y={py}
-                      fill={isHovered ? '#0B0E17' : '#EDF1F7'}
-                      fontSize={isHovered ? '11' : '9'}
-                      fontWeight="bold"
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                    >
-                      {planet.glyph}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* Inner Center Hub */}
-              <circle cx={center} cy={center} r={aspectsRadius} fill="#090D18" stroke="#1D273B" strokeWidth="1" />
-              <circle cx={center} cy={center} r="6" fill="#E0C99A" opacity="0.6" />
-            </svg>
+          {/* Legend aspek */}
+          <Box sx={{ display: 'flex', gap: 2.5, mt: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+              <Box sx={{ width: 22, height: 0, borderTop: '2px solid #1D4ED8' }} />
+              <Typography variant="caption" sx={{ color: '#94A3B8' }}>Harmony (trine, sextile)</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+              <Box sx={{ width: 22, height: 0, borderTop: '2px solid #C62828' }} />
+              <Typography variant="caption" sx={{ color: '#94A3B8' }}>Conflict (square, opposition)</Typography>
+            </Box>
           </Box>
 
           {/* Hovered Planet Details Popover */}
           <Box sx={{ mt: 1.5, minHeight: 36, textAlign: 'center' }}>
             {hoveredPlanet ? (
               <Typography variant="body2" sx={{ color: '#E0C99A', fontWeight: 600 }}>
-                {hoveredPlanet.glyph} {hoveredPlanet.name} in {hoveredPlanet.sign} at {hoveredPlanet.degree}°{hoveredPlanet.minute}'
+                <AstroGlyphInline name={hoveredPlanet.id} size={16} style={{ marginRight: 6 }} />{hoveredPlanet.name} in {hoveredPlanet.sign} at {hoveredPlanet.degree}°{hoveredPlanet.minute}'
                 {hoveredPlanet.house ? ` (House ${hoveredPlanet.house})` : ''} {hoveredPlanet.isRetrograde ? '· Retrograde (Rx)' : ''}
               </Typography>
             ) : (
               <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                Hover over planet glyphs on the wheel to inspect coordinate details
+                Hover or tap a planet on the wheel to see its details and aspects
               </Typography>
             )}
           </Box>
@@ -365,14 +232,15 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
                   >
                     <TableCell sx={{ color: '#EDF1F7', fontWeight: 600 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography sx={{ color: '#E0C99A', fontFamily: 'system-ui', fontSize: '1.1rem' }}>
-                          {planet.glyph}
-                        </Typography>
+                        <AstroGlyphInline name={planet.id} size={18} color="#E0C99A" />
                         {planet.name}
                       </Box>
                     </TableCell>
                     <TableCell sx={{ color: '#D4DCED' }}>
-                      {SIGN_GLYPHS[planet.sign]} {planet.sign}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <AstroGlyphInline name={planet.sign} size={16} color="#E0C99A" />
+                        {planet.sign}
+                      </Box>
                     </TableCell>
                     <TableCell sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
                       {planet.degree}° {planet.minute}'
@@ -416,7 +284,10 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
                       House {h.house}
                     </TableCell>
                     <TableCell sx={{ color: '#D4DCED' }}>
-                      {SIGN_GLYPHS[h.sign]} {h.sign}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <AstroGlyphInline name={h.sign} size={16} color="#E0C99A" />
+                        {h.sign}
+                      </Box>
                     </TableCell>
                     <TableCell sx={{ color: '#D4DCED', fontFamily: '"JetBrains Mono", monospace' }}>
                       {h.degree}° {h.minute}'
@@ -456,13 +327,11 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
                           height: 20,
                           fontSize: '0.7rem',
                           backgroundColor:
-                            asp.aspectType === 'Trine' ? 'rgba(96, 165, 250, 0.15)' :
-                            asp.aspectType === 'Square' ? 'rgba(248, 113, 113, 0.15)' :
-                            asp.aspectType === 'Opposition' ? 'rgba(251, 191, 36, 0.15)' : 'rgba(52, 211, 153, 0.15)',
+                            asp.aspectType === 'Trine' || asp.aspectType === 'Sextile' ? 'rgba(59, 130, 246, 0.16)' :
+                            asp.aspectType === 'Square' || asp.aspectType === 'Opposition' ? 'rgba(239, 68, 68, 0.16)' : 'rgba(224, 201, 154, 0.16)',
                           color:
-                            asp.aspectType === 'Trine' ? '#93C5FD' :
-                            asp.aspectType === 'Square' ? '#FCA5A5' :
-                            asp.aspectType === 'Opposition' ? '#FDE68A' : '#6EE7B7',
+                            asp.aspectType === 'Trine' || asp.aspectType === 'Sextile' ? '#93C5FD' :
+                            asp.aspectType === 'Square' || asp.aspectType === 'Opposition' ? '#FCA5A5' : '#E0C99A',
                         }}
                       />
                     </TableCell>
