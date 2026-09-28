@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import type { AstrologyCalculationResult, PlanetPosition } from '../../../../systems/astrology/types';
-import { AstroGlyph, ZodiacGlyph } from './astroGlyphs';
+import { PlanetGlyph, ZodiacGlyph } from './astroGlyphs';
 
 /**
  * Natal chart wheel (gaya astro-seek), tema emas OMC.
@@ -291,17 +291,17 @@ export const NatalChartWheel: React.FC<Props> = ({ data, hoveredId, onHover }) =
 
             {/* area sentuh */}
             <circle cx={glyph.x} cy={glyph.y} r="15" fill="transparent" />
-            {isHover && <circle cx={glyph.x} cy={glyph.y} r="14" fill={INK} />}
+            {isHover && <circle cx={glyph.x} cy={glyph.y} r="15" fill={GOLD.core} stroke={INK} strokeWidth="1.2" />}
 
             <text x={deg.x} y={deg.y} fontSize="11" fontWeight="600" fill={INK} textAnchor="middle" dominantBaseline="central">
               {p.degree}°
             </text>
-            <AstroGlyph
-              name={p.id}
+            <PlanetGlyph
+              id={p.id}
               x={glyph.x}
               y={glyph.y}
-              size={isHover ? 22 : 20}
-              color={isHover ? GOLD.field : INK}
+              size={isHover ? 26 : 24}
+              color={INK}
               strokeWidth={1.7}
             />
             <ZodiacGlyph sign={p.sign} x={signG.x} y={signG.y} size={17} />

@@ -200,3 +200,40 @@ export const ZodiacGlyph: React.FC<{
     pointerEvents="none"
   />
 );
+
+/**
+ * Glyph planet dari file PNG (public/astrology/planet/<planet>-dark.png, 64x64, transparan).
+ * Baru tersedia untuk sun..neptune. Pluto, Chiron, dan North Node belum punya PNG,
+ * jadi otomatis jatuh ke glyph SVG (AstroGlyph).
+ */
+export const PLANET_PNG = new Set([
+  'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune',
+]);
+
+export const planetSrc = (id: string) =>
+  `${import.meta.env.BASE_URL}astrology/planet/${id.toLowerCase()}-dark.png`;
+
+/** Di dalam <svg>: PNG planet (titik tengah di x, y); fallback ke glyph SVG bila PNG belum ada. */
+export const PlanetGlyph: React.FC<{
+  id: string;
+  x?: number;
+  y?: number;
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+}> = ({ id, x = 0, y = 0, size = 22, color = '#000', strokeWidth = 1.7 }) => {
+  const key = id.toLowerCase();
+  if (!PLANET_PNG.has(key)) {
+    return <AstroGlyph name={key} x={x} y={y} size={size} color={color} strokeWidth={strokeWidth} />;
+  }
+  return (
+    <image
+      href={planetSrc(key)}
+      x={x - size / 2}
+      y={y - size / 2}
+      width={size}
+      height={size}
+      pointerEvents="none"
+    />
+  );
+};
