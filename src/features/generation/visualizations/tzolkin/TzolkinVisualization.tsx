@@ -4,9 +4,9 @@ import {
   Typography,
   Chip,
 } from '@mui/material';
-import { BaseChartResult } from '../../../types/systems';
-import { TzolkinCalculationResult, TzolkinKin, SolarSeal } from '../../../systems/tzolkin/types';
-import { getSealIconPath, getCastleIconPath } from '../../../systems/tzolkin/icons';
+import { BaseChartResult } from '../../../../types/systems';
+import { TzolkinCalculationResult, TzolkinKin, SolarSeal } from '../../../../systems/tzolkin/types';
+import { getSealIconPath, getCastleIconPath } from '../../../../systems/tzolkin/icons';
 
 interface TzolkinVisualizationProps {
   result: BaseChartResult<TzolkinCalculationResult>;

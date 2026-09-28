@@ -13,8 +13,8 @@ import {
   Chip,
   Paper,
 } from '@mui/material';
-import { BaseChartResult } from '../../../types/systems';
-import { AstrologyCalculationResult, PlanetPosition } from '../../../systems/astrology/types';
+import { BaseChartResult } from '../../../../types/systems';
+import { AstrologyCalculationResult, PlanetPosition } from '../../../../systems/astrology/types';
 import { NatalChartWheel } from './NatalChartWheel';
 import { AstroGlyphInline } from './astroGlyphs';
 

@@ -9,8 +9,8 @@ import {
   IconButton,
 } from '@mui/material';
 import { X, Crown, Sparkles } from 'lucide-react';
-import { BaseChartResult } from '../../../types/systems';
-import { ZiWeiCalculationResult, ZiWeiPalace } from '../../../systems/zi-wei-dou-shu/types';
+import { BaseChartResult } from '../../../../types/systems';
+import { ZiWeiCalculationResult, ZiWeiPalace } from '../../../../systems/zi-wei-dou-shu/types';
 
 interface ZiWeiVisualizationProps {
   result: BaseChartResult<ZiWeiCalculationResult>;

@@ -4,8 +4,8 @@ import {
   Typography,
   Chip,
 } from '@mui/material';
-import { BaseChartResult } from '../../../types/systems';
-import { NumerologyCalculationResult } from '../../../systems/numerology/types';
+import { BaseChartResult } from '../../../../types/systems';
+import { NumerologyCalculationResult } from '../../../../systems/numerology/types';
 
 interface NumerologyVisualizationProps {
   result: BaseChartResult<NumerologyCalculationResult>;

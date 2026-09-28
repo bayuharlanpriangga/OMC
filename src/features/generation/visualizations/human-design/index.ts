@@ -1,0 +1,1 @@
+export { HumanDesignVisualization } from './HumanDesignVisualization';

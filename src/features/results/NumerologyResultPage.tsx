@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import { BookOpen } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 import { NumerologyCalculationResult } from '../../systems/numerology/types';
-import { NumerologyVisualization } from '../generation/visualizations/NumerologyVisualization';
+import { NumerologyVisualization } from '../generation/visualizations/numerology';
 import { ResultHeaderBanner } from './ResultHeaderBanner';
 
 interface NumerologyResultPageProps {

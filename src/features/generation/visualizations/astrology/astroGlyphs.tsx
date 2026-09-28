@@ -172,3 +172,31 @@ export const AstroGlyphInline: React.FC<{
     <AstroGlyph name={name} color={color} size={20} strokeWidth={1.5} />
   </svg>
 );
+
+/**
+ * Glyph zodiak dari file PNG (public/astrology/zodiak/<variant>/<sign>-<variant>.png, 64x64, transparan).
+ * variant 'dark' = goresan hitam (dipakai di atas latar gold, mis. wheel).
+ * variant 'gold' = untuk latar gelap (mis. daftar aspek), belum ada filenya.
+ */
+export type ZodiacVariant = 'dark' | 'gold';
+
+export const zodiacSrc = (sign: string, variant: ZodiacVariant = 'dark') =>
+  `${import.meta.env.BASE_URL}astrology/zodiak/${variant}/${sign.toLowerCase()}-${variant}.png`;
+
+/** Di dalam <svg>: gambar PNG zodiak, titik tengah di (x, y). */
+export const ZodiacGlyph: React.FC<{
+  sign: string;
+  x?: number;
+  y?: number;
+  size?: number;
+  variant?: ZodiacVariant;
+}> = ({ sign, x = 0, y = 0, size = 24, variant = 'dark' }) => (
+  <image
+    href={zodiacSrc(sign, variant)}
+    x={x - size / 2}
+    y={y - size / 2}
+    width={size}
+    height={size}
+    pointerEvents="none"
+  />
+);

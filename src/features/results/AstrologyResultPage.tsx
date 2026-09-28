@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import { BookOpen } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 import { AstrologyCalculationResult } from '../../systems/astrology/types';
-import { AstrologyVisualization } from '../generation/visualizations/AstrologyVisualization';
+import { AstrologyVisualization } from '../generation/visualizations/astrology';
 import { ResultHeaderBanner } from './ResultHeaderBanner';
 
 interface AstrologyResultPageProps {

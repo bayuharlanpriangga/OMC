@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import { BookOpen } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 import { ZiWeiCalculationResult } from '../../systems/zi-wei-dou-shu/types';
-import { ZiWeiVisualization } from '../generation/visualizations/ZiWeiVisualization';
+import { ZiWeiVisualization } from '../generation/visualizations/zi-wei-dou-shu';
 import { ResultHeaderBanner } from './ResultHeaderBanner';
 
 interface ZiWeiResultPageProps {

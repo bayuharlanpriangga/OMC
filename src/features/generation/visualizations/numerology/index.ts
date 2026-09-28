@@ -1,0 +1,1 @@
+export { NumerologyVisualization } from './NumerologyVisualization';

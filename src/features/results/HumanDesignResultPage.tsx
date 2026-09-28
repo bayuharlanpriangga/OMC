@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import { BookOpen } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 import { HumanDesignCalculationResult } from '../../systems/human-design/types';
-import { HumanDesignVisualization } from '../generation/visualizations/HumanDesignVisualization';
+import { HumanDesignVisualization } from '../generation/visualizations/human-design';
 import { ResultHeaderBanner } from './ResultHeaderBanner';
 
 interface HumanDesignResultPageProps {

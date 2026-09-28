@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import { BookOpen } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 import { TzolkinCalculationResult } from '../../systems/tzolkin/types';
-import { TzolkinVisualization } from '../generation/visualizations/TzolkinVisualization';
+import { TzolkinVisualization } from '../generation/visualizations/tzolkin';
 import { ResultHeaderBanner } from './ResultHeaderBanner';
 
 interface TzolkinResultPageProps {

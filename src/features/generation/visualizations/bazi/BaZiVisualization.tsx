@@ -4,8 +4,8 @@ import {
   Typography,
   LinearProgress,
 } from '@mui/material';
-import { BaseChartResult } from '../../../types/systems';
-import { BaZiCalculationResult, BaZiPillar, WuXingElement } from '../../../systems/bazi/types';
+import { BaseChartResult } from '../../../../types/systems';
+import { BaZiCalculationResult, BaZiPillar, WuXingElement } from '../../../../systems/bazi/types';
 
 interface BaZiVisualizationProps {
   result: BaseChartResult<BaZiCalculationResult>;

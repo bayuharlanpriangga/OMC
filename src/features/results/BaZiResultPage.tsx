@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import { BookOpen } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 import { BaZiCalculationResult } from '../../systems/bazi/types';
-import { BaZiVisualization } from '../generation/visualizations/BaZiVisualization';
+import { BaZiVisualization } from '../generation/visualizations/bazi';
 import { ResultHeaderBanner } from './ResultHeaderBanner';
 
 interface BaZiResultPageProps {

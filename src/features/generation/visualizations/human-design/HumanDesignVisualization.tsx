@@ -11,8 +11,8 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { BaseChartResult } from '../../../types/systems';
-import { HDCenterId, HumanDesignCalculationResult } from '../../../systems/human-design/types';
+import { BaseChartResult } from '../../../../types/systems';
+import { HDCenterId, HumanDesignCalculationResult } from '../../../../systems/human-design/types';
 
 interface HumanDesignVisualizationProps {
   result: BaseChartResult<HumanDesignCalculationResult>;
