@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, Chip } from '@mui/material';
-import { ArrowLeft, Sliders, Sparkles, Printer, Calendar, Clock, MapPin, Globe } from 'lucide-react';
+import { ArrowLeft, Sliders, Calendar, Clock, MapPin, Globe } from 'lucide-react';
 import { BaseChartResult } from '../../types/systems';
 
 interface ResultHeaderBannerProps {
@@ -57,38 +57,6 @@ export const ResultHeaderBanner: React.FC<ResultHeaderBannerProps> = ({
             }}
           >
             Ubah Parameter
-          </Button>
-
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={onCalculateOtherSystem}
-            startIcon={<Sparkles size={15} />}
-            sx={{
-              borderColor: '#2E3952',
-              color: '#E0C99A',
-              borderRadius: 20,
-              fontSize: '0.8rem',
-              '&:hover': { borderColor: '#E0C99A', backgroundColor: 'rgba(224, 201, 154, 0.08)' },
-            }}
-          >
-            Sistem Lain
-          </Button>
-
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => window.print()}
-            startIcon={<Printer size={15} />}
-            sx={{
-              borderColor: '#2E3952',
-              color: '#94A3B8',
-              borderRadius: 20,
-              fontSize: '0.8rem',
-              '&:hover': { color: '#EDF1F7', borderColor: '#3E4C6E' },
-            }}
-          >
-            Cetak / Simpan
           </Button>
         </Box>
       </Box>

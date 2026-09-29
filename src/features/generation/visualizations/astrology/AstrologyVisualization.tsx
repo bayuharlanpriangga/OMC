@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   Typography,
@@ -12,11 +12,67 @@ import {
   TableRow,
   Chip,
   Paper,
+  ButtonBase,
 } from '@mui/material';
+import { Download } from 'lucide-react';
 import { BaseChartResult } from '../../../../types/systems';
 import { AstrologyCalculationResult, PlanetPosition } from '../../../../systems/astrology/types';
 import { NatalChartWheel } from './NatalChartWheel';
 import { AstroGlyphInline } from './astroGlyphs';
+
+/** Ekspor SVG chart ke PNG (glyph <image> di-inline sebagai data URI). */
+async function downloadWheelPng(svg: SVGSVGElement, filename: string) {
+  const vb = svg.viewBox.baseVal;
+  const scale = 2;
+  const w = vb.width * scale;
+  const h = vb.height * scale;
+
+  const clone = svg.cloneNode(true) as SVGSVGElement;
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  clone.setAttribute('width', String(w));
+  clone.setAttribute('height', String(h));
+
+  await Promise.all(
+    Array.from(clone.querySelectorAll('image')).map(async (img) => {
+      const href = img.getAttribute('href') || img.getAttribute('xlink:href');
+      if (!href || href.startsWith('data:')) return;
+      const blob = await (await fetch(href)).blob();
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+      });
+      img.setAttribute('href', dataUrl);
+      img.removeAttribute('xlink:href');
+    })
+  );
+
+  const xml = new XMLSerializer().serializeToString(clone);
+  const url = URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }));
+  try {
+    const image = new Image();
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = reject;
+      image.src = url;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(image, 0, 0, w, h);
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = filename;
+    a.click();
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
 
 interface AstrologyVisualizationProps {
   result: BaseChartResult<AstrologyCalculationResult>;
@@ -25,6 +81,22 @@ interface AstrologyVisualizationProps {
 export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ result }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [hoveredPlanet, setHoveredPlanet] = useState<PlanetPosition | null>(null);
+  const wheelRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadChart = async () => {
+    const svg = wheelRef.current?.querySelector('svg');
+    if (!svg || downloading) return;
+    setDownloading(true);
+    try {
+      const name = (result.profiles[0]?.name || 'chart').replace(/\s+/g, '-').toLowerCase();
+      await downloadWheelPng(svg as SVGSVGElement, `omc-natal-chart-${name}.png`);
+    } catch (err) {
+      console.error('Gagal mengunduh chart:', err);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const { data } = result;
   const { planets, houses, aspects, elementBalance, modalityBalance } = data;
@@ -102,35 +174,40 @@ export const AstrologyVisualization: React.FC<AstrologyVisualizationProps> = ({ 
             Celestial Wheel Projection
           </Typography>
 
-          <Box sx={{ width: '100%', maxWidth: 620, aspectRatio: '1 / 1', position: 'relative', userSelect: 'none' }}>
+          <Box ref={wheelRef} sx={{ width: '100%', maxWidth: 620, aspectRatio: '1 / 1', position: 'relative', userSelect: 'none' }}>
             <NatalChartWheel data={data} hoveredId={hoveredPlanet?.id ?? null} onHover={setHoveredPlanet} />
           </Box>
 
-          {/* Legend aspek */}
-          <Box sx={{ display: 'flex', gap: 2.5, mt: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-              <Box sx={{ width: 22, height: 0, borderTop: '2px solid #1D4ED8' }} />
-              <Typography variant="caption" sx={{ color: '#94A3B8' }}>Harmony (trine, sextile)</Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-              <Box sx={{ width: 22, height: 0, borderTop: '2px solid #C62828' }} />
-              <Typography variant="caption" sx={{ color: '#94A3B8' }}>Conflict (square, opposition)</Typography>
-            </Box>
-          </Box>
-
           {/* Hovered Planet Details Popover */}
-          <Box sx={{ mt: 1.5, minHeight: 36, textAlign: 'center' }}>
+          <Box sx={{ mt: 1.5, minHeight: 24, textAlign: 'center' }}>
             {hoveredPlanet ? (
               <Typography variant="body2" sx={{ color: '#E0C99A', fontWeight: 600 }}>
                 <AstroGlyphInline name={hoveredPlanet.id} size={16} style={{ marginRight: 6 }} />{hoveredPlanet.name} in {hoveredPlanet.sign} at {hoveredPlanet.degree}°{hoveredPlanet.minute}'
                 {hoveredPlanet.house ? ` (House ${hoveredPlanet.house})` : ''} {hoveredPlanet.isRetrograde ? '· Retrograde (Rx)' : ''}
               </Typography>
-            ) : (
-              <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                Hover or tap a planet on the wheel to see its details and aspects
-              </Typography>
-            )}
+            ) : null}
           </Box>
+
+          {/* Tombol download chart: ikon + teks abu, emas saat hover/focus */}
+          <ButtonBase
+            className="no-print"
+            onClick={handleDownloadChart}
+            disabled={downloading}
+            disableRipple
+            sx={{
+              mt: 0.5,
+              gap: 0.8,
+              color: '#94A3B8',
+              fontFamily: 'inherit',
+              fontSize: '0.75rem',
+              transition: 'color 0.2s ease',
+              '&:hover, &:focus-visible, &:active': { color: '#E0C99A' },
+              '&.Mui-disabled': { color: '#64748B' },
+            }}
+          >
+            <Download size={14} />
+            {downloading ? 'Menyiapkan…' : 'Download chart'}
+          </ButtonBase>
         </Box>
 
         {/* Elemental & Modality Breakdown */}
