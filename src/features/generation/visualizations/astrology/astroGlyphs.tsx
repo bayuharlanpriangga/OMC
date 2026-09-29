@@ -207,7 +207,7 @@ export const ZodiacGlyph: React.FC<{
  * jadi otomatis jatuh ke glyph SVG (AstroGlyph).
  */
 export const PLANET_PNG = new Set([
-  'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune',
+  'sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto', 'chiron',
 ]);
 
 export const planetSrc = (id: string) =>
