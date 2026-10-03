@@ -1,5 +1,10 @@
 import { BirthProfile } from '../../types/birth-data';
-import { NumerologyCalculationResult, NumerologyNumber } from './types';
+import {
+  NumerologyCalculationResult,
+  NumerologyFigure,
+  NumerologyNumber,
+  NumerologyPeriod,
+} from './types';
 
 const PYTHAGOREAN_MAP: Record<string, number> = {
   A: 1, J: 1, S: 1,
@@ -13,7 +18,8 @@ const PYTHAGOREAN_MAP: Record<string, number> = {
   I: 9, R: 9,
 };
 
-const VOWELS = new Set(['A', 'E', 'I', 'O', 'U']);
+const KARMIC_DEBT_NUMBERS = [13, 14, 16, 19];
+const isVowelLetter = (ch: string) => 'AEIOU'.includes(ch);
 
 const NUMBER_METADATA: Record<number, { name: string; tagline: string; keywords: string[] }> = {
   1: { name: 'The Sovereign Pioneer', tagline: 'Originality, Leadership & Independence', keywords: ['Initiative', 'Courage', 'Willpower', 'Autonomy'] },
@@ -43,20 +49,69 @@ function reduceNumber(num: number, preserveMaster = true): { value: number; isMa
   return reduceNumber(sum, preserveMaster);
 }
 
-function getNumberDetails(val: number): NumerologyNumber {
-  const reduced = reduceNumber(val, true);
-  const meta = NUMBER_METADATA[reduced.value] || {
-    name: `Vibration ${reduced.value}`,
+function toFigure(raw: number): NumerologyFigure {
+  const value = reduceNumber(raw, true).value;
+  const base = reduceNumber(raw, false).value;
+  const isMasterNumber = value !== base;
+  const compound = raw > 9 ? raw : null;
+  let display: string;
+  if (compound === null) display = String(value);
+  else if (isMasterNumber) display = compound === value ? `${compound}/${base}` : `${compound}/${value}/${base}`;
+  else display = `${compound}/${value}`;
+  return { value, base, compound, isMasterNumber, display };
+}
+
+function getNumberDetails(raw: number): NumerologyNumber {
+  const fig = toFigure(raw);
+  const meta = NUMBER_METADATA[fig.value] || {
+    name: `Vibration ${fig.value}`,
     tagline: 'Harmonic frequency',
     keywords: ['Resonance'],
   };
-  return {
-    value: reduced.value,
-    isMasterNumber: reduced.isMaster,
-    name: meta.name,
-    tagline: meta.tagline,
-    keywords: meta.keywords,
-  };
+  return { ...fig, name: meta.name, tagline: meta.tagline, keywords: meta.keywords };
+}
+
+/** Nama → bagian-bagian (depan, tengah, belakang) berisi huruf A–Z saja; aksen dinormalisasi (é → E). */
+function splitNameParts(raw: string): string[] {
+  return raw
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .split(/\s+/)
+    .map((p) => p.replace(/[^A-Z]/g, ''))
+    .filter(Boolean);
+}
+
+/** Y dihitung vokal hanya jika tidak bersebelahan dengan vokal lain (Bayu → konsonan, Lynn/Mary → vokal). */
+function isVowelAt(part: string, i: number): boolean {
+  const ch = part[i];
+  if (isVowelLetter(ch)) return true;
+  if (ch !== 'Y') return false;
+  const prev = part[i - 1];
+  const next = part[i + 1];
+  return !(prev && isVowelLetter(prev)) && !(next && isVowelLetter(next));
+}
+
+const letterValue = (ch: string) => PYTHAGOREAN_MAP[ch] || 0;
+
+/**
+ * Metode per-nama: tiap bagian nama direduksi dulu (master number dipertahankan), lalu hasilnya dijumlahkan.
+ * Angka majemuk (14, 24, 17, ...) berasal dari penjumlahan ini.
+ */
+function sumByParts(parts: string[], pick: (isVowel: boolean) => boolean): NumerologyFigure {
+  let compound = 0;
+  for (const part of parts) {
+    let s = 0;
+    for (let i = 0; i < part.length; i++) {
+      if (pick(isVowelAt(part, i))) s += letterValue(part[i]);
+    }
+    if (s > 0) compound += reduceNumber(s, true).value;
+  }
+  return toFigure(compound);
+}
+
+function buildPeriods(values: number[], boundaries: Array<[number, number | null]>): NumerologyPeriod[] {
+  return values.map((value, i) => ({ value, startAge: boundaries[i][0], endAge: boundaries[i][1] }));
 }
 
 export function calculateNumerology(
@@ -68,50 +123,140 @@ export function calculateNumerology(
   const m = parseInt(mStr, 10);
   const d = parseInt(dStr, 10);
 
-  // Life Path: Reduce year, month, day individually first (Pythagorean method)
+  // ---------- Angka kelahiran ----------
+  // Life Path: reduksi bulan, hari, tahun masing-masing dulu (master number dipertahankan), lalu dijumlahkan.
   const redMonth = reduceNumber(m, true);
   const redDay = reduceNumber(d, true);
   const redYear = reduceNumber(y, true);
   const lifePathRaw = redMonth.value + redDay.value + redYear.value;
+  const lifePathFigure = toFigure(lifePathRaw);
+  const birthDayFigure = toFigure(d);
   const lifePathNumber = getNumberDetails(lifePathRaw);
+  const birthdayNumber = getNumberDetails(d);
 
-  const cleanName = profile.name.toUpperCase().replace(/[^A-Z]/g, '') || 'SEEKER';
+  // Pinnacle: P1 = bulan + hari, P2 = hari + tahun, P3 = P1 + P2, P4 = bulan + tahun.
+  const p1 = reduceNumber(redMonth.value + redDay.value, true).value;
+  const p2 = reduceNumber(redDay.value + redYear.value, true).value;
+  const p3 = reduceNumber(p1 + p2, true).value;
+  const p4 = reduceNumber(redMonth.value + redYear.value, true).value;
+  // Pinnacle pertama berakhir di usia 36 − Life Path (angka tunggal), tiap pinnacle berikutnya 9 tahun.
+  const end1 = 36 - lifePathFigure.base;
+  const pinnacles = buildPeriods(
+    [p1, p2, p3, p4],
+    [[0, end1], [end1 + 1, end1 + 9], [end1 + 10, end1 + 18], [end1 + 19, null]]
+  );
+  // Cycle: bulan, hari, tahun. Usia 0–27, 28–55, 56+.
+  const cycles = buildPeriods(
+    [redMonth.value, redDay.value, redYear.value],
+    [[0, 27], [28, 55], [56, null]]
+  );
+  // Karmic Debt kelahiran: compound Life Path atau tanggal lahir.
+  const karmicDebts = Array.from(
+    new Set([lifePathRaw, d].filter((n) => KARMIC_DEBT_NUMBERS.includes(n)))
+  );
 
-  // Expression / Destiny: Sum of all letters
-  let destinySum = 0;
-  let vowelsSum = 0;
-  let consonantsSum = 0;
+  // ---------- Angka nama ----------
+  const parts = splitNameParts(profile.name || '');
+  const hasName = parts.length > 0;
 
-  for (const char of cleanName) {
-    const val = PYTHAGOREAN_MAP[char] || 0;
-    destinySum += val;
-    if (VOWELS.has(char)) {
-      vowelsSum += val;
-    } else {
-      consonantsSum += val;
+  let name: NumerologyCalculationResult['name'] = null;
+  let hybrid: NumerologyCalculationResult['hybrid'] = null;
+  let destinyNumber: NumerologyNumber | null = null;
+  let soulUrgeNumber: NumerologyNumber | null = null;
+  let personalityNumber: NumerologyNumber | null = null;
+  let maturityNumber: NumerologyNumber | null = null;
+  const destinySteps: string[] = [];
+
+  if (hasName) {
+    const all = () => true;
+    const vowelsOnly = (v: boolean) => v;
+    const consonantsOnly = (v: boolean) => !v;
+
+    const expression = sumByParts(parts, all);
+    const heartsDesire = sumByParts(parts, vowelsOnly);
+    const personality = sumByParts(parts, consonantsOnly);
+
+    // Minor = nama depan + belakang saja (nama tengah dilewati). Untuk nama ≤ 2 kata sama dengan versi penuh.
+    const minorParts = parts.length >= 3 ? [parts[0], parts[parts.length - 1]] : parts;
+    const minorExpression = sumByParts(minorParts, all);
+    const minorHeartsDesire = sumByParts(minorParts, vowelsOnly);
+
+    // Balance = jumlah inisial seluruh nama; Cornerstone = huruf pertama nama depan.
+    const balance = toFigure(parts.reduce((acc, p) => acc + letterValue(p[0]), 0));
+    const cornerstone = parts[0][0];
+
+    // Karmic Lessons = angka 1–9 yang tidak muncul di nama; Subconscious Self = 9 − jumlah lesson.
+    const present = new Set<number>();
+    for (const part of parts) for (const ch of part) present.add(letterValue(ch));
+    const karmicLessons = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((n) => !present.has(n));
+    const subconsciousSelf = 9 - karmicLessons.length;
+
+    name = {
+      nameParts: parts,
+      expression,
+      minorExpression,
+      heartsDesire,
+      minorHeartsDesire,
+      personality,
+      heartPersonalityBridge: Math.abs(heartsDesire.base - personality.base),
+      balance,
+      cornerstone,
+      subconsciousSelf,
+      karmicLessons,
+      nameKarmicDebts: [
+        { source: 'Expression', fig: expression },
+        { source: "Heart's Desire", fig: heartsDesire },
+        { source: 'Personality', fig: personality },
+      ]
+        .filter((x) => x.fig.compound !== null && KARMIC_DEBT_NUMBERS.includes(x.fig.compound))
+        .map((x) => ({ source: x.source, display: x.fig.display })),
+    };
+
+    const maturityFigure = toFigure(lifePathFigure.value + expression.value);
+    hybrid = {
+      maturity: maturityFigure,
+      lifePathExpressionBridge: Math.abs(lifePathFigure.base - expression.base),
+      rationalThought: toFigure(parts[0].split('').reduce((acc, ch) => acc + letterValue(ch), 0)),
+    };
+
+    destinyNumber = getNumberDetails(expression.compound ?? expression.value);
+    soulUrgeNumber = heartsDesire.value > 0 ? getNumberDetails(heartsDesire.compound ?? heartsDesire.value) : null;
+    personalityNumber = personality.value > 0 ? getNumberDetails(personality.compound ?? personality.value) : null;
+    maturityNumber = getNumberDetails(lifePathFigure.value + expression.value);
+
+    destinySteps.push(`Name: ${parts.join(' ')}`);
+    for (const part of parts) {
+      const raw = part.split('').reduce((acc, ch) => acc + letterValue(ch), 0);
+      destinySteps.push(`${part}: ${part.split('').map((ch) => `${ch}${letterValue(ch)}`).join('+')} = ${raw} → ${reduceNumber(raw, true).value}`);
     }
+    destinySteps.push(`Sum of reduced names = ${expression.compound ?? expression.value} → ${expression.value}`);
+  } else {
+    destinySteps.push('Nama tidak mengandung huruf A–Z, angka nama tidak dapat dihitung.');
   }
 
-  const destinyNumber = getNumberDetails(destinySum);
-  const soulUrgeNumber = getNumberDetails(vowelsSum || 1);
-  const personalityNumber = getNumberDetails(consonantsSum || 1);
-  const birthdayNumber = getNumberDetails(d);
-  const maturityNumber = getNumberDetails(lifePathNumber.value + destinyNumber.value);
-
-  const currentYear = new Date().getFullYear();
+  // ---------- Personal Year ----------
+  const now = new Date();
+  const currentYear = now.getFullYear();
   const personalYearRaw = reduceNumber(m, false).value + reduceNumber(d, false).value + reduceNumber(currentYear, false).value;
   const personalYearNumber = reduceNumber(personalYearRaw, false).value;
 
+  let currentAge = currentYear - y;
+  if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) currentAge -= 1;
+
   return {
     lifePathNumber,
+    birthdayNumber,
     destinyNumber,
     soulUrgeNumber,
     personalityNumber,
-    birthdayNumber,
     maturityNumber,
     personalYearNumber,
     currentYear,
+    currentAge,
     calculationMethod: 'Pythagorean',
+    birth: { lifePath: lifePathFigure, birthDay: birthDayFigure, pinnacles, cycles, karmicDebts },
+    name,
+    hybrid,
     digitBreakdown: {
       lifePathSteps: [
         `Month (${m}) → ${redMonth.value}`,
@@ -119,10 +264,7 @@ export function calculateNumerology(
         `Year (${y}) → ${redYear.value}`,
         `Sum: ${redMonth.value} + ${redDay.value} + ${redYear.value} = ${lifePathRaw} → ${lifePathNumber.value}`,
       ],
-      destinySteps: [
-        `Name: ${cleanName}`,
-        `Letter Frequencies Sum = ${destinySum} → ${destinyNumber.value}`,
-      ],
+      destinySteps,
     },
   };
 }
