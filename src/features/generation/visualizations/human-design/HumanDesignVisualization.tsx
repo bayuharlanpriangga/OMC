@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   Typography,
@@ -10,11 +10,14 @@ import {
   TableHead,
   TableRow,
   Paper,
+  ButtonBase,
 } from '@mui/material';
+import { Download } from 'lucide-react';
 import { BaseChartResult } from '../../../../types/systems';
 import { HDCenterId, HDGateActivation, HumanDesignCalculationResult } from '../../../../systems/human-design/types';
 import { AstroGlyphInline } from '../astrology/astroGlyphs';
 import { Bodygraph, DESIGN_COLOR, PERSONALITY_COLOR } from './Bodygraph';
+import { downloadSvgAsPng } from '../exportChartPng';
 
 /** Kolom posisi planet (gate.line) — kiri = Design (merah), kanan = Personality (emas). */
 const PlanetColumn: React.FC<{ rows: HDGateActivation[]; kind: 'design' | 'personality' }> = ({ rows, kind }) => {
@@ -80,14 +83,22 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
   const { data } = result;
   const [selectedCenter, setSelectedCenter] = useState<HDCenterId | null>(null);
 
-  const profileTz = result.profiles[0]?.timezone;
-  const designDateLabel = (() => {
+  const graphRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadChart = async () => {
+    const svg = graphRef.current?.querySelector('svg');
+    if (!svg || downloading) return;
+    setDownloading(true);
     try {
-      return new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short', timeZone: profileTz || 'UTC' }).format(new Date(data.designDateUtc));
-    } catch {
-      return new Date(data.designDateUtc).toUTCString();
+      const name = (result.profiles[0]?.name || 'chart').replace(/\s+/g, '-').toLowerCase();
+      await downloadSvgAsPng(svg as SVGSVGElement, `omc-human-design-${name}.png`);
+    } catch (err) {
+      console.error('Gagal mengunduh chart:', err);
+    } finally {
+      setDownloading(false);
     }
-  })();
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
@@ -176,7 +187,7 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
               <PlanetColumn rows={data.designGates} kind="design" />
             </Box>
 
-            <Box sx={{ gridArea: 'graph', width: '100%', maxWidth: 460, mx: 'auto', userSelect: 'none' }}>
+            <Box ref={graphRef} sx={{ gridArea: 'graph', width: '100%', maxWidth: 460, mx: 'auto', userSelect: 'none' }}>
               <Bodygraph data={data} selectedCenter={selectedCenter} onSelectCenter={setSelectedCenter} />
             </Box>
 
@@ -190,10 +201,27 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
             <LegendSwatch color={DESIGN_COLOR} label="Design" />
             <LegendSwatch color="" striped label="Keduanya" />
           </Box>
+          {/* Tombol download chart: ikon + teks abu, emas saat hover/focus */}
+          <ButtonBase
+            className="no-print"
+            onClick={handleDownloadChart}
+            disabled={downloading}
+            disableRipple
+            sx={{
+              mt: 1.5,
+              gap: 0.8,
+              color: '#94A3B8',
+              fontFamily: 'inherit',
+              fontSize: '0.75rem',
+              transition: 'color 0.2s ease',
+              '&:hover, &:focus-visible, &:active': { color: '#E0C99A' },
+              '&.Mui-disabled': { color: '#64748B' },
+            }}
+          >
+            <Download size={14} />
+            {downloading ? 'Menyiapkan…' : 'Download chart'}
+          </ButtonBase>
           <Typography variant="caption" sx={{ color: '#64748B', mt: 1, textAlign: 'center' }}>
-            Design dihitung saat Matahari 88° sebelum posisi lahir · {designDateLabel}
-          </Typography>
-          <Typography variant="caption" sx={{ color: '#64748B', mt: 0.25, textAlign: 'center' }}>
             Klik center untuk melihat detailnya
           </Typography>
         </Box>

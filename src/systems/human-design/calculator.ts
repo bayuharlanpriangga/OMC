@@ -6,7 +6,7 @@ import {
   planetEclipticLongitude,
   zonedCivilTimeToUtc,
 } from '../astrology/natal/calculator';
-import { CHANNELS, GATE_CENTER, MOTOR_CENTERS, longitudeToGate } from './gates';
+import { CHANNELS, GATE_CENTER, MOTOR_CENTERS, longitudeToGate, rightAngleCrossName } from './gates';
 import {
   HDCenterId,
   HDGateActivation,
@@ -310,7 +310,7 @@ export function calculateHumanDesign(
     notSelfTheme,
     signature,
     definition,
-    incarnationCross: `${crossAngle} Cross (${pSun.gate}/${pEarth.gate} | ${dSun.gate}/${dEarth.gate})`,
+    incarnationCross: `${crossAngle === 'Right Angle' ? `Right Angle Cross of ${rightAngleCrossName(pSun.gate)}` : `${crossAngle} Cross`} (${pSun.gate}/${pEarth.gate} | ${dSun.gate}/${dEarth.gate})`,
     crossAngle,
     crossGates: { personalitySun: pSun.gate, personalityEarth: pEarth.gate, designSun: dSun.gate, designEarth: dEarth.gate },
     variables: {
