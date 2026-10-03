@@ -12,7 +12,65 @@ import {
   Paper,
 } from '@mui/material';
 import { BaseChartResult } from '../../../../types/systems';
-import { HDCenterId, HumanDesignCalculationResult } from '../../../../systems/human-design/types';
+import { HDCenterId, HDGateActivation, HumanDesignCalculationResult } from '../../../../systems/human-design/types';
+import { AstroGlyphInline } from '../astrology/astroGlyphs';
+import { Bodygraph, DESIGN_COLOR, PERSONALITY_COLOR } from './Bodygraph';
+
+/** Kolom posisi planet (gate.line) — kiri = Design (merah), kanan = Personality (emas). */
+const PlanetColumn: React.FC<{ rows: HDGateActivation[]; kind: 'design' | 'personality' }> = ({ rows, kind }) => {
+  const isDesign = kind === 'design';
+  const accent = isDesign ? DESIGN_COLOR : PERSONALITY_COLOR;
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '3px', width: '100%' }}>
+      <Box sx={{ textAlign: 'center', mb: 0.5 }}>
+        <Typography variant="caption" sx={{ color: accent, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', lineHeight: 1.2 }}>
+          {isDesign ? 'Design' : 'Personality'}
+        </Typography>
+        <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.65rem', display: 'block', lineHeight: 1.2 }}>
+          {isDesign ? 'Unconscious' : 'Conscious'}
+        </Typography>
+      </Box>
+      {rows.map((a) => (
+        <Box
+          key={a.planetId}
+          title={a.isExtra ? `${a.planet} — hanya informasi, tidak menentukan definisi` : a.planet}
+          sx={{
+            display: 'flex',
+            flexDirection: isDesign ? 'row' : 'row-reverse',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 0.75,
+            px: 1,
+            height: 26,
+            borderRadius: 1,
+            backgroundColor: isDesign ? 'rgba(220, 38, 38, 0.16)' : 'rgba(224, 201, 154, 0.12)',
+            border: `1px solid ${isDesign ? 'rgba(220, 38, 38, 0.45)' : 'rgba(224, 201, 154, 0.35)'}`,
+            opacity: a.isExtra ? 0.6 : 1,
+          }}
+        >
+          <AstroGlyphInline name={a.planetId} size={15} color={accent} />
+          <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600, fontSize: '0.8rem', fontVariantNumeric: 'tabular-nums' }}>
+            {a.gate}.{a.line}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
+const LegendSwatch: React.FC<{ color: string; striped?: boolean; label: string }> = ({ color, striped, label }) => (
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+    <Box
+      sx={{
+        width: 18,
+        height: 6,
+        borderRadius: 3,
+        background: striped ? `repeating-linear-gradient(90deg, ${PERSONALITY_COLOR} 0 4px, ${DESIGN_COLOR} 4px 8px)` : color,
+      }}
+    />
+    <Typography variant="caption" sx={{ color: '#94A3B8' }}>{label}</Typography>
+  </Box>
+);
 
 interface HumanDesignVisualizationProps {
   result: BaseChartResult<HumanDesignCalculationResult>;
@@ -22,18 +80,14 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
   const { data } = result;
   const [selectedCenter, setSelectedCenter] = useState<HDCenterId | null>(null);
 
-  // Geometric coordinates for 9 Bodygraph centers in SVG (width 380, height 520)
-  const centerCoords: Record<HDCenterId, { x: number; y: number; label: string }> = {
-    head: { x: 190, y: 45, label: 'Head' },
-    ajna: { x: 190, y: 110, label: 'Ajna' },
-    throat: { x: 190, y: 185, label: 'Throat' },
-    'g-center': { x: 190, y: 270, label: 'G-Center' },
-    heart: { x: 275, y: 285, label: 'Heart / Ego' },
-    spleen: { x: 95, y: 355, label: 'Spleen' },
-    'solar-plexus': { x: 285, y: 355, label: 'Solar Plexus' },
-    sacral: { x: 190, y: 375, label: 'Sacral' },
-    root: { x: 190, y: 465, label: 'Root' },
-  };
+  const profileTz = result.profiles[0]?.timezone;
+  const designDateLabel = (() => {
+    try {
+      return new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short', timeZone: profileTz || 'UTC' }).format(new Date(data.designDateUtc));
+    } catch {
+      return new Date(data.designDateUtc).toUTCString();
+    }
+  })();
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
@@ -102,178 +156,45 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
           },
         }}
       >
-        {/* Interactive Bodygraph SVG (NO Gradients) */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* Bodygraph + kolom posisi planet (gaya chart HD klasik) */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', minWidth: 0 }}>
           <Typography variant="subtitle2" sx={{ alignSelf: 'flex-start', mb: 1.5, color: '#E0C99A', fontFamily: '"Cinzel", serif' }}>
             The Nine-Center Bodygraph
           </Typography>
 
-          <Box sx={{ width: '100%', maxWidth: 380, position: 'relative', userSelect: 'none' }}>
-            <svg viewBox="0 0 380 520" width="100%" height="100%">
-              {/* Background Spinal Circuit Channels */}
-              <line x1="190" y1="45" x2="190" y2="110" stroke="#1F2A3F" strokeWidth="4" />
-              <line x1="190" y1="110" x2="190" y2="185" stroke="#1F2A3F" strokeWidth="4" />
-              <line x1="190" y1="185" x2="190" y2="270" stroke="#1F2A3F" strokeWidth="4" />
-              <line x1="190" y1="270" x2="190" y2="375" stroke="#1F2A3F" strokeWidth="4" />
-              <line x1="190" y1="375" x2="190" y2="465" stroke="#1F2A3F" strokeWidth="4" />
+          <Box
+            sx={{
+              width: '100%',
+              display: 'grid',
+              gap: { xs: 1.5, md: 1 },
+              alignItems: 'start',
+              gridTemplateColumns: { xs: '1fr 1fr', md: 'minmax(88px, 112px) minmax(0, 1fr) minmax(88px, 112px)' },
+              gridTemplateAreas: { xs: '"graph graph" "design personality"', md: '"design graph personality"' },
+            }}
+          >
+            <Box sx={{ gridArea: 'design' }}>
+              <PlanetColumn rows={data.designGates} kind="design" />
+            </Box>
 
-              {/* Diagonal Channels */}
-              <line x1="190" y1="270" x2="275" y2="285" stroke="#1F2A3F" strokeWidth="3" />
-              <line x1="190" y1="185" x2="95" y2="355" stroke="#1F2A3F" strokeWidth="3" />
-              <line x1="190" y1="185" x2="285" y2="355" stroke="#1F2A3F" strokeWidth="3" />
-              <line x1="95" y1="355" x2="190" y2="375" stroke="#1F2A3F" strokeWidth="3" />
-              <line x1="285" y1="355" x2="190" y2="375" stroke="#1F2A3F" strokeWidth="3" />
-              <line x1="95" y1="355" x2="190" y2="465" stroke="#1F2A3F" strokeWidth="3" />
-              <line x1="285" y1="355" x2="190" y2="465" stroke="#1F2A3F" strokeWidth="3" />
+            <Box sx={{ gridArea: 'graph', width: '100%', maxWidth: 460, mx: 'auto', userSelect: 'none' }}>
+              <Bodygraph data={data} selectedCenter={selectedCenter} onSelectCenter={setSelectedCenter} />
+            </Box>
 
-              {/* Active Channels Highlight */}
-              {data.activeChannels.map((ch) => {
-                return (
-                  <path
-                    key={ch.id}
-                    d="M 190 270 L 190 375"
-                    stroke="#E0C99A"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    opacity="0.8"
-                  />
-                );
-              })}
-
-              {/* Render 9 Centers */}
-              {/* 1. HEAD (Upright Triangle) */}
-              <g onClick={() => setSelectedCenter('head')} style={{ cursor: 'pointer' }}>
-                <polygon
-                  points="190,20 160,65 220,65"
-                  fill={data.centers.head.isDefined ? '#E0C99A' : '#101625'}
-                  stroke={data.centers.head.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="190" y="52" fill={data.centers.head.isDefined ? '#1A1408' : '#94A3B8'} fontSize="9" fontWeight="bold" textAnchor="middle">
-                  HEAD
-                </text>
-              </g>
-
-              {/* 2. AJNA (Inverted Triangle) */}
-              <g onClick={() => setSelectedCenter('ajna')} style={{ cursor: 'pointer' }}>
-                <polygon
-                  points="160,85 220,85 190,135"
-                  fill={data.centers.ajna.isDefined ? '#9BB8DE' : '#101625'}
-                  stroke={data.centers.ajna.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="190" y="105" fill={data.centers.ajna.isDefined ? '#0A1320' : '#94A3B8'} fontSize="9" fontWeight="bold" textAnchor="middle">
-                  AJNA
-                </text>
-              </g>
-
-              {/* 3. THROAT (Square) */}
-              <g onClick={() => setSelectedCenter('throat')} style={{ cursor: 'pointer' }}>
-                <rect
-                  x="165"
-                  y="160"
-                  width="50"
-                  height="50"
-                  rx="6"
-                  fill={data.centers.throat.isDefined ? '#D97706' : '#101625'}
-                  stroke={data.centers.throat.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="190" y="188" fill={data.centers.throat.isDefined ? '#FFFFFF' : '#94A3B8'} fontSize="8" fontWeight="bold" textAnchor="middle">
-                  THROAT
-                </text>
-              </g>
-
-              {/* 4. G-CENTER (Diamond) */}
-              <g onClick={() => setSelectedCenter('g-center')} style={{ cursor: 'pointer' }}>
-                <polygon
-                  points="190,240 220,270 190,300 160,270"
-                  fill={data.centers['g-center'].isDefined ? '#E0C99A' : '#101625'}
-                  stroke={data.centers['g-center'].isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="190" y="273" fill={data.centers['g-center'].isDefined ? '#1A1408' : '#94A3B8'} fontSize="8" fontWeight="bold" textAnchor="middle">
-                  G-CENTER
-                </text>
-              </g>
-
-              {/* 5. HEART / EGO (Small Triangle) */}
-              <g onClick={() => setSelectedCenter('heart')} style={{ cursor: 'pointer' }}>
-                <polygon
-                  points="260,270 290,285 260,300"
-                  fill={data.centers.heart.isDefined ? '#EF4444' : '#101625'}
-                  stroke={data.centers.heart.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="270" y="288" fill={data.centers.heart.isDefined ? '#FFFFFF' : '#94A3B8'} fontSize="7" fontWeight="bold" textAnchor="middle">
-                  EGO
-                </text>
-              </g>
-
-              {/* 6. SPLEEN (Left Triangle) */}
-              <g onClick={() => setSelectedCenter('spleen')} style={{ cursor: 'pointer' }}>
-                <polygon
-                  points="115,325 115,385 65,355"
-                  fill={data.centers.spleen.isDefined ? '#D97706' : '#101625'}
-                  stroke={data.centers.spleen.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="100" y="358" fill={data.centers.spleen.isDefined ? '#FFFFFF' : '#94A3B8'} fontSize="7" fontWeight="bold" textAnchor="middle">
-                  SPLEEN
-                </text>
-              </g>
-
-              {/* 7. SOLAR PLEXUS (Right Triangle) */}
-              <g onClick={() => setSelectedCenter('solar-plexus')} style={{ cursor: 'pointer' }}>
-                <polygon
-                  points="265,325 315,355 265,385"
-                  fill={data.centers['solar-plexus'].isDefined ? '#D97706' : '#101625'}
-                  stroke={data.centers['solar-plexus'].isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="280" y="358" fill={data.centers['solar-plexus'].isDefined ? '#FFFFFF' : '#94A3B8'} fontSize="7" fontWeight="bold" textAnchor="middle">
-                  EMOTIONAL
-                </text>
-              </g>
-
-              {/* 8. SACRAL (Square) */}
-              <g onClick={() => setSelectedCenter('sacral')} style={{ cursor: 'pointer' }}>
-                <rect
-                  x="165"
-                  y="350"
-                  width="50"
-                  height="50"
-                  rx="6"
-                  fill={data.centers.sacral.isDefined ? '#EF4444' : '#101625'}
-                  stroke={data.centers.sacral.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="190" y="378" fill={data.centers.sacral.isDefined ? '#FFFFFF' : '#94A3B8'} fontSize="8" fontWeight="bold" textAnchor="middle">
-                  SACRAL
-                </text>
-              </g>
-
-              {/* 9. ROOT (Square) */}
-              <g onClick={() => setSelectedCenter('root')} style={{ cursor: 'pointer' }}>
-                <rect
-                  x="165"
-                  y="440"
-                  width="50"
-                  height="50"
-                  rx="6"
-                  fill={data.centers.root.isDefined ? '#D97706' : '#101625'}
-                  stroke={data.centers.root.isDefined ? '#EDF1F7' : '#2A364F'}
-                  strokeWidth="2"
-                />
-                <text x="190" y="468" fill={data.centers.root.isDefined ? '#FFFFFF' : '#94A3B8'} fontSize="8" fontWeight="bold" textAnchor="middle">
-                  ROOT
-                </text>
-              </g>
-            </svg>
+            <Box sx={{ gridArea: 'personality' }}>
+              <PlanetColumn rows={data.personalityGates} kind="personality" />
+            </Box>
           </Box>
 
-          <Typography variant="caption" sx={{ color: '#94A3B8', mt: 1 }}>
-            Click on any center to review its definition state and conditioning potential
+          <Box sx={{ display: 'flex', gap: 2.5, mt: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <LegendSwatch color={PERSONALITY_COLOR} label="Personality" />
+            <LegendSwatch color={DESIGN_COLOR} label="Design" />
+            <LegendSwatch color="" striped label="Keduanya" />
+          </Box>
+          <Typography variant="caption" sx={{ color: '#64748B', mt: 1, textAlign: 'center' }}>
+            Design dihitung saat Matahari 88° sebelum posisi lahir · {designDateLabel}
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#64748B', mt: 0.25, textAlign: 'center' }}>
+            Klik center untuk melihat detailnya
           </Typography>
         </Box>
 
@@ -291,6 +212,13 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
                   size="small"
                   sx={{ mb: 1.5 }}
                 />
+                {data.centers[selectedCenter].definedGates.length > 0 && (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1.5 }}>
+                    {Array.from(new Set(data.centers[selectedCenter].definedGates)).map((g) => (
+                      <Chip key={g} label={`Gate ${g}`} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                    ))}
+                  </Box>
+                )}
                 <Typography variant="body2" sx={{ color: '#D4DCED' }}>
                   {data.centers[selectedCenter].isDefined
                     ? `This center produces a steady, reliable internal frequency that remains fixed regardless of environment.`

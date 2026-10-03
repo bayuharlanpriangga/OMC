@@ -52,6 +52,14 @@ export const GLYPHS: Record<string, GlyphDef> = {
     paths: ['M-6 5 C-6 -9 6 -9 6 5'],
     circles: [[-6, 7, 2], [6, 7, 2]],
   },
+  'south-node': {
+    paths: ['M-6 -5 C-6 9 6 9 6 -5'],
+    circles: [[-6, -7, 2], [6, -7, 2]],
+  },
+  earth: { paths: ['M-8 0 H8', 'M0 -8 V8'], circles: [[0, 0, 8]] },
+  lilith: {
+    paths: ['M2 -10 A5.5 5.5 0 1 0 2 1 A3.8 3.8 0 1 1 2 -10 Z', 'M-1 4 V10', 'M-4 7.5 H2'],
+  },
 
   // ---- Zodiak ----
   aries: {

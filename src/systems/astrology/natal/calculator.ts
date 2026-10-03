@@ -74,7 +74,7 @@ export function degreeToSign(degree: number): ZodiacSign {
 // accounts for historical DST rules without needing a timezone database
 // dependency.
 // ---------------------------------------------------------------------------
-function zonedCivilTimeToUtc(
+export function zonedCivilTimeToUtc(
   year: number, month: number, day: number, hour: number, minute: number,
   timeZone: string
 ): Date {
@@ -122,7 +122,7 @@ function lahiriAyanamsa(year: number): number {
 // ---------------------------------------------------------------------------
 // Mean lunar North Node (Meeus, "Astronomical Algorithms" ch. 47).
 // ---------------------------------------------------------------------------
-function meanLunarNode(jd: number): number {
+export function meanLunarNode(jd: number): number {
   const T = (jd - 2451545.0) / 36525.0;
   const omega = 125.0445479 - 1934.1362891 * T + 0.0020754 * T * T + (T ** 3) / 467441 - (T ** 4) / 60616000;
   return normalizeAngle(omega);
@@ -133,7 +133,7 @@ function meanLunarNode(jd: number): number {
 // the `ephemeris` package (Moshier-based, pure JS, no data files). Verified
 // against known ingress dates (Aquarius 2005, Pisces 2010, Aries 2018).
 // ---------------------------------------------------------------------------
-function chironEclipticLongitude(date: Date): number {
+export function chironEclipticLongitude(date: Date): number {
   const r: any = ephemeris.getPlanet('chiron', date, 0, 0, 0);
   return normalizeAngle(r.observed.chiron.apparentLongitudeDd);
 }
@@ -142,7 +142,7 @@ function chironEclipticLongitude(date: Date): number {
 // Real geocentric apparent ecliptic longitude for any major planet via
 // astronomy-engine (VSOP87/DE-derived, arc-second-class precision).
 // ---------------------------------------------------------------------------
-function planetEclipticLongitude(body: Astronomy.Body, date: Date): number {
+export function planetEclipticLongitude(body: Astronomy.Body, date: Date): number {
   if (body === Astronomy.Body.Sun) {
     return normalizeAngle(Astronomy.SunPosition(date).elon);
   }
