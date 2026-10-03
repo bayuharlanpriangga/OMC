@@ -57,6 +57,13 @@ export interface NumerologyNameSection {
   nameKarmicDebts: { source: string; display: string }[];
 }
 
+export interface NumerologyDistributionEntry {
+  number: number; // 1–9
+  count: number;
+  /** Persentase dari seluruh angka di laporan, 1 desimal. */
+  percent: number;
+}
+
 export interface NumerologyHybridSection {
   maturity: NumerologyFigure;
   lifePathExpressionBridge: number;
@@ -76,6 +83,10 @@ export interface NumerologyCalculationResult {
   currentAge: number;
   calculationMethod: 'Pythagorean' | 'Chaldean';
   birth: NumerologyBirthSection;
+  /** Frekuensi angka 1–9 di seluruh angka laporan (master number dihitung sebagai angka tunggalnya). */
+  numberDistribution: NumerologyDistributionEntry[];
+  /** Angka dengan frekuensi tertinggi (bisa lebih dari satu jika seri). */
+  dominantNumbers: number[];
   /** Null jika nama tidak mengandung huruf A–Z. */
   name: NumerologyNameSection | null;
   hybrid: NumerologyHybridSection | null;

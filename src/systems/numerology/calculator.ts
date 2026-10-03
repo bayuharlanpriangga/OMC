@@ -234,6 +234,39 @@ export function calculateNumerology(
     destinySteps.push('Nama tidak mengandung huruf A–Z, angka nama tidak dapat dihitung.');
   }
 
+  // ---------- Distribusi angka (dominant) ----------
+  // Tiap angka di laporan dihitung 1x ke angka tunggalnya (11 → 2, 22 → 4, 33 → 6). Selisih bridge 0 dilewati.
+  const tallyValues: number[] = [
+    lifePathFigure.base,
+    birthDayFigure.base,
+    ...[p1, p2, p3, p4].map((v) => reduceNumber(v, false).value),
+    ...[redMonth.value, redDay.value, redYear.value].map((v) => reduceNumber(v, false).value),
+  ];
+  if (name && hybrid) {
+    tallyValues.push(
+      name.expression.base,
+      name.minorExpression.base,
+      name.heartsDesire.base,
+      name.minorHeartsDesire.base,
+      name.personality.base,
+      name.heartPersonalityBridge,
+      name.balance.base,
+      name.subconsciousSelf,
+      hybrid.maturity.base,
+      hybrid.lifePathExpressionBridge,
+      hybrid.rationalThought.base
+    );
+  }
+  const tallyCounts = new Map<number, number>();
+  for (const v of tallyValues) if (v >= 1 && v <= 9) tallyCounts.set(v, (tallyCounts.get(v) || 0) + 1);
+  const tallyTotal = Array.from(tallyCounts.values()).reduce((a, b) => a + b, 0);
+  const numberDistribution = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
+    const count = tallyCounts.get(n) || 0;
+    return { number: n, count, percent: tallyTotal ? Math.round((count / tallyTotal) * 1000) / 10 : 0 };
+  });
+  const maxCount = Math.max(...numberDistribution.map((e) => e.count));
+  const dominantNumbers = maxCount > 0 ? numberDistribution.filter((e) => e.count === maxCount).map((e) => e.number) : [];
+
   // ---------- Personal Year ----------
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -255,6 +288,8 @@ export function calculateNumerology(
     currentAge,
     calculationMethod: 'Pythagorean',
     birth: { lifePath: lifePathFigure, birthDay: birthDayFigure, pinnacles, cycles, karmicDebts },
+    numberDistribution,
+    dominantNumbers,
     name,
     hybrid,
     digitBreakdown: {

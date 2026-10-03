@@ -187,6 +187,7 @@ export const NumerologyVisualization: React.FC<NumerologyVisualizationProps> = (
             <Tab label="Birth" />
             <Tab label="Name" />
             <Tab label="Hybrid" />
+            <Tab label="Dominant" />
           </Tabs>
         </Box>
 
@@ -283,6 +284,51 @@ export const NumerologyVisualization: React.FC<NumerologyVisualizationProps> = (
               Hybrid numbers could not be calculated because the name has no A–Z letters.
             </Typography>
           ))}
+
+        {/* Tab 3: distribusi angka — angka mana yang paling dominan */}
+        {reportTab === 3 &&
+          (() => {
+            const maxPercent = Math.max(...data.numberDistribution.map((e) => e.percent), 1);
+            return (
+              <Box sx={{ maxWidth: 640 }}>
+                <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600, mb: 0.5 }}>
+                  Dominant number{data.dominantNumbers.length > 1 ? 's' : ''}:{' '}
+                  <Box component="span" sx={{ color: '#E0C99A' }}>
+                    {data.dominantNumbers.join(', ') || '—'}
+                  </Box>
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mb: 1.5 }}>
+                  How often each number appears across all figures in this report. Master numbers count as their single digit.
+                </Typography>
+                {data.numberDistribution.map((e) => {
+                  const dominant = data.dominantNumbers.includes(e.number);
+                  return (
+                    <Box key={e.number} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 0.6 }}>
+                      <Typography variant="body2" sx={{ width: 16, color: dominant ? '#E0C99A' : '#94A3B8', fontWeight: 700 }}>
+                        {e.number}
+                      </Typography>
+                      <Box sx={{ flex: 1, height: 10, borderRadius: '5px', backgroundColor: '#141C2E', overflow: 'hidden' }}>
+                        <Box
+                          sx={{
+                            width: `${(e.percent / maxPercent) * 100}%`,
+                            height: '100%',
+                            borderRadius: '5px',
+                            backgroundColor: dominant ? '#E0C99A' : '#3B4A6B',
+                          }}
+                        />
+                      </Box>
+                      <Typography
+                        variant="caption"
+                        sx={{ width: 78, textAlign: 'right', color: '#D4DCED', fontVariantNumeric: 'tabular-nums' }}
+                      >
+                        {e.percent}% · {e.count}x
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
+            );
+          })()}
       </Box>
 
       {/* Calculation Derivation Proof */}
