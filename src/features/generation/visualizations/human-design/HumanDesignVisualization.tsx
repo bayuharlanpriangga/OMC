@@ -275,6 +275,34 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
             )}
           </Box>
 
+          {/* Variabel lanjutan: lingkungan, motivasi, perspektif, pencernaan, kognisi, pikiran, arketipe */}
+          <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
+            <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
+              Variables &amp; Cognition
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              {(
+                [
+                  ['Lingkungan', data.extendedVariables.environment],
+                  ['Motivasi', data.extendedVariables.motivation],
+                  ['Perspektif', data.extendedVariables.perspective],
+                  ['Pencernaan', data.extendedVariables.digestion],
+                  ['Kognisi Tubuh', data.extendedVariables.cognition],
+                  ['Tindakan Pikiran', data.extendedVariables.mindAction],
+                  ['Arketipe Pemrogram', data.extendedVariables.programmingArchetype],
+                ] as const
+              ).map(([label, v]) => (
+                <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 2, py: 0.9, borderBottom: '1px solid #172133' }}>
+                  <Typography variant="body2" sx={{ color: '#94A3B8', flexShrink: 0 }}>{label}:</Typography>
+                  <Box sx={{ textAlign: 'right', minWidth: 0 }}>
+                    <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>{v.label}</Typography>
+                    <Typography variant="caption" sx={{ color: '#64748B' }}>{v.detail}</Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
           {/* Active Channels List */}
           <Box>
             <Typography variant="subtitle2" sx={{ color: '#9BB8DE', mb: 1.5, fontFamily: '"Cinzel", serif' }}>

@@ -57,6 +57,8 @@ export interface HDVariableArrow {
   direction: 'left' | 'right';
 }
 
+import type { HDExtendedVariables } from './variables';
+
 export interface HumanDesignCalculationResult {
   type: HumanDesignType;
   profile: string; // e.g., '1/3', '4/6'
@@ -73,6 +75,8 @@ export interface HumanDesignCalculationResult {
   crossAngle: 'Right Angle' | 'Left Angle' | 'Juxtaposition';
   crossGates: { personalitySun: number; personalityEarth: number; designSun: number; designEarth: number };
   variables: { determination: HDVariableArrow; environment: HDVariableArrow; motivation: HDVariableArrow; perspective: HDVariableArrow };
+  /** Variabel lanjutan: lingkungan, motivasi, perspektif, pencernaan, kognisi, tindakan pikiran, arketipe. */
+  extendedVariables: HDExtendedVariables;
   /** Waktu (UTC, ISO) saat Design dihitung: Matahari 88° sebelum posisi lahir. */
   designDateUtc: string;
   personalityGates: HDGateActivation[];

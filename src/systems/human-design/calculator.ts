@@ -8,6 +8,7 @@ import {
 } from '../astrology/natal/calculator';
 import { CHANNELS, GATE_CENTER, MOTOR_CENTERS, longitudeToGate } from './gates';
 import { lookupIncarnationCross } from './crosses';
+import { buildExtendedVariables } from './variables';
 import {
   HDCenterId,
   HDGateActivation,
@@ -323,6 +324,7 @@ export function calculateHumanDesign(
       motivation: arrow(pSun),
       perspective: arrow(nodeP),
     },
+    extendedVariables: buildExtendedVariables(personalityGates, designGates),
     designDateUtc: designUtc.toISOString(),
     centers,
     activeChannels,
