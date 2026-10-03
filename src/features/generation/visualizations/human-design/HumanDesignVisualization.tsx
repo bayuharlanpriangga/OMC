@@ -11,6 +11,8 @@ import {
   TableRow,
   Paper,
   ButtonBase,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import { Download } from 'lucide-react';
 import { BaseChartResult } from '../../../../types/systems';
@@ -82,6 +84,8 @@ interface HumanDesignVisualizationProps {
 export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> = ({ result }) => {
   const { data } = result;
   const [selectedCenter, setSelectedCenter] = useState<HDCenterId | null>(null);
+  // 0 = Cognition (variabel lanjutan), 1 = Channel (channel yang terdefinisi)
+  const [detailTab, setDetailTab] = useState(0);
 
   const graphRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
@@ -275,52 +279,64 @@ export const HumanDesignVisualization: React.FC<HumanDesignVisualizationProps> =
             )}
           </Box>
 
-          {/* Variabel lanjutan: lingkungan, motivasi, perspektif, pencernaan, kognisi, pikiran, arketipe */}
-          <Box sx={{ pb: 2.5, mb: 2.5, borderBottom: '1px solid #1E283D' }}>
-            <Typography variant="subtitle2" sx={{ color: '#E0C99A', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
-              Variables &amp; Cognition
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              {(
-                [
-                  ['Lingkungan', data.extendedVariables.environment],
-                  ['Motivasi', data.extendedVariables.motivation],
-                  ['Perspektif', data.extendedVariables.perspective],
-                  ['Pencernaan', data.extendedVariables.digestion],
-                  ['Kognisi Tubuh', data.extendedVariables.cognition],
-                  ['Tindakan Pikiran', data.extendedVariables.mindAction],
-                  ['Arketipe Pemrogram', data.extendedVariables.programmingArchetype],
-                ] as const
-              ).map(([label, v]) => (
-                <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 2, py: 0.9, borderBottom: '1px solid #172133' }}>
-                  <Typography variant="body2" sx={{ color: '#94A3B8', flexShrink: 0 }}>{label}:</Typography>
-                  <Box sx={{ textAlign: 'right', minWidth: 0 }}>
-                    <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>{v.label}</Typography>
-                    <Typography variant="caption" sx={{ color: '#64748B' }}>{v.detail}</Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-
-          {/* Active Channels List */}
+          {/* Tab Cognition / Channel (gaya tab sama seperti Astrology) */}
           <Box>
-            <Typography variant="subtitle2" sx={{ color: '#9BB8DE', mb: 1.5, fontFamily: '"Cinzel", serif' }}>
-              Defined Electromagnetic Channels
-            </Typography>
-            {data.activeChannels.map((ch) => (
-              <Box key={ch.id} sx={{ py: 1, borderBottom: '1px solid #172133', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>
-                    Channel {ch.id}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                    {ch.name}
-                  </Typography>
-                </Box>
-                <Chip label={`Gates ${ch.gates[0]} · ${ch.gates[1]}`} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+            <Box sx={{ borderBottom: '1px solid #1E283D', mb: 1 }}>
+              <Tabs value={detailTab} onChange={(_, val) => setDetailTab(val)}>
+                <Tab label="Cognition" />
+                <Tab label="Channel" />
+              </Tabs>
+            </Box>
+
+            {/* Tab 0: Variabel lanjutan — lingkungan, motivasi, perspektif, pencernaan, kognisi, pikiran, arketipe */}
+            {detailTab === 0 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                {(
+                  [
+                    ['Lingkungan', data.extendedVariables.environment],
+                    ['Motivasi', data.extendedVariables.motivation],
+                    ['Perspektif', data.extendedVariables.perspective],
+                    ['Pencernaan', data.extendedVariables.digestion],
+                    ['Kognisi Tubuh', data.extendedVariables.cognition],
+                    ['Tindakan Pikiran', data.extendedVariables.mindAction],
+                    ['Arketipe Pemrogram', data.extendedVariables.programmingArchetype],
+                  ] as const
+                ).map(([label, v]) => (
+                  <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 2, py: 0.9, borderBottom: '1px solid #172133' }}>
+                    <Typography variant="body2" sx={{ color: '#94A3B8', flexShrink: 0 }}>{label}:</Typography>
+                    <Box sx={{ textAlign: 'right', minWidth: 0 }}>
+                      <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>{v.label}</Typography>
+                      <Typography variant="caption" sx={{ color: '#64748B' }}>{v.detail}</Typography>
+                    </Box>
+                  </Box>
+                ))}
               </Box>
-            ))}
+            )}
+
+            {/* Tab 1: Channel yang terdefinisi */}
+            {detailTab === 1 && (
+              <Box>
+                {data.activeChannels.length === 0 ? (
+                  <Typography variant="body2" sx={{ color: '#94A3B8', py: 1.5 }}>
+                    Tidak ada channel yang terdefinisi pada chart ini.
+                  </Typography>
+                ) : (
+                  data.activeChannels.map((ch) => (
+                    <Box key={ch.id} sx={{ py: 1, borderBottom: '1px solid #172133', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Box>
+                        <Typography variant="body2" sx={{ color: '#EDF1F7', fontWeight: 600 }}>
+                          Channel {ch.id}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                          {ch.name}
+                        </Typography>
+                      </Box>
+                      <Chip label={`Gates ${ch.gates[0]} · ${ch.gates[1]}`} size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                    </Box>
+                  ))
+                )}
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>
