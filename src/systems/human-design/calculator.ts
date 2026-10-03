@@ -6,7 +6,8 @@ import {
   planetEclipticLongitude,
   zonedCivilTimeToUtc,
 } from '../astrology/natal/calculator';
-import { CHANNELS, GATE_CENTER, MOTOR_CENTERS, longitudeToGate, rightAngleCrossName } from './gates';
+import { CHANNELS, GATE_CENTER, MOTOR_CENTERS, longitudeToGate } from './gates';
+import { lookupIncarnationCross } from './crosses';
 import {
   HDCenterId,
   HDGateActivation,
@@ -288,6 +289,9 @@ export function calculateHumanDesign(
       ? 'Left Angle'
       : 'Right Angle';
 
+  const crossKey = crossAngle === 'Right Angle' ? 'R' : crossAngle === 'Left Angle' ? 'L' : 'J';
+  const crossName = lookupIncarnationCross(crossKey, pSun.gate, dSun.gate)?.name ?? `${crossAngle} Cross`;
+
   const centers = {} as HumanDesignCalculationResult['centers'];
   (Object.keys(CENTER_NAMES) as HDCenterId[]).forEach((cid) => {
     centers[cid] = {
@@ -310,7 +314,7 @@ export function calculateHumanDesign(
     notSelfTheme,
     signature,
     definition,
-    incarnationCross: `${crossAngle === 'Right Angle' ? `Right Angle Cross of ${rightAngleCrossName(pSun.gate)}` : `${crossAngle} Cross`} (${pSun.gate}/${pEarth.gate} | ${dSun.gate}/${dEarth.gate})`,
+    incarnationCross: `${crossName} (${pSun.gate}/${pEarth.gate} | ${dSun.gate}/${dEarth.gate})`,
     crossAngle,
     crossGates: { personalitySun: pSun.gate, personalityEarth: pEarth.gate, designSun: dSun.gate, designEarth: dEarth.gate },
     variables: {

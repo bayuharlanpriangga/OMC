@@ -104,17 +104,3 @@ export const CHANNELS: ChannelDef[] = [
 ];
 
 export const MOTOR_CENTERS: HDCenterId[] = ['sacral', 'solar-plexus', 'heart', 'root'];
-
-/**
- * Nama Right Angle Cross. Tiap nama dipakai 4 gate yang indeksnya di roda berselisih 16
- * (mis. Laws = 3, 56, 50, 60), jadi kuncinya: indeks roda Personality Sun mod 16.
- */
-const RIGHT_ANGLE_CROSS_NAMES = [
-  'the Vessel of Love', 'Service', 'Tension', 'Penetration',
-  'Maya', 'Laws', 'the Unexpected', 'the Four Ways',
-  'the Sphinx', 'Explanation', 'Contagion', 'the Sleeping Phoenix',
-  'Planning', 'Consciousness', 'Rulership', 'Eden',
-];
-
-export const rightAngleCrossName = (personalitySunGate: number): string =>
-  RIGHT_ANGLE_CROSS_NAMES[GATE_WHEEL.indexOf(personalitySunGate) % 16];
