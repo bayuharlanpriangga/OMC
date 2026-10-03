@@ -16,9 +16,9 @@ import { HDGateActivation } from './types';
  */
 
 export interface HDVariableValue {
-  /** Label utama (gaya Human Design Indonesia). */
+  /** Label utama (nama Inggris standar Human Design). */
   label: string;
-  /** Penjelasan singkat: nama Inggris + flavor kiri/kanan. */
+  /** Penjelasan singkat: flavor kiri/kanan atau tone. */
   detail: string;
 }
 
@@ -34,9 +34,9 @@ export interface HDExtendedVariables {
 
 type Pair = [string, string]; // [kiri, kanan]
 
-// ---- Pencernaan (Determination): label HDI diketahui untuk color 1 = Pemburu ----
+// ---- Pencernaan (Determination) ----
 const DIGESTION: Array<{ label: string; en: string; flavor: Pair }> = [
-  { label: 'Pemburu', en: 'Appetite', flavor: ['Consecutive', 'Alternating'] },
+  { label: 'Appetite', en: 'Appetite', flavor: ['Consecutive', 'Alternating'] },
   { label: 'Taste', en: 'Taste', flavor: ['Open', 'Closed'] },
   { label: 'Thirst', en: 'Thirst', flavor: ['Hot', 'Cold'] },
   { label: 'Touch', en: 'Touch', flavor: ['Calm', 'Nervous'] },
@@ -44,51 +44,51 @@ const DIGESTION: Array<{ label: string; en: string; flavor: Pair }> = [
   { label: 'Light', en: 'Light', flavor: ['Direct', 'Indirect'] },
 ];
 
-// ---- Kognisi tubuh = tone body: label HDI diketahui untuk tone 3 = Observation ----
+// ---- Kognisi tubuh = tone body ----
 const COGNITION: Array<{ label: string; en: string }> = [
   { label: 'Smell', en: 'Smell' },
   { label: 'Taste', en: 'Taste' },
-  { label: 'Observation', en: 'Outer Vision' },
+  { label: 'Outer Vision', en: 'Outer Vision' },
   { label: 'Inner Vision', en: 'Inner Vision' },
   { label: 'Feeling', en: 'Feeling' },
   { label: 'Touch', en: 'Touch' },
 ];
 
 const ENVIRONMENT: Array<{ label: string; en: string; flavor: Pair }> = [
-  { label: 'Gua', en: 'Caves', flavor: ['Selective', 'Blending'] },
-  { label: 'Pasar', en: 'Markets', flavor: ['Internal', 'External'] },
-  { label: 'Dapur', en: 'Kitchens', flavor: ['Wet', 'Dry'] },
-  { label: 'Gunung', en: 'Mountains', flavor: ['Active', 'Passive'] },
-  { label: 'Lembah', en: 'Valleys', flavor: ['Narrow', 'Wide'] },
-  { label: 'Pantai', en: 'Shores', flavor: ['Natural', 'Artificial'] },
+  { label: 'Caves', en: 'Caves', flavor: ['Selective', 'Blending'] },
+  { label: 'Markets', en: 'Markets', flavor: ['Internal', 'External'] },
+  { label: 'Kitchens', en: 'Kitchens', flavor: ['Wet', 'Dry'] },
+  { label: 'Mountains', en: 'Mountains', flavor: ['Active', 'Passive'] },
+  { label: 'Valleys', en: 'Valleys', flavor: ['Narrow', 'Wide'] },
+  { label: 'Shores', en: 'Shores', flavor: ['Natural', 'Artificial'] },
 ];
 
 const MOTIVATION: Array<{ label: string; en: string }> = [
-  { label: 'Ketakutan', en: 'Fear' },
-  { label: 'Harapan', en: 'Hope' },
-  { label: 'Keinginan', en: 'Desire' },
-  { label: 'Kebutuhan', en: 'Need' },
-  { label: 'Rasa Bersalah', en: 'Guilt' },
-  { label: 'Kepolosan', en: 'Innocence' },
+  { label: 'Fear', en: 'Fear' },
+  { label: 'Hope', en: 'Hope' },
+  { label: 'Desire', en: 'Desire' },
+  { label: 'Need', en: 'Need' },
+  { label: 'Guilt', en: 'Guilt' },
+  { label: 'Innocence', en: 'Innocence' },
 ];
 
 const PERSPECTIVE: Array<{ label: string; en: string }> = [
-  { label: 'Bertahan Hidup', en: 'Survival' },
-  { label: 'Kemungkinan', en: 'Possibility' },
-  { label: 'Kekuatan', en: 'Power' },
-  { label: 'Menginginkan', en: 'Wanting' },
-  { label: 'Probabilitas', en: 'Probability' },
-  { label: 'Pribadi', en: 'Personal' },
+  { label: 'Survival', en: 'Survival' },
+  { label: 'Possibility', en: 'Possibility' },
+  { label: 'Power', en: 'Power' },
+  { label: 'Wanting', en: 'Wanting' },
+  { label: 'Probability', en: 'Probability' },
+  { label: 'Personal', en: 'Personal' },
 ];
 
 // Tone sisi Personality (Rave Psychology)
 const MIND_TONE: Array<{ label: string; en: string }> = [
-  { label: 'Keamanan', en: 'Security' },
-  { label: 'Ketidakpastian', en: 'Uncertainty' },
-  { label: 'Tindakan', en: 'Action' },
-  { label: 'Meditasi', en: 'Meditation' },
-  { label: 'Penghakiman', en: 'Judgment' },
-  { label: 'Penerimaan', en: 'Acceptance' },
+  { label: 'Security', en: 'Security' },
+  { label: 'Uncertainty', en: 'Uncertainty' },
+  { label: 'Action', en: 'Action' },
+  { label: 'Meditation', en: 'Meditation' },
+  { label: 'Judgment', en: 'Judgment' },
+  { label: 'Acceptance', en: 'Acceptance' },
 ];
 
 // 16 Godhead: tiap 4 gate berurutan di roda, mulai indeks 56 (Gate 13).
@@ -137,12 +137,12 @@ export function buildExtendedVariables(personality: HDGateActivation[], design: 
   const god = godheadOfGate(pSun.gate);
 
   return {
-    environment: { label: env.label, detail: `${env.flavor[side(dNode.tone)]} ${env.en} · ${side(dNode.tone) ? 'Observer' : 'Observed'}` },
-    motivation: { label: mot.label, detail: `${mot.en} · ${side(pSun.tone) ? 'Receptive' : 'Strategic'}` },
-    perspective: { label: per.label, detail: `${per.en} · ${side(pNode.tone) ? 'Peripheral' : 'Focused'}` },
-    digestion: { label: dig.label, detail: `${dig.flavor[side(dSun.tone)]} ${dig.en} · ${side(dSun.tone) ? 'Passive' : 'Active'}` },
-    cognition: { label: cog.label, detail: `${cog.en} · Tone ${dSun.tone}` },
-    mindAction: { label: mind.label, detail: `${mind.en} · Tone ${pSun.tone}` },
+    environment: { label: env.label, detail: `${env.flavor[side(dNode.tone)]} · ${side(dNode.tone) ? 'Observer' : 'Observed'}` },
+    motivation: { label: mot.label, detail: side(pSun.tone) ? 'Receptive' : 'Strategic' },
+    perspective: { label: per.label, detail: side(pNode.tone) ? 'Peripheral' : 'Focused' },
+    digestion: { label: dig.label, detail: `${dig.flavor[side(dSun.tone)]} · ${side(dSun.tone) ? 'Passive' : 'Active'}` },
+    cognition: { label: cog.label, detail: `Tone ${dSun.tone}` },
+    mindAction: { label: mind.label, detail: `Tone ${pSun.tone}` },
     programmingArchetype: { label: god.name, detail: `${god.title} · Gates ${god.gates.join(', ')}` },
   };
 }
